@@ -1,0 +1,55 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+(#defmacro `_Test')
+	.trim.
+
+	(#forloop 0, 10, 1, `This text appears on each of the 11 lines')
+		.{$$index $$extra0 .nl.}.
+	(#endforloop)
+
+	.{.nl.}.
+	
+	(#forloop 10, 0, -1, `Counting down this time')
+		.{$$index $$extra0 .nl.}.
+	(#endforloop)
+
+	.{.nl.}.
+	
+	(#forloop 10, 0, -2, `Skipping two')
+		.{$$index $$extra0 .nl.}.
+	(#endforloop)
+
+	.{.nl.}.
+
+	(#forloop 1, 10, 1)
+		(#forloop 1, 10, 2)
+			.{#String.Format(`{0,8}', `[$$index, $$$index]') }.
+		(#endforloop)
+		.{.nl.}.
+	(#endforloop)
+
+	.{.nl.}.
+
+	(#forloop 1, 10, 2)
+		#.forloop( 1, 10, 2, `!.{#String.Format(`{0,8}', `[$$index, $$$index]')}.')
+		.{.nl.}.
+	(#endforloop)
+
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

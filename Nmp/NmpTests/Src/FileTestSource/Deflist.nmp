@@ -1,0 +1,40 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+(#defmacro `_Test')
+	.trim.
+
+	(#deflist `list1', true)
+		line 1
+		line 2
+		line 3
+		line 4
+-	(#endlist)
+	
+	(#deflist `list2', false)
+		line 1
+		line 2
+		line 3
+		line 4
+-	(#endlist)
+	
+list1
+list2
+	
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert] #.BreakNext()
+	#.saveDivert( `Success\\'#Path.GetFileName( #.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

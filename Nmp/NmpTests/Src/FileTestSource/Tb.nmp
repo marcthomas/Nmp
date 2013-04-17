@@ -1,0 +1,34 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+#.define( `this', `******')
+#.define( `that', `******')
+#.define( `change', `******')
+
+(#defmacro `_Test')
+	.trim.
+	
+(#tb)
+this is a block of text that should be passed through to the
+output unchanged even though there are several macros defined
+that would change, or cause errors.
+(#endtb)
+
+
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

@@ -1,0 +1,82 @@
+#pushDivert(-1)
+
+#include( `include\Macros.nmp')
+#include( `include\UpdateProject.nmp')
+
+#setOutputExtension( `.cs')
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+
+#define( `numTuples', 11)
+
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#popdivert()-
+// NmpTuple.cs
+//
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+
+
+public interface IStructuralEquatable {
+	bool Equals( object other, IEqualityComparer comparer );
+	int GetHashCode( IEqualityComparer comparer );
+}
+
+
+public interface IStructuralComparable
+{
+	int CompareTo(object other, IComparer comparer);
+}
+
+ 
+public interface INmpTuple
+{
+  int      Size { get; }
+  int      GetHashCode(IEqualityComparer comparer);
+  string   ToString(StringBuilder sb);
+}
+
+
+public class NmpTuple {
+
+  internal static int CombineHashCodes(int h1, int h2)
+  {
+     return (((h1 << 5) + h1) ^ h2);
+  }
+
+-	#forloop( 1, numTuples, 1, `_genCreates')
+} 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; delete files that match the pattern: NmpTuple*.cs
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+//
+// removing old files
+//
+#define( `files', `@#Directory.GetFiles(#directory,`NmpTuple*.cs')')-
+#foreach( `@files', `_foreachItem', `// deleting `$value' #File.Delete(`$value') .nl.')-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; generate the new source files
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+//
+// generating new `files'
+//
+#forloop( 1, numTuples, 1, `_forItem', `// generating NmpTuple<_eachT($index)> _TupleFileGen($index) #saveDivert(`NmpTuple$index.cs', `_TupleFileGen', true).nl.')
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; update project file - do NOT recoment you do this without A LOT OF TESTING
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+//
+// update project file: _updateProject( numTuples, #eval(files.Length - 1), `..\NmpTuples.csproj')
+//
+

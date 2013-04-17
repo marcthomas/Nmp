@@ -1,0 +1,60 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+(#defmacro `_Test')
+	.trim.
+
+	
+	(#defarray `array')
+	 "widget": {
+	    "debug": "on",
+	    "window": {
+	        "title": "Sample Konfabulator Widget",
+					"name": "main_window",        
+					"width": 500,        
+					"height": 500
+	    },  
+			"image": { 
+	        "src": "Images/Sun.png",
+	        "name": "sun1",        
+					"hOffset": 250,        
+					"vOffset": 250,        
+					"alignment": "center"
+	    },
+			"text": {
+	        "data": "Click Here",
+	        "size": 36,
+	        "style": "bold",        
+					"name": "text1",        
+					"hOffset": 250,        
+					"vOffset": 100,        
+					"alignment": "center",
+	        "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
+	    }
+	}    
+	(#endarray)
+	
+-	array
+	
+-	array.widget.debug
+-	array.widget.window.title
+-	array.widget.image.src
+-	array.widget.text.onMouseUp
+	
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

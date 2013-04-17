@@ -1,0 +1,42 @@
+<SmartAssemblyProject ProjectId="{4a5b7f6d-83e7-450d-b101-4c43c587efb0}" Version="2.0">
+    <MainAssemblyFileName>..\..\Current\MSoft Tools\Debug\NmpCustomTool.dll</MainAssemblyFileName>
+    <FriendlyName>NMP Custom Tool</FriendlyName>
+    <CompanyName>netmacros.net</CompanyName>
+    <Configuration Name="Release">
+        <ApplicationName>NMP Custom Tool for Visual Studio</ApplicationName>
+        <Destination DestinationFileName="..\..\Current\MSoft Tools\Debug\SA\NmpCustomTool.dll" />
+        <Assemblies>
+            <Assembly AssemblyName="CustomToolShim, Culture=neutral, PublicKeyToken=null">
+                <Merging />
+                <Embedding />
+            </Assembly>
+            <Assembly AssemblyName="NmpBase, Culture=neutral, PublicKeyToken=null">
+                <Merging />
+                <Embedding />
+            </Assembly>
+            <Assembly AssemblyName="Nmp, Culture=neutral, PublicKeyToken=null">
+                <Merging />
+                <Embedding />
+            </Assembly>
+            <Assembly AssemblyName="NmpCustomTool, Culture=neutral, PublicKeyToken=null">
+                <Merging>
+                    <ResourcesCompression />
+                    <MemberRefsProxy />
+                    <Pruning />
+                    <Obfuscation />
+                    <ControlFlow />
+                </Merging>
+            </Assembly>
+        </Assemblies>
+        <Options>
+            <Obfuscation FieldsNameMangling="2" NameMangling="2" />
+            <ExceptionReporting EmailToBeNotified="jmclain@netmacros.net" ReportExceptions="1" Template="res:{SmartExceptions}.1033.dll" />
+            <FeatureUsageReporting Template="res:SmartUsageWithUIConsentFirstRun1033.dll" />
+            <StrongNameSigning />
+            <OtherProtections />
+            <StringsEncoding />
+            <OtherOptimizations />
+            <Debugging />
+        </Options>
+    </Configuration>
+</SmartAssemblyProject>

@@ -1,0 +1,49 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+;;
+;; THIS TEST DOES NOT WORK WHEN THE NMP SOURCE DIRECTORY IS CHANGES BETWEEEN SETTING
+;; UP THE TEST AND RUNNING THE TEST - WHICH IS COMMON - SO, NO TEST
+;;
+
+(#defmacro `_Test')
+	.trim.
+
+;;
+;; since we're being invoked (during the test) by using InvokeMacro() there is no
+;; current file, so the root directory is being used - that is either the directory
+;; that was current when NMP was initialize or some directory set with SetRootDirectory()
+;;
+;; which we are doing for the tests - #directory will point at the directory that contains
+;; this file
+;;
+#.currentDirectory
+
+#.defpath
+
+;;
+;; currentFile / #parentfile will return empty because theres is no current
+;; or parnt faile
+;;
+;;#.currentFile
+;;
+;;#parentfile
+
+(#endmacro)
+
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `_Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

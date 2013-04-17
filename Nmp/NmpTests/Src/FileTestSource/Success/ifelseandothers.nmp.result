@@ -1,0 +1,58 @@
+is neither cat or dog
+is a cat
+is a dog
+
+is false
+is true
+
+correct
+
+
+
+not empty
+empty
+
+not empty
+empty
+
+
+False
+True
+
+True
+False
+
+
+False
+True
+
+True
+False
+
+isTrue: True
+isTrue: False
+isTrue: True
+isTrue: False
+isTrue: True
+isTrue: True
+
+isFalse: True
+isFalse: True
+isFalse: False
+isFalse: True
+
+not: False
+not: True
+not: True
+
+ifDefined: is not defined
+ifDefined: is defined
+
+isDefined: False
+isDefined: True
+
+is not defined
+is defined
+
+True
+False

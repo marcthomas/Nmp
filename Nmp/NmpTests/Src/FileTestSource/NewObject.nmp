@@ -1,0 +1,49 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+#.define( `_Dummy', `dummy text to save to file')
+
+
+(#defmacro `_Test')
+	.trim.
+
+;;
+;; throw an ExitException(1)
+;;
+;; this is a __test__ NOT an example, if you do this stuff you are guaranteed
+;; to drive yourself crazy and anyone who tries to maintain you macro code
+;; will go insane (but they will kill you first)
+;;
+;; tests #object.newObject, #object.newStaticMacro and large portions of reflection code
+;;
+
+	#object.newStaticMacro( `_Expression', `System.Linq.Expressions.Expression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089')
+	
+	#.define( `_exception', `@_Expression.Throw(`@_Expression.Constant(`@#object.newObject(`NmpBase.ExitException', 1)')')' )
+	
+	_Expression.Lambda( `@#object.getType(`System.Action')', `@_exception' ).Compile().DynamicInvoke()
+
+(#endmacro)
+
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+
+	;;
+	;; need to save a file before we fail - the unit tests needs to find an output file
+	;; even though it will never compare the contents of the file because the test
+	;; is intended to fail
+	;;
+	_Dummy@[divert]	
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Dummy', true)
+
+	_Test@[divert]
+
+(#endif)
+
+

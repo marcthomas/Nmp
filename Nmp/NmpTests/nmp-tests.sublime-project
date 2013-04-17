@@ -1,0 +1,10 @@
+{
+	"folders":
+	[
+		{
+			"path": "./",
+			"folder_exclude_patterns": ["_*"],
+			"file_exclude_patterns": ["*.sublime*", "*.cs*", "*.config", "*bin"],
+			"folder_exclude_patterns": ["bin", "obj", "properties"]
+		}
+	]}

@@ -1,0 +1,409 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"te",
+				"textBlock"
+			],
+			[
+				"_text",
+				"_textBoxHeight"
+			],
+			[
+				"Row",
+				"RowDefinition"
+			],
+			[
+				"_in",
+				"_insertRowDefs"
+			],
+			[
+				"b",
+				"bcaptures	bcaptures-(beginCaptures)"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "nmp-tests.sublime-project",
+			"settings":
+			{
+				"buffer_size": 216,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Src/Manual Tests/_readme.txt",
+			"settings":
+			{
+				"buffer_size": 247,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Src/Manual Tests/Lorem Ipsum Paragraphs.nmp",
+			"settings":
+			{
+				"buffer_size": 1286661,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/User/Nmp.sublime-build",
+	"command_palette":
+	{
+		"height": 242.0,
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 258.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/D/Work/2013 Forward/Templating/Nmp3/Nmp/NmpTests/Src/Manual Tests/Lorem Ipsum Paragraphs - small.nmp",
+		"/D/Work/2013 Forward/Templating/Nmp3/Nmp/NmpTests/Src/Manual Tests/lorem ipsum paragraphs",
+		"/D/Work/2013 Forward/Templating/Nmp3/Nmp/NmpTests/Src/Manual Tests/LoremIpsumParagraphs.text.nmp",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/Nmp.sublime-build",
+		"/D/Work/2013 Forward/Templating/Nmp3/Nmp/NmpTests/Src/Manual Tests/LoremIpsumParagraphs.nmp",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/Nmp.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/ScriptCs.sublime-build.url",
+		"/D/Work/2013 Forward/Templating/Nmp3/Nmp/NmpTests/Src/FileTestSource/Simple Regex.nmp",
+		"/D/Work/2013 Forward/Templating/Nmp3/Nmp/NmpTests/nmp-tests.sublime-project",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp/NmpTests/nmp-tests.sublime-project",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp/NmpTests/Src/FileTestSource/Deflist.nmp",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp/NmpTests/Src/FileTestSource/Directory.nmp",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp/NmpTests/Src/FileTestSource/f11.bat",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Examples/nmp-examples.sublime-project",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/Nmp.tmLanguage",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Examples/Block Macros/F11.bat",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/AfterBuild/copy-files-local.btm",
+		"/D/Work/2013 Forward/Templating/Nmp v3 - src for Nmp GitHub/CopyNmpForVisualStudio.btm",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Notepad 51.sublime-project",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp-Hosts/NmpCustomTool/Registry/Nmp Register.reg.nmp",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp-Hosts/NmpCustomTool/Registry/f11.bat",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Examples/all.rsp",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Examples/F11.bat",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/license.txt",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp-Hosts/NmpCustomTool/Registry/user/Register.reg",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp-Hosts/NmpCustomTool/test.nmp",
+		"/D/Work/2013 Forward/Templating/Nmp GitHub/Nmp-Hosts/NmpCustomTool/register.nmp",
+		"/D/Work/2013 Forward/templating-2/CopyNmpForVisualStudio.btm",
+		"/D/Work/2013 Forward/Windows 8/Projects/Form Applications/CodeGeneration/Standard/RunData.nmpinc",
+		"/D/Work/2013 Forward/Windows 8/Projects/Form Applications/CodeGeneration/Standard/f11.bat",
+		"/D/Work/2013 Forward/Windows 8/Projects/Honey Do/Code/Notepad 51.sublime-project",
+		"/D/Work/2013 Forward/Windows 8/Projects/Form Applications/CodeGeneration/Standard/CreateResources.nmpinc",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/RunData.nmpinc",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Frames.nmpinc",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/f11.bat",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Generator.txt",
+		"/C/Users/joe/Documents/New Notebook File.np51",
+		"/D/Work/2013 Forward/Windows 8/Projects/Form Applications/Relationships and Structure.txt",
+		"/D/Work/2013 Forward/Windows 8/Projects/Honey Do/Code/Code Generation/Generator.txt.nmp",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Generated Code/GeneratedFramesInfo.cs",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Notepad 51.csproj.user",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Notepad 51.sln",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/CreateResources.nmpinc",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/CreateFrame.nmpinc",
+		"/C/Users/joe/AppData/Local/Packages/28918DigitalWritingAdvent.HoneyDoNotepad_rqne9yf2x17dr/LocalState/AutoSave.homeproject",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Perl/Perl.tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Perl/Perl.tmLanguage.cache",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/C#/C#.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/C#/C#.tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/C#/Build.tmLanguage",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Generated Frames/Frame1.xaml",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Generated Frames/Frame.xaml",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Controls.nmpinc",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Default/Default (Windows).sublime-keymap",
+		"/D/Work/Backup - No Skydrive.btm",
+		"/D/Work/Backup.btm",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/Nmp.sublime-settings",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/C#/Build.JSON-tmLanguage",
+		"/D/Work/2013 Forward/templating-2/Nmp/Nmp/NmpTests/Code/FileTestSource/Defarray.nmp",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Makefile/Make.sublime-build",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/Controls.inc",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/Code/Code Generation/CreateFrame.inc",
+		"/D/Work/2013 Forward/templating-2/Nmp-Hosts/Notes and Surprizes.txt",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/test.nmp",
+		"/D/Work/2013 Forward/Windows 8/Projects/Honey Do/Honey Do.sln",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/git-update.bat",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/git-status.bat",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/git-push.bat",
+		"/D/Work/2013 Forward/Windows 8/Projects/Notepad 51/git-add.bat",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/_Nmp.JSON-tmLanguage.1",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/XML/XML.tmLanguage",
+		"/C/Users/joe/Desktop/_Save/nmp - Copy.JSON-tmLanguage",
+		"/C/Users/joe/Desktop/_Save/Nmp.JSON-tmLanguage",
+		"/C/Users/joe/Desktop/AAANmp/Nmp.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/snippet.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Settings/Session.sublime_session",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/test.ssraw",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/HTML/html.sublime-snippet",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/C++/C++.sublime-settings",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/C++/C++.sublime-build",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Makefile/Miscellaneous.tmPreferences",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Makefile/Makefile.sublime-settings",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/nmp - Copy.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/nmp.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/nmp.sublime-build",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Ruby/Ruby.sublime-build",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/nmp.tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Batch File/Batch File.tmLanguage",
+		"/D/Work/2013 Forward/templating-2/Nmp-Hosts/Nmp_Core/nmp.nuspec.nmp",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Nmp/nmp.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Nmp/nmp.sublime-build",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/Nmp/nmp.tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/Nmp/nmp.JSON-tmLanguage",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/nmp",
+		"/D/Work/2013 Forward/templating-2/Nmp-Installer/NuGet Package 2/NET.Macro.Processor.nuspec.nmp",
+		"/D/Work/2013 Forward/templating-2/Nmp-Hosts/COPY LOCAL/{COPY LOCAL}.csproj",
+		"/D/Work/2013 Forward/templating-2/.gitignore",
+		"/D/Work/2013 Forward/templating-2/Nmp-Installer/build-nuget.btm",
+		"/D/Work/2013 Forward/templating-2/Nmp-Hosts/COPY LOCAL/{COPY LOCAL}.csproj.user",
+		"/D/Work/2013 Forward/templating-2/Nmp-Installer/postbuild.btm",
+		"/D/Work/2013 Forward/templating-2/Nmp-Installer/NuGet Package 2/NET.Macro.Processor.nuspec",
+		"/D/Work/2013 Forward/templating-2/Nmp-Installer/prebuild.btm",
+		"/D/Work/2013 Forward/templating-2/Nmp-Installer/NuGet Package 2/",
+		"/D/Work/2013 Forward/templating-2/Nmp/Nmp/Code/Builtin Macros/Object/ObjectMacros.cs",
+		"/C/Users/joe/AppData/Roaming/Sublime Text 2/Packages/User/NMP/nmp.sublime-build",
+		"/D/Work/Git Repositories/scriptcs/src/Scriptcs.Contracts/IScriptsRecipe.cs"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"WowNode",
+			"11.0",
+			"pushdi",
+			"FrameViewB",
+			"ObservableStringObjectDictionary",
+			"SelectItemFieldName",
+			"IdentifyFormFieldName",
+			"AppStorageName",
+			"fieldNameOrder",
+			"clear",
+			"fieldNameOrder",
+			"f12`",
+			"f12",
+			"\n#",
+			"delete",
+			"focusControlName",
+			"focusName",
+			"frameClassName",
+			"frameName",
+			"exec",
+			"f11",
+			"copy",
+			"line",
+			"copy",
+			"directory",
+			"find",
+			"keypad",
+			"find"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"#WowNode",
+			"#Version",
+			"ItemDataDictionary",
+			"focusControlName",
+			"frameClassName"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "nmp-tests.sublime-project",
+					"settings":
+					{
+						"buffer_size": 216,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								205,
+								205
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Src/Manual Tests/_readme.txt",
+					"settings":
+					{
+						"buffer_size": 247,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Src/Manual Tests/Lorem Ipsum Paragraphs.nmp",
+					"settings":
+					{
+						"buffer_size": 1286661,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11297,
+								11297
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/User/Nmp.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 5244.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.aaa_package_dev":
+	{
+		"height": 124.0
+	},
+	"output.exec":
+	{
+		"height": 529.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/D/Work/2013 Forward/Templating/Nmp GitHub/Examples/nmp-examples.sublime-project"
+			]
+		],
+		"width": 555.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 228.0,
+	"status_bar_visible": true
+}

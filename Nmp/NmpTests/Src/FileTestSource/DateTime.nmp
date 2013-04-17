@@ -1,0 +1,41 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+#.define( `ticks_1', `@#.newDateTime(1)')
+#.define( `jan_1_2001', `@#.newDateTime(2001, 1, 1)')
+#.define( `jan_1_2001_8_15', `@#.newDateTime(2001, 1, 1, 8, 15)')
+
+(#defmacro `_Test')
+	.trim.
+
+-	ticks_1.ToString()
+- ticks_1.Ticks
+
+-	jan_1_2001.ToString()
+-	jan_1_2001_8_15.ToString()
+- jan_1_2001_8_15.ToFileTime()
+
+;;
+;; cant test these because they are constantly changing and will
+;; never match the file
+;;
+;;-	#newDateTime( -1 )	
+;;-	#newDateTimeUtc( -1 )	
+	
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

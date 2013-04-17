@@ -1,0 +1,13 @@
+@echo off
+
+path=D:\work\2010 Forward\NMP2\Nmp2\NmpHost\bin\Debug\;%path
+
+:: echo %path
+
+mphost -test:input input1.txt
+
+
+
+
+pause
+exit

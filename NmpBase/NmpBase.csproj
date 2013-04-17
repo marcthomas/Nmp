@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9ED13A14-924A-455B-88B2-F6C4DBA5EC42}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NmpBase</RootNamespace>
+    <AssemblyName>NmpBase</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\CSX\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\NmpBase.XML</DocumentationFile>
+    <NoWarn>1591 1572 1573</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\NmpBase.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug .NET 3.5|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug .NET 3.5\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET35</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>..\..\Current\Nmp\Debug\NmpBase.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>NmpBase Key File.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v2.0\Assemblies\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\Attributes.cs">
+      <Link>Code\Code\Attributes.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Src\JSON\JSONInterfaces.cs" />
+    <Compile Include="Src\Reflection\Arguments.cs" />
+    <Compile Include="Src\Code\FileGroup.cs" />
+    <Compile Include="Src\Code\FilesFinder.cs" />
+    <Compile Include="Src\Code\NmpEnvironment.cs" />
+    <Compile Include="Src\Compile\CodeCompile.cs" />
+    <Compile Include="Src\Compile\CodeCompileRunner.cs" />
+    <Compile Include="Src\Code\CharsAndTokens.cs" />
+    <Compile Include="Src\Code\CharSequence.cs" />
+    <Compile Include="Src\Code\EscapedChars.cs" />
+    <Compile Include="Src\Code\Exceptions.cs" />
+    <Compile Include="Src\Code\INmpDynamic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\Code\NmpBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\Code\NmpDynamicBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\External\ExecuteArbitrary.cs" />
+    <Compile Include="Src\Code\FileHelpers.cs" />
+    <Compile Include="Src\Code\Helpers.cs" />
+    <Compile Include="Src\Code\NamedTextBlocks.cs" />
+    <Compile Include="Src\JSON\JSONArrayBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\JSON\JSONParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\JSON\JSONValue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\JSON\JSONVisualizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\JSON\ToJSONConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\NmpCollections\KVPValueList.cs" />
+    <Compile Include="Src\NmpCollections\ListOfNmpArray.cs" />
+    <Compile Include="Src\NmpCollections\ListOfNmpStringList.cs" />
+    <Compile Include="Src\NmpCollections\NmpArray.cs" />
+    <Compile Include="Src\NmpCollections\NmpObjectList.cs" />
+    <Compile Include="Src\NmpCollections\NmpStack.cs" />
+    <Compile Include="Src\NmpCollections\NmpStringArray.cs" />
+    <Compile Include="Src\NmpCollections\NmpStringList.cs" />
+    <Compile Include="Src\Code\Notifier.cs" />
+    <Compile Include="Src\Code\ParseStringReader.cs" />
+    <Compile Include="Src\Code\Preferences.cs" />
+    <Compile Include="Src\Code\PropertyDictionary.cs" />
+    <Compile Include="Src\Code\ReverseEnumerator.cs" />
+    <Compile Include="Src\Code\SplitString.cs" />
+    <Compile Include="Src\Code\StdParseHelpers.cs" />
+    <Compile Include="Src\Code\StringExtensions.cs" />
+    <Compile Include="Src\Code\StringIndexer.cs" />
+    <Compile Include="Src\Razor\HelperResult.cs" />
+    <Compile Include="Src\Reflection\Invoker.cs" />
+    <Compile Include="Src\Razor\IRazorBase.cs" />
+    <Compile Include="Src\Razor\ParseRazorSource.cs" />
+    <Compile Include="Src\Razor\RazorOptions.cs" />
+    <Compile Include="Src\Razor\RazorResponse.cs" />
+    <Compile Include="Src\Reflection\TypeCreator.cs" />
+    <Compile Include="Src\Reflection\TypeLoader.cs" />
+    <Compile Include="Src\Code\TokenMap.cs" />
+    <Compile Include="Src\Tuples\NmpTuple.cs" />
+    <Compile Include="Src\Tuples\NmpTuple1.cs" />
+    <Compile Include="Src\Tuples\NmpTuple10.cs" />
+    <Compile Include="Src\Tuples\NmpTuple11.cs" />
+    <Compile Include="Src\Tuples\NmpTuple2.cs" />
+    <Compile Include="Src\Tuples\NmpTuple3.cs" />
+    <Compile Include="Src\Tuples\NmpTuple4.cs" />
+    <Compile Include="Src\Tuples\NmpTuple5.cs" />
+    <Compile Include="Src\Tuples\NmpTuple6.cs" />
+    <Compile Include="Src\Tuples\NmpTuple7.cs" />
+    <Compile Include="Src\Tuples\NmpTuple8.cs" />
+    <Compile Include="Src\Tuples\NmpTuple9.cs" />
+    <Compile Include="Src\Code\UsingWrapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Src\ObjectHelpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NmpBase Key File.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

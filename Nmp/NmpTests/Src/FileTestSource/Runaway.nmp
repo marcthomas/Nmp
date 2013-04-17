@@ -1,0 +1,39 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+
+#.define( `_Dummy', `dummy text to save to file')
+
+#.define( `ping', `pong')
+#.define( `pong', `ping')
+
+
+(#defmacro `_Test')
+	.trim.
+
+-	ping
+
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	;;
+	;; need to save a file before we fail - the unit tests needs to find an output file
+	;; even though it will never compare the contents of the file because the test
+	;; is intended to fail
+	;;
+	_Dummy@[divert]	
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Dummy', true)
+
+	_Test@[divert]
+
+
+(#endif)
+
+

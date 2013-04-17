@@ -1,0 +1,100 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+(#defmacro `_Test')
+	.{}.	
+	.trim.
+
+	(#deflist `list1', true)
+		line 1
+		line 2
+		line 3
+		line 4
+-	(#endlist)
+	
+	(#foreach `@list1')
+		.{"$$value" .nl.}.	
+	(#endforeach)
+	
+	.{.nl.}.
+	
+
+	(#defarray `array')
+    "debug": "on",
+    "window": {
+        "title": "Sample Konfabulator Widget",
+				"name": "main_window",        
+				"width": 500,        
+				"height": 500
+    },  
+		"image": { 
+        "src": "Images/Sun.png",
+        "name": "sun1",        
+				"hOffset": 250,        
+				"vOffset": 250,        
+				"alignment": "center"
+    },
+		"text": {
+        "data": "Click Here",
+        "size": 36,
+        "style": "bold",        
+				"name": "text1",        
+				"hOffset": 250,        
+				"vOffset": 100,        
+				"alignment": "center",
+        "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
+	}    
+	(#endarray)
+
+	(#foreach `@array')
+		.{$$value.Key}.
+		
+;;
+;; issue shows up here (i think) $$value.Value
+;;
+;; $$value.Value is seen as a char when we use 'o'
+;;
+;; and the if fails into the foreach
+
+;; collection IEnumerable that says: on
+
+;; or more specific the string is passed to foreach which iterates
+;; over each char - which has no $$value.Value so we just get
+;; an = followed by nothing
+
+;; so, its the #typeof that's failing
+
+!!! BaseMacros are not being loaded !!!
+because they're not being copied !!
+		
+		
+		(#if #is.Equal(#object.typeof(`@$$value.Value'),System.String) )
+			.{ = $$value.Value }.
+		(#else)
+			(#foreach `@$$value.Value')
+				.{.nl.  $$$value.Key = $$$value.Value}.
+			(#endforeach)
+		(#endif)
+		
+		.{.nl.}.
+		.{.nl.}.
+	(#endforeach)
+
+
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

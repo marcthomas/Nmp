@@ -1,0 +1,14 @@
+@echo off
+
+::4nt copy "$(TargetDir)*.*" "c:\program files\nmp\v2.0 testing"
+
+::echo %1
+
+::4nt copy %1 "c:\program files\nmp\v2.0 testing"
+
+
+::pause
+exit 0
+
+
+

@@ -1,0 +1,54 @@
+Install.txt
+-----------
+
+
+
+
+
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\10.0\CLSID
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\CLSID
+
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\10.0\Generators
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\Generators
+
+(Default)
+Assembly
+Class
+InprocServer32
+ThreadingModel
+
+				GenRegData regData = new GenRegData(
+											"CustomTool.MPNet",												// tool class
+											"MP.VSTools.dll",													// code base
+											"mscoree.dll",														// ?? in vista 64 - need to locate special folder
+											"Both",																		// threading model
+											"MPNet",																	// name
+											"MPNet Macro Processor",									// description
+											"{d707539d-6d2a-4213-bee2-ec0469b392dc}",	// tool guid
+											true																			// generates source
+										);
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\8.0\Generators\{164b10b9-b200-11d0-8c61-00a0c91e29d5}\MSDataSetGenerator]
+@="Microsoft VB Code Generator for XSD"
+"CLSID"="{E76D53CC-3D4F-40a2-BD4D-4F3419755476}"
+"GeneratesDesignTimeSource"=dword:00000001
+
+
+
+
+
+
+		const string	REG_PATH_GLOBAL_ENVIRONMENT	= @"SYSTEM\CurrentControlSet\Control\Session Manager\Environment";
+		const string	REG_PATH_USER_ENVIRONMENT	= @"Environment";
+		const string	REG_PATH_NAME	= @"Path";
+
+		const string	REG_INSTALL_NAME	= @"NMPInstall";
+		const string	REG_LIB_NAME			= @"NMPLib";
+		
+		const string	REG_NMP_LIB_APPDATA_FOLDER	= @"NMP\Library";
+
+

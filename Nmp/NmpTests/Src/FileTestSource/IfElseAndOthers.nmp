@@ -1,0 +1,96 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+
+
+
+(#defmacro `_Test')
+	.trim.
+	
+#.define( `ping', `pong')
+#.define( `pong', `ping')
+
+;;
+;; errors
+;;
+;;#if.else()
+;;#if.else( a )
+
+
+-	#if.else( cat, dog, is true, is neither cat or dog)
+-	#if.else( cat, cat, is a cat, is not a cat)
+-	#if.else( dog, dog, is a dog, is not a dog)
+
+-	#if.else( #if.else(dog,cat,is,not), #if.else(cat,cat,is,not), is true, is false)
+-	#if.else( #if.else(cat,cat,is,not), #if.else(cat,cat,is,not), is true, is false)
+
+-	#if.else( #eval(`Math.pow(10,2)'), 100, correct, not)
+
+
+
+#if.Empty( `this is not empty', empty, not empty)
+#if.Empty( `', empty, not empty)
+
+#if.NotEmpty( `this is not empty', not empty, empty)
+#if.NotEmpty( `', not empty, empty)
+
+
+#is.Empty( `this is not empty')
+#is.Empty( `')
+
+#is.NotEmpty( `this is not empty')
+#is.NotEmpty( `')
+
+
+#is.Equal( a, b)
+#is.Equal( a, a)
+
+#is.NotEqual( a, b)
+#is.NotEqual( a, a)
+
+isTrue: #is.True(true)
+isTrue: #is.True(false)
+isTrue: #is.True(1)
+isTrue: #is.True(0)
+isTrue: #is.True((decimal)1.2)
+isTrue: #is.True((float)0.22)
+
+isFalse: #is.False()
+isFalse: #is.False(0)
+isFalse: #is.False(1)
+isFalse: #is.False(today is the day)
+
+not: #.not(1)
+not: #.not(0)
+not: #.not(is what)
+
+ifDefined: #if.Defined(`fred', is defined, is not defined)
+ifDefined: #if.Defined(`_Test', is defined, is not defined)
+
+isDefined: #is.Defined(`fred')
+isDefined: #is.Defined(`_Test')
+
+#if.NotDefined(`fred', is not defined, is defined)
+#if.NotDefined(`_Test', is not defined, is defined)
+
+#is.NotDefined(`fred')
+#is.NotDefined(`_Test')
+
+(#endmacro)
+
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

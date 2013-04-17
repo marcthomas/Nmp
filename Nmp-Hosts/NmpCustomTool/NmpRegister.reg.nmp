@@ -1,0 +1,55 @@
+;;
+;; the following generates NmpRegister.reg file which can be used to register the
+;; Nmp Custom Tool for Visual Studio
+;;
+#pushDivert(-1)
+;;
+;; must be unicode for Registry Editor
+;;
+#.setOutputEncoding( `unicode')
+
+;;
+;; Visual Studio Version - default to 2012 (v11)
+;;
+(#if #is.NotDefined(`#Version'))
+	#.define( `#Version', `11.0')
+(#endif)
+
+;;
+;; 32 or 64 Bits - different registery locations
+;;
+#.define( `#Bits', #if.True(#Environment.Is64BitOperatingSystem,64,32))
+#define( `#WowNode', #if.Else(#Bits,64,`Wow6432Node\\', `'))
+
+;;
+;; Codebase for custom tool dll - current currentDirectory
+;;
+;;#.define( `#Codebase', #.currentDirectory\NmpCustomTool.dll)
+#.define( `#Codebase', #.echo(#.currentDirectory\NmpCustomTool.dll).Replace(`\\', `\\\'))
+
+#popDivert()-
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\Software\#WowNode`'Microsoft\VisualStudio\#Version\CLSID\{d707539d-6d2a-4213-bee2-ec0469b392dc}]
+@="Net Macro Processor 3"
+;;"_Assembly"="NmpCustomTool, Version=0.3.0.8, Culture=neutral, PublicKeyToken=null"
+"Class"="NmpCustomTool.NetMacroProcessor"
+"CodeBase"="#Codebase"
+"InprocServer32"="mscoree.dll"
+"ThreadingModel"="Both"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\#WowNode`'Microsoft\VisualStudio\#Version\Generators\{164B10B9-B200-11D0-8C61-00A0C91E29D5}\NMP]
+@="Net Macro Processor"
+"CLSID"="{d707539d-6d2a-4213-bee2-ec0469b392dc}"
+"GeneratesDesignTimeSource"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\Software\#WowNode`'Microsoft\VisualStudio\#Version\Generators\{164B10B9-B200-11D0-8C61-00A0C91E29D5}\.nmp]
+@="NMP"
+
+[HKEY_LOCAL_MACHINE\Software\#WowNode`'Microsoft\VisualStudio\#Version\Generators\{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}\NMP]
+@="Net Macro Processor"
+"CLSID"="{d707539d-6d2a-4213-bee2-ec0469b392dc}"
+"GeneratesDesignTimeSource"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\Software\#WowNode`'Microsoft\VisualStudio\#Version\Generators\{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}\.nmp]
+@="NMP"

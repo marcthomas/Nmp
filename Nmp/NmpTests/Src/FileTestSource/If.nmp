@@ -1,0 +1,42 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+#.define( `value', true)
+
+(#defmacro `_Test')
+	.trim.
+	
+	(#if value)
+		.{"`value' is true", }.
+	(#endif)
+	
+	(#if #.not(value) )
+		.{this would be wrong}.
+	(#elseif value)
+		.{"again `value' is true", }.
+	(#endif)
+	
+	(#if #.not(value))
+		.{wrong again}.
+	(#else)
+		.{"still true (for the third time)!}.
+	(#endif)
+	
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

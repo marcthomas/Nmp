@@ -1,0 +1,3 @@
+this is a block of text that should be passed through to the
+output unchanged even though there are several macros defined
+that would change, or cause errors.

@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D70A2431-59C3-43D1-9CA9-EC9E5344BCD7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nmp</RootNamespace>
+    <AssemblyName>Nmp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\CSX\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Current\Nmp\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Current\Nmp\Release\</OutputPath>
+    <DefineConstants>TRACE;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug .NET 3.5|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug .NET 3.5\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET35</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Nmp Key File.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MarkdownSharp">
+      <HintPath>..\Lib\Net 4.5\MarkdownSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.JScript" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Src\Builtin Macros\Core\Core-Collections.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Eval.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Logical.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Misc.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core_LoadPowershell.cs" />
+    <Compile Include="Src\Builtin Macros\Logical\IfMacros.cs" />
+    <Compile Include="Src\Builtin Macros\Logical\IsMacros.cs" />
+    <Compile Include="Src\Builtin Macros\Object\ObjectMacros.cs" />
+    <Compile Include="Src\Builtin Macros\Options\NmpOptions.cs" />
+    <Compile Include="Src\Evaluators\InvocationContext.cs" />
+    <Compile Include="Src\Evaluators\InvocationStack.cs" />
+    <Compile Include="Src\Evaluators\MacroArgs.cs" />
+    <Compile Include="Src\Evaluators\MacroArguments.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\Evaluators\MIR.cs" />
+    <Compile Include="Src\GrandCentral\ExecutionSecurity.cs" />
+    <Compile Include="Src\GrandCentral\GrandCentral-FileIO.cs" />
+    <Compile Include="Src\GrandCentral\GrandCentral-FixText.cs" />
+    <Compile Include="Src\GrandCentral\GrandCentral-GetParseReader.cs" />
+    <Compile Include="Src\GrandCentral\GrandCentral-GetQuotedText.cs" />
+    <Compile Include="Src\GrandCentral\Hub.cs" />
+    <Compile Include="Src\Macro Handlers\BlockMacroHandlerBase.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Lists\Deflist.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Miscellaneous\Block.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Miscellaneous\ExpandoBlock.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Arrays\Defarray.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Macros\DefMacro.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\Builtin Macros\Core\Core-Helpers.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Loops.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Main.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Divert.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-FileSys.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Other.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core-Properties.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core_Exec.cs" />
+    <Compile Include="Src\Builtin Macros\Core\Core_MakeRsp.cs" />
+    <Compile Include="Src\Builtin Macros\Helpers\ForeachHandler.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Looping\ForeachBlockMacro.cs" />
+    <Compile Include="Src\Builtin Macros\Helpers\ForloopHandler.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Looping\ForloopBlockMacro.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Conditionals\If.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Macros\Pushdef.cs" />
+    <Compile Include="Src\Builtin Macros\BlockMacros\Miscellaneous\Textblock.cs" />
+    <Compile Include="Builtin Test Objects\Test Objects 1.cs" />
+    <Compile Include="Src\Evaluators\ArgumentsProcessor.cs" />
+    <Compile Include="Src\Evaluators\ETB.cs" />
+    <Compile Include="Src\Input\ParseReader.cs" />
+    <Compile Include="Src\Input\Reader.cs" />
+    <Compile Include="Src\Macro Handlers\BuiltinMacroHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\Macro Handlers\MacroContainer.cs" />
+    <Compile Include="Src\Macro Handlers\NetObjectMacroHandler.cs" />
+    <Compile Include="Src\Macro Handlers\TextMacros\TextMacroHandler.cs" />
+    <Compile Include="Src\Macro Handlers\TextMacros\TextMacroRunner.cs" />
+    <Compile Include="Src\Macro Handlers\TextMacros\TextMacroRunner_EvalResult.cs" />
+    <Compile Include="Src\Macro Processor\DefaultMacroProcessor.cs" />
+    <Compile Include="Src\Macro Processor\Macro.cs" />
+    <Compile Include="Src\Main\EvalLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\Main\Evaluate.cs" />
+    <Compile Include="Src\Main\EvaluationContexts.cs" />
+    <Compile Include="Src\GrandCentral\GrandCentral.cs" />
+    <Compile Include="Src\Main\InvokeMacro.cs" />
+    <Compile Include="Src\Main\LibInfo.cs" />
+    <Compile Include="Src\Main\NmpBaseEvaluator.cs" />
+    <Compile Include="Src\Main\Nmp.cs" />
+    <Compile Include="Src\Main\NmpEvaluator.cs" />
+    <Compile Include="Src\Main\NmpMakeCurrent.cs" />
+    <Compile Include="Src\Main\RegisterMacros.cs" />
+    <Compile Include="Src\Main\NmpScanner.cs" />
+    <Compile Include="Src\Interfaces\DoesNotExist.cs" />
+    <Compile Include="Src\Expressions\ArgumentsEvaluator.cs" />
+    <Compile Include="Src\Expressions\DelegateInvoker.cs" />
+    <Compile Include="Src\Expressions\DynamicIndexerInvoker.cs" />
+    <Compile Include="Src\Expressions\DynamicMethodInvoker.cs" />
+    <Compile Include="Src\Expressions\DynamicPropertyInvoker.cs" />
+    <Compile Include="Src\Expressions\ExpressionDumper.cs" />
+    <Compile Include="Src\Expressions\ExpressionEvaluator.cs" />
+    <Compile Include="Src\Expressions\ExpressionEvaluatorBase.cs" />
+    <Compile Include="Src\Expressions\Expressions.cs" />
+    <Compile Include="Src\Expressions\FieldInvoker.cs" />
+    <Compile Include="Src\Expressions\IndexerInvoker.cs" />
+    <Compile Include="Src\Expressions\Invokers.cs" />
+    <Compile Include="Src\Expressions\MethodInvoker.cs" />
+    <Compile Include="Src\Expressions\ObjectHelpers\StringArrayObjectHelper.cs" />
+    <Compile Include="Src\Expressions\ObjectHelpers\StringObjectHelper.cs" />
+    <Compile Include="Src\Expressions\ObjectInfo.cs" />
+    <Compile Include="Src\Expressions\PropertyInvoker.cs" />
+    <Compile Include="Src\Interfaces\NmpInterfaces.cs" />
+    <Compile Include="Src\Interfaces\NmpMacroList.cs" />
+    <Compile Include="Src\Interfaces\NullResult.cs" />
+    <Compile Include="Src\Notifications\Notifications.cs" />
+    <Compile Include="Src\Output\Diversions.cs" />
+    <Compile Include="Src\Output\Output.cs" />
+    <Compile Include="Src\ThreadContext\ErrorsAndNotifications.cs" />
+    <Compile Include="Src\ThreadContext\ThreadContext.cs" />
+    <Compile Include="Src\ThreadContext\ThreadData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Recognizers\BaseRecognizer.cs" />
+    <Compile Include="Src\Recognizers\DefaultRecognizer.cs" />
+    <Compile Include="Src\Recognizers\RegExRecognizer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="What we have to do.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Src\Powershell\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Nmp Key File.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NmpBase\NmpBase.csproj">
+      <Project>{9ed13a14-924a-455b-88b2-f6c4dba5ec42}</Project>
+      <Name>NmpBase %28NmpBase\NmpBase%29</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

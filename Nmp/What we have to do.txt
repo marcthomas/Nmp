@@ -1,0 +1,33 @@
+﻿What we have to do.txt
+======================
+
+This the last hand scratched list for integrating powershell and NMP before I was
+diverted to razor, and then Csx
+
+	o	Add PSMacros to NMP
+	o	Create script block from NMP
+	o	Block level define script block for powershell
+	o	Allow $ as first char but do not allow as part of macro name
+	o	Callback and PS Stuff
+	o	NMP invoke and output
+	o	PS macros
+
+Work on input.cs just because
+
+	NEED TO TRACK WHERE WE ARE FOR DEBUGGING
+
+		o	this will not just be in input but have its hooks everywhere
+			so it needs to be some data attached to a macro invocation record
+		
+		?	some sort of stack of locations leading from the current byte of input thru various
+			macro invocations
+				
+				macro name
+				macro souce file name
+				line in macro
+				line in source file
+
+
+Must complete a simple main routine in Nmp
+
+Must complete a basic NmpHost so we can test whatever else we're doing !

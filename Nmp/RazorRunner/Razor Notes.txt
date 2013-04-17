@@ -1,0 +1,248 @@
+
+@name
+@{ }
+@( )
+@section
+@helper
+@template
+@functions
+
+@model
+@inherits
+
+
+
+
+Sections are saved a macros with the section name, can get section in NMP just
+by mentioning its name
+
+(#block `razor' [, `name', `empty'] ) that are named are added to macro dictionary and
+can be accessed via `name' as an object macro. Since you can define @functions { ... }
+you can access those functions via this macro. This is an easy way to create
+macros in C# that are dynamicaly compiled
+
+
+#razorAddAssembly() *** before *** the (#block `razor'
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+@RazorOnly
+[@RazorSource]
+[@RazorAssembly]
+
+
+@RazorBefore
+[@RazorSource]
+
+@RazorAfter
+[@RazorSource]
+
+[@RazorAssembly]
+
+
+
+class RazorOptions {
+	public bool Only = false;
+	public bool	Before = false;
+	public bool After = false;
+	public bool	Source = false;
+	public bool	SourceBefore = false;
+	public bool	SourceAfter = false;
+}
+
+
+
+@section
+@RenderSection
+
+
+@section sectionName { C# code }
+
+@RenderSection( "name" )
+@RenderSection( "name", required : true )
+@RenderSection( "name", required : false )
+@RenderSection( "name", required : true|false, objectArg0 [, arg1, arg2 ...] )
+
+within your @section name { } code you can make reference to an object array
+named 'args' (object [] args). this array will hold 0 or more objects which
+are passed to the section via @RenderSection(), or as the macro arguments if invoked
+as a macro
+
+   @RenderSection( "name", required : true, "Hello world!", DateTime.Now )
+
+	 name( `Hello world!', `@#DateTime.Now')
+
+
+
+
+
+You need to escape `@' when it collides with what Razor thinks is the start
+of a C# expression: @Name; or an NMP reference: `@macro'
+
+
+@functions {
+}
+
+
+
+
+
+
+
+
+
+
+
+@RazorBefore
+ RazorSource
+@using Nmp
+
+@section name { @(0 == args.Length ? "no args" : args[0].ToString()) @args[1] }
+
+@RenderSection( "name", true, "This is arg 0", @DateTime.Now)
+
+name( `Hi!', `there')
+
+name( `Hi!', `@@#DateTime.Now')
+
+@@ { }
+
+@functions {
+
+	public string fred( int count, Func<int, object> template )
+	{
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < count; i++) {
+			builder.AppendLine( template(i).ToString() );
+		}
+		return builder.ToString();
+	}
+	
+}
+
+"@fred(10, @<li>List Item #@item</li>)"
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+@functions {
+	...
+}
+
+Where: 
+	
+	(#block `razor', `name')...(#endblock)
+
+If 'name' is supplied then add an object macro that represents the instance
+of Razor run by the nameof `name' - macro scripts can call methods defined
+within the @functions { } blocks
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+@helper
+
+Markeup inside of a helper follows the same rules as @section, use
+"@:" to escape a line and <text>...</text> to escape a bunch of text, or
+a single chunk of markup with an element <a> ... </a>
+difference is that <text>...</text> is stripped
+
+all else is assumed to be code
+
+@helper help( int a ) { 
+	<a>the value is + @a;
+	
+	<b>hi</b>
+	
+	</a>
+	
+	<text>
+		yes
+	</text>
+	
+	var x = 22;
+	@x
+}
+
+
+public HelperResult help( int a ) {
+
+	return new HelperResult(
+	
+		__razor_helper_writer =>
+		{
+			HelperResult.WriteLiteral(@__razor_helper_writer, "\t<a>the value is + ");
+			HelperResult.Write(@__razor_helper_writer, a);
+			HelperResult.WriteLiteral(@__razor_helper_writer, ";\n\t\n\t<b>hi</b>\n\t\n\t</a>\n");
+			HelperResult.WriteLiteral(@__razor_helper_writer, "\t");
+			HelperResult.WriteLiteral(@__razor_helper_writer, "\n\t\tyes\n\t");
+			HelperResult.WriteLiteral(@__razor_helper_writer, "\n");
+			x = 22;
+			HelperResult.Write(@__razor_helper_writer, x);
+		}
+	);
+
+}
+
+The result of 'help' is a HelperResult instance.
+
+The arguments passed to 'help' are captured by the closure around the HelperResult instance.
+
+When invoked 'help' is called in the context of a Write statement, e.g. Write(help(1)) which at
+some point has ToString() called on it and the value returned is the value of the helper.
+
+-The "Write" and "WriteLiteral"'s are methods on the base class that take a TextWriter and either
+-an object or a string. Note that they live in the base class but any content they generate is to
+-the TextWriter - so HelperResult does generate its own output, but uses an outside method that
+-participates in that generation.
+
+The Write and WriteLiteral's are now static methods on HelperResult so we can keep all the
+functionality together and make it easier to swap base classes or HelperResult definitions
+at a later date. Write and WriteLiteral are helpers that output to a TextWriter instance.
+
+  It is possible that Write and WriteLiteral are used elsewhere and we haven't run across
+	them yet.
+
+	They could still be put in a special static helper class since, unlike Write(object) and
+	WriteLiteral(string) they do not output through the base class.
+
+
+Now, how do we wrap an instance of a helper so it can be invoked as a macro?
+
+	Look for all instances of methods that return HelperResult.
+
+	Wrap the method with a reference to that method using the instance of the class
+	that was run with an delegate that calls the method and returns HelperResult which
+	will later have ToString() called on it.
+
+		Unlike our wrpping of an @section all the text generation is wrapped up in the
+		HelperResult
+
+
+@helper name (...) { }
+
+A method by the name of 'name' is generated which returns an instance of
+of HelperResult when 'name' is invoked.
+
+
+@ section name { }
+
+DefineSection is called: DefineSection( name, Lambda expression / anonymous method )
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+Rules for:
+
+@section name { }
+@helper name( ... ) { }
+
+
+Contents are assumed to be

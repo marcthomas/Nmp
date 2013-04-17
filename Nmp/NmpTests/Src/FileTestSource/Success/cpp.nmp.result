@@ -1,0 +1,21 @@
+#define( yyy, I am a y )
+
+
+	#include( fred farkel )
+
+	I am an x
+	yyy
+
+
+	
+	#undef( yyy)
+
+	yyy
+	xxx
+
+	
+
+	
+	
+	
+	cpp is off now and #define works again

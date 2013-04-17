@@ -1,0 +1,49 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+(#defmacro `_match')
+-	(#foreach `@$specials')
+-		$$index: `$$value'
+-	(#endforeach)
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+(#defmacro `_Test')
+	.trim.
+	
+<span> some span text </span>
+
+<div> some div text </div>
+
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; this DOES NOT do a balanced match of tags, it is just for
+;; testing !!
+;;
+#.addRecognizerRegex( first, `\G<(.*?)>(.*?)</(.*?)>',`_match')
+#.setRegexRecognizer( true )	;;, false, false )
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
