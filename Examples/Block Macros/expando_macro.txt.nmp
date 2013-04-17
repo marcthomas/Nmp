@@ -1,0 +1,18 @@
+#.pushDivert(-1)
+
+#.define( `#Car', `Truck')
+#.define( `Truck', `ServiceVehicle')
+#.define( `ServiceVehicle', `Fire Engine')
+
+#.define( `work', `the large farm at the edge of town')
+
+#popDivert()-
+
+ `(##& ... ##)' macro
+
+;; The expando macro allows you to keep repeating the expansion of a block until
+;; there are no more changes or 128 iterations have taken place
+
+(##&
+  Jimmy drove his #Car to work`'.
+##)

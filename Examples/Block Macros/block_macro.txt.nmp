@@ -1,0 +1,20 @@
+#.pushDivert(-1)
+
+(#defmacro `#handleBlockMacro', `textBlock', `firstArg')
+$firstArg
+$textBlock
+(#endmacro)
+
+#popDivert()-
+
+ `(#block ... (#endblock)' macro
+
+;; The block macro allows you to pass a chunk of text to a macro as the first argument 
+;; to the macro, any additional arguments passed to block macro are passed as the second and 
+;; following arguments.
+
+(#block `#handleBlockMacro', `This is the text passed in the block:')
+  Lo and behold what macros have wrought!
+  Second line.
+  Third line.
+(#endblock)

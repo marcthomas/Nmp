@@ -1,0 +1,17 @@
+#.pushDivert(-1)
+#popDivert()-
+
+ `(#tb) ... (#endtb)' macro
+
+ ;; The textblock macro allows text to pass through the macro processor without being processed
+
+(#tb)
+`#define( `Excess', `Too much chocolate cake.')
+
+`````note we don't have to watch out quoting in here'
+
+
+(#defmacro `NeverDefined')
+	This macro will never be defined because it lives in a textblock!
+(#endmacro)
+(#endtb)
