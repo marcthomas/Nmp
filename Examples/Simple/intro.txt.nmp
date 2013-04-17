@@ -1,0 +1,10 @@
+#.define( `treasure', `gold coins!')
+#.define( `#player', `Tracy')
+
+(#defmacro `#whosePlaying', `who')
+$who is playing for treasure-
+(#endmacro)
+
+"#whosePlaying(#player)"
+
+

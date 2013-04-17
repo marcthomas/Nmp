@@ -1,0 +1,59 @@
+#pushdivert(-1)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; this generates the <ItemGroup> section containing the source file. if yo
+;; play around with the project in Visual Studio it may start moving things
+;; around in which case this macro will become invalid!
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_filesItemGroup', `nTuples')
+  <ItemGroup Label="tuple_source">
+
+
+    <None Include="Code\NmpTuple.nmp">
+      <Generator>NetMacroProcessor</Generator>
+      <LastGenOutput>NmpTuple.cs</LastGenOutput>
+    </None>
+  
+    <Compile Include="Code\NmpTuple.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NmpTuple.nmp</DependentUpon>
+    </Compile>
+  
+(#forloop 1, $nTuples, 1)
+    <Compile Include="Code\NmpTuple`'$$index.cs" />
+(#endforloop)
+
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; updates the project file - if using custom tool on NmpTuple.nmp the
+;; you'll be updating a project file this is in use!
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_updateProject', `newCount', `oldCount', `projFile')
+	.{"$projFile"}.
+
+	(#if #not(#eval($newCount == $oldCount)) )
+		#readFile( `project', `$projFile' )
+
+		project.ReplaceEx( `(?s)<ItemGroup\s*?Label="tuple_source".*?</ItemGroup>', `@_filesItemGroup(numTuples)' )@[divert]
+
+		;;#saveDivert(`..\new.csproj', `project', true)
+		#saveDivert(`$projFile', `project', true)
+	(#endif)
+
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#popdivert()-

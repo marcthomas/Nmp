@@ -1,0 +1,278 @@
+#.pushDivert(-1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; called by #foreach() macros
+;;
+;; .reexpand. will cause subtitution to be performed on the
+;; result of the first subtitution - this allows 'boilerplate' to
+;; be expanded and then the result of 'boilerplate' to be expanded
+;; so any $ substitution tokens in boilerplate will be substituted
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_foreachItem', `value', `index', `lastIndex', `count', `type', `boilerplate')
+	.reexpand.
+	.{$boilerplate}.
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; called by #forloop() macros
+;;
+;; .reexpand. will cause subtitution to be performed on the
+;; result of the first subtitution - this allows 'boilerplate' to
+;; be expanded and then the result of 'boilerplate' to be expanded
+;; so any $ substitution tokens in boilerplate will be substituted
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_forItem', `index', `lastIndex', `increment', `boilerplate')
+	.reexpand.
+	.{$boilerplate}.
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; outputs T1, T2, T3 ...
+;;
+;; `$count' times
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_eachT', `count')
+	.{#.forloop( 1, $count, 1, `_forItem', `T$$index`'#if.Else($$index, $$lastIndex,,`, ')')}.
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; outputs the Item# getter
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_eachItemProperty', `index', `lastIndex', `increment')
+  /////////////////////////////////////////////////////////////////////////////
+
+  public T$index Item$index
+  {
+    //[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+    get
+    {
+      return this.m_Item$index;
+    }
+  }
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; comparer.Compare() in IStructuralComparable.CompareTo()
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_eachCompare', `index', `lastIndex', `increment')
+    num = comparer.Compare(this.m_Item$index, tuple.m_Item$index);
+    if (num != 0) {
+      return num;
+    }
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; GetHasCode() in IStructuralComparable.GetHashCode()
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_eachHashCode', `count')
+	.{}.
+	(#if #ifElse($count,1) )
+		.{    return comparer.GetHashCode( this.m_Item1 );}.
+	(#elseif #ifElse($count,2) )
+		.{    return NmpTuple.CombineHashCodes( comparer.GetHashCode(this.m_Item1), comparer.GetHashCode(this.m_Item2) );}.
+	(#else)
+		(#if #eval($count % 2) )	;; or #eval( 1 == ($count&1) )
+			;;
+			;; odd number
+			;;
+			$local.Set( `next', 2 )
+			.{    int hc = comparer.GetHashCode( this.m_Item1 );}.
+		(#else)
+			;;
+			;; even number of items
+			;;
+			$local.Set( `next', 3 )
+			.{    int hc = NmpTuple.CombineHashCodes( comparer.GetHashCode(this.m_Item1), comparer.GetHashCode(this.m_Item2) );}.
+		(#endif)
+		.{.nl.}.
+		.{#forloop( $local.next, $count, 2, `_forItem', `    hc = NmpTuple.CombineHashCodes( hc, NmpTuple.CombineHashCodes( comparer.GetHashCode(this.m_Item`'$$index), comparer.GetHashCode(this.m_Item`'#eval(1 + $$index)) ));.nl.' )}.
+		.{    return hc;}.
+		(#endif)
+	(#endif)
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; generates the source for NmpTuple#.cs
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `_TupleFileGen', `nitems')
+;;
+;; outputs the contenst of the macro to a diversion with the same name
+;;
+	.divert.
+
+.{-
+// NmpTuple$nitems.cs
+//
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+
+[Serializable]
+public class NmpTuple<_eachT($nitems)> : IStructuralEquatable, IStructuralComparable, IComparable, INmpTuple
+{
+  // ******
+-  #forloop( 1, $nitems, 1, `_forItem', `  private readonly T$$index m_Item$$index;.nl.')
+
+
+  /////////////////////////////////////////////////////////////////////////////
+	
+  //[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+  public NmpTuple( #forloop( 1, $nitems, 1, `_forItem', `T$$index item$$index`'#ifElse($$index, $$lastIndex,,`, ')') )
+  {
+-		#forloop( 1, $nitems, 1, `_forItem', `    this.m_Item`'$$index = item$$index;.nl.')-
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  public override bool Equals(object obj)
+  {
+    return ((IStructuralEquatable) this).Equals(obj, EqualityComparer<object>.Default);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  public override int GetHashCode()
+  {
+    return ((IStructuralEquatable) this).GetHashCode(EqualityComparer<object>.Default);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  int IStructuralComparable.CompareTo(object other, IComparer comparer)
+  {
+    if (other == null) {
+      return 1;
+    }
+    NmpTuple<_eachT($nitems)> tuple = other as NmpTuple<_eachT($nitems)>;
+    if (tuple == null) {
+      //throw new ArgumentException(Environment.GetResourceString("ArgumentException_TupleIncorrectType", new object[] { base.GetType().ToString() }), "other");
+      throw new ArgumentException( "not an NmpTuple" );
+    }
+
+-		(#if #eval($nitems>1) )
+    int num = 0;
+-		#forloop( 1, #eval($nitems-1), 1, `_eachCompare')
+-		(#endif)
+    return comparer.Compare(this.m_Item$nitems, tuple.m_Item$nitems);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  bool IStructuralEquatable.Equals(object other, IEqualityComparer comparer)
+  {
+    if (other == null) {
+      return false;
+    }
+    NmpTuple<_eachT($nitems)> tuple = other as NmpTuple<_eachT($nitems)>;
+    if (tuple == null) {
+      return false;
+    }
+    return (`'#forloop( 1, $nitems, 1, `_forItem', `comparer.Equals(this.m_Item$$index, tuple.m_Item$$index)#ifElse($$index,$$lastIndex,,` && ')'));
+  }
+
+	
+  /////////////////////////////////////////////////////////////////////////////
+
+  int IStructuralEquatable.GetHashCode(IEqualityComparer comparer)
+  {
+-    _eachHashCode( $nitems )
+  }
+
+	
+  /////////////////////////////////////////////////////////////////////////////
+
+  int IComparable.CompareTo(object obj)
+  {
+    return ((IStructuralComparable) this).CompareTo(obj, Comparer<object>.Default);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  int INmpTuple.GetHashCode(IEqualityComparer comparer)
+  {
+    return ((IStructuralEquatable) this).GetHashCode(comparer);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  string INmpTuple.ToString(StringBuilder sb)
+  {
+    sb.Append("(");
+-		#forloop( 1, $nitems, 1, `_forItem', `    sb.Append(this.m_Item$$index); #ifElse($$index, $$lastIndex,,` sb.Append(", ");.nl.')')
+    sb.Append(")");
+    return sb.ToString();
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  public override string ToString()
+  {
+    return ((INmpTuple) this).ToString(new StringBuilder());
+  }
+
+  // Properties
+-	#forloop( 1, $nitems, 1, `_eachItemProperty')
+
+  int INmpTuple.Size
+  {
+    get
+    {
+      return $nitems;
+    }
+  }
+}
+}.
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+
+(#defmacro `_genCreates', `index')
+  /////////////////////////////////////////////////////////////////////////////
+
+  public static NmpTuple<_eachT($index)> Create<_eachT($index)>(`'#.forloop( 1, $index, 1, `_forItem', `T$$index item$$index`'#ifElse($$index,$$lastIndex,,`, ')'))
+  {
+    return new NmpTuple<_eachT($index)>(`'#.forloop( 1, $index, 1, `_forItem', `item$$index`'#if.Else($$index,$$lastIndex,,`, ')'));
+  }
+
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#.popDivert()-

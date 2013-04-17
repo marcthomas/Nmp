@@ -1,0 +1,108 @@
+#.pushDivert(-1)
+;;
+;; don't generate an output file from this script
+;;
+#.nofile()
+
+(#*
+
+Explanation:
+
+	This script does the following:
+
+		Creates a C# source file named program.cs. 
+
+		Creates a response file for the C# command line compiler (csc.exe)
+
+		"Makes" the output file by calling the macro #.makersp() which will
+		call csc.exe to build a DLL from the program.cs source file
+
+		By passing `true' as the second argument to #.makersp() Nmp will load
+		the library
+
+		Next we create an instance of the type "Library.Example" from the DLL
+		that was just compiled
+
+		Finally we call the method "Message()" just like any other macro
+
+		You should see a dialog box
+
+
+	Notes:
+
+		csc.exe must be in your path for this sample to run to completion,
+		on my system (Windows 8) it is located at:
+
+			C:\Windows\Microsoft.NET\Framework64\v4.0.30319
+
+		Since we generate a response file you can do anything that the command
+		line compiler allows in a response file
+
+		#.makersp() checks for the "/out:file" entry in the response file and
+		will NOT call csc.exe if it is up to date with respect to all of the source
+		(*.cs) files in the response file.
+
+		Program.cs, response.rsp and program.dll are all generated as the result of
+		this script, only Compile.txt.nmp existed before it was run.
+
+		It is possible to clean up after generating these files by deleting some
+		or all of them, I don't do that here. 
+
+*#)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+(#defmacro `_genResponseFile')
+/target:library
+/out:program.dll
+program.cs
+(#endmacro)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+(#defmacro `_genC#File')
+using System;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Library {
+
+	public class Example {
+
+		public void Message()
+		{
+			MessageBox.Show( "Hello from Nmp" );
+		}
+
+	}
+
+}
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+#.define( `#responseFileName', `response.rsp')
+
+_genResponseFile()@[Divert]
+#.saveDivert( #responseFileName, `_genResponseFile', true)
+
+_genC#File()@[Divert]
+#.saveDivert( `Program.cs', `_genC#File', true)
+
+;; public object makersp( string rspPath, bool loadMacros, bool displayFoundMacros )
+
+#.makersp( #responseFileName, true, false )
+
+;; public object newObjectMacro( string macroName, string typeName, params object [] constructorArgs )
+
+#object.newObjectMacro( `example', `Library.Example' )
+
+example.Message()
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+#.popDivert()-
