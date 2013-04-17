@@ -74,16 +74,18 @@ namespace Nmp.Builtin.Macros {
 			// ******
 			while( true ) {
 				//
+				// Text Blocks no longer require ballanced quotes
+				//
 				// first quote check
 				//
-				if( quoteStartChar == input.Peek() && gc.SeqOpenQuote.Starts(input) ) {
-					//
-					// GetQuotedText() strips the outer quotes but perserves inner quotes; but
-					// first we need to eat the open quote
-					//
-					gc.SeqOpenQuote.Skip( input );
-					sb.Append( gc.GetQuotedText(input, true) );
-				}
+				//if( quoteStartChar == input.Peek() && gc.SeqOpenQuote.Starts(input) ) {
+				//	//
+				//	// GetQuotedText() strips the outer quotes but perserves inner quotes; but
+				//	// first we need to eat the open quote
+				//	//
+				//	gc.SeqOpenQuote.Skip( input );
+				//	sb.Append( gc.GetQuotedText(input, true) );
+				//}
 
 				// ******				
 				char ch = input.Next();

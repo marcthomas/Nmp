@@ -244,6 +244,14 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		public object dumpMacro( bool dumpToOutput, params string [] names )
+		{
+			return DumpMacro( dumpToOutput, names );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
 		public object EchoArguments( IEnumerable<string> args )
 		{
 			// ******
