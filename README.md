@@ -39,7 +39,7 @@ If this looks intersting or at all usefull continue reading; otherwise, this is 
 ### Installing
 
 * You can install Nmp by downloading the 4.5 binaries here: [http://sdrv.ms/110FY74](http://sdrv.ms/110FY74)
-* Clone on windows at [GitHub](https://github.com/jmclain/Nmp)
+* Clone the dev branch on windows at [GitHub](https://github.com/jmclain/Nmp)
 * Or download the zipped source on [GitHub](https://github.com/jmclain/Nmp)
 
 ### Running from the command line
