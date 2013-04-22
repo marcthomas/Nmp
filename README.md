@@ -1,7 +1,7 @@
 Readme.txt
 ==========
 
-###April 2013 - 3.0.1
+##April 2013 - 3.0.1
 
 Nmp (Net Macro Processor) is a text macro processor that runs under .Net 4.5, it should compile without changes on .Net 4.0 and (at one point) under 3.5 and Mono - not sure about those last two at this point.
 
@@ -74,3 +74,7 @@ To do.
 ### From your own code
 
 To do.
+
+## License
+
+[Eclipse Public License](license.txt)

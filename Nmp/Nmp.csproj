@@ -87,6 +87,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Src\Evaluators\MIR.cs" />
+    <Compile Include="Src\Expressions\ObjectHelpers\StringObjectHelper.cs" />
     <Compile Include="Src\GrandCentral\ExecutionSecurity.cs" />
     <Compile Include="Src\GrandCentral\GrandCentral-FileIO.cs" />
     <Compile Include="Src\GrandCentral\GrandCentral-FixText.cs" />
@@ -162,7 +163,6 @@
     <Compile Include="Src\Expressions\Invokers.cs" />
     <Compile Include="Src\Expressions\MethodInvoker.cs" />
     <Compile Include="Src\Expressions\ObjectHelpers\StringArrayObjectHelper.cs" />
-    <Compile Include="Src\Expressions\ObjectHelpers\StringObjectHelper.cs" />
     <Compile Include="Src\Expressions\ObjectInfo.cs" />
     <Compile Include="Src\Expressions\PropertyInvoker.cs" />
     <Compile Include="Src\Interfaces\NmpInterfaces.cs" />
