@@ -1,0 +1,13 @@
+emptyValue "" is empty 
+notEmptyValue "Hello" is not empty 
+"Equal" == "Equal" 
+"Equal" != "Other" 
+"#is.True()" is False 
+"#is.True(Hello)" is False 
+"#is.True(1)" is True 
+"#is.True(true)" is True 
+"#is.False()" is True 
+"#is.False(true)" is False 
+"#is.False(false)" is True 
+"#is.Defined(macro)" is True 
+"#is.NotDefined(someOtherMacro)" is True

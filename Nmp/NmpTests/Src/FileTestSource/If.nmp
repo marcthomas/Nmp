@@ -8,21 +8,83 @@
 	.trim.
 	
 	(#if value)
-		.{"`value' is true", }.
+		.{"`value' is true".nl.}.
 	(#endif)
 	
 	(#if #.not(value) )
-		.{this would be wrong}.
+		.{this would be wrong.nl.}.
 	(#elseif value)
-		.{"again `value' is true", }.
+		.{"again `value' is true".nl.}.
 	(#endif)
 	
 	(#if #.not(value))
-		.{wrong again}.
+		.{wrong again.nl.}.
 	(#else)
-		.{"still true (for the third time)!}.
+		.{"still true (for the third time)!.nl.}.
 	(#endif)
-	
+
+.{
+
+*************************************************
+`#if.True(..)':
+
+;;
+;;#if.True() - at least two arguments are now required
+;;
+#if.True(1, 1 is true, 1 is false)
+#if.True(2, 2 is true, 2 is false)
+#if.True(0, 0 is true, 0 is false)
+#if.True(babyBlue, babyBlue is TRUE, babyBlue is not TRUE)
+
+*************************************************
+`#if.False(..)':
+
+;;
+;;#if.False() - at least two arguments are now required
+;;
+#if.False(1, 1 is true, 1 is not false)
+#if.False(2, 2 is false, 2 is not false)
+#if.False(0, 0 is false, 0 is true)
+#if.False(babyBlue, babyBlue is FALSE, babyBlue is TRUE)
+
+*************************************************
+`#if.Empty()'
+
+#if.Empty( `', it is empty, it is not empty)
+#if.Empty( `fred', it is empty, it is not empty)
+
+*************************************************
+`#if.Empty()'
+
+#if.NotEmpty( `kruger', `freddies not dead', `oops, he\'s passed away')
+#if.NotEmpty( `', string is not empty, the string is empty)
+
+*************************************************
+`#if.Defined()'
+
+#if.Defined( `value', `the macro value is defined', `the macro value is not defined')
+#if.Defined( `Iron', `the macro Iron is defined', `the macro Iron is not defined')
+
+*************************************************
+`#if.NotDefined()'
+
+#if.NotDefined( `value', `this will never be seen because the macro value does exist', `the macro value exists')
+#if.NotDefined( `Iron', `the macro Iron does not exist', `found the Iron macro')
+
+*************************************************
+`#if.Else()'
+
+#if.Else( 1, 1, equal match, does not equal)
+#if.Else( 1, 2, equal match, does not equal)
+#if.Else( 1, 2, equal match, `try again', `try again', `second time was the charm', `still no match')
+#if.Else( 1, 2, equal match, `try again', `lets fail', `second time was the charm', `still no match')
+#if.Else( 1, 2, equal match, `try again', `lets fail', `', `once more', `once more', `success on the third try')
+
+}.
+
+
+
+
 (#endmacro)
 
 (#if #.not(isTest) )

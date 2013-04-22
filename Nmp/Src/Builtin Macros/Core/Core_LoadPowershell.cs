@@ -30,33 +30,39 @@ namespace Nmp.Builtin.Macros {
 
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Do not use, has not been fully implemented in v3 of Nmp
+		/// </summary>
+		/// <param name="pathToDll"></param>
+		/// <returns></returns>
 
-		public object loadPowershell( string pathToDll = null )
-		{
-			// ******
-			if( string.IsNullOrEmpty(pathToDll) ) {
-				pathToDll = Path.Combine( LibInfo.CodeBasePath, PSInterfaceDllName );
-			}
+		//[Macro]
+		//public object loadPowershell( string pathToDll = null )
+		//{
+		//	// ******
+		//	if( string.IsNullOrEmpty(pathToDll) ) {
+		//		pathToDll = Path.Combine( LibInfo.CodeBasePath, PSInterfaceDllName );
+		//	}
 
-			// ******
-			string message = string.Empty;
+		//	// ******
+		//	string message = string.Empty;
 
-			try {
-				//
-				// note: powershell interface must register itself by calling mp.RegisterPowershell()
-				//
-				if( AutoRegisterMacros.RegisterMacroContainers(mp, pathToDll, false) ) {
-					return string.Empty;
-				}
-			}
-			catch ( Exception ex ) {
-				message = ex.Message;
-			}
+		//	try {
+		//		//
+		//		// note: powershell interface must register itself by calling mp.RegisterPowershell()
+		//		//
+		//		if( AutoRegisterMacros.RegisterMacroContainers(mp, pathToDll, false) ) {
+		//			return string.Empty;
+		//		}
+		//	}
+		//	catch ( Exception ex ) {
+		//		message = ex.Message;
+		//	}
 
-			// ******
-			ThreadContext.MacroError( "unable to load Powershell interface DLL \"{0}\"; {1}", pathToDll, message );
-			return null;
-		}
+		//	// ******
+		//	ThreadContext.MacroError( "unable to load Powershell interface DLL \"{0}\"; {1}", pathToDll, message );
+		//	return null;
+		//}
 
 
 

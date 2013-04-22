@@ -109,7 +109,7 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public object PopMacro( string macroName )
+		private object PopMacro( string macroName )
 		{
 			// ******
 			if( string.IsNullOrEmpty(macroName) ) {
@@ -143,7 +143,7 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public object UndefineMacro( string macroName )
+		private object UndefineMacro( string macroName )
 		{
 			// ******
 			if( string.IsNullOrEmpty(macroName) ) {
@@ -243,7 +243,14 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Outputs the contents of a macro into the ouput or error stream
+		/// </summary>
+		/// <param name="dumpToOutput">If true outputs to the error stream</param>
+		/// <param name="names">Macro names to dump, '*' dumps all</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object dumpMacro( bool dumpToOutput, params string [] names )
 		{
 			return DumpMacro( dumpToOutput, names );
@@ -268,7 +275,15 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Defines a mach
+		/// </summary>
+		/// <param name="macroName">Macho name where value should be placed</param>
+		/// <param name="macroObject">Text or an object (`@someObject')</param>
+		/// <param name="argNames">Options names for arguments passed to macro</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object define( string macroName, object macroObject, params string [] argNames )
 		{
 			return DefineMacro( mp.CurrentMacroArgs, macroName, macroObject, argNames, false );
@@ -276,7 +291,16 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Pushes a macro with the same name on a macro stack and defines a new macro
+		/// with the same name
+		/// </summary>
+		/// <param name="macroName"></param>
+		/// <param name="macroObject"></param>
+		/// <param name="argNames"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object push( string macroName, object macroObject, params string [] argNames )
 		{
 			return DefineMacro( mp.CurrentMacroArgs, macroName, macroObject, argNames, true );
@@ -284,7 +308,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Removes a macro from the macro stack for 'macroName'
+		/// </summary>
+		/// <param name="macroName"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object pop( string macroName )
 		{
 			return PopMacro( macroName );
@@ -292,7 +322,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Same as 'pop'
+		/// </summary>
+		/// <param name="macroName"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object popdef( string macroName )
 		{
 			return pop( macroName );
@@ -300,7 +336,15 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Undefines a macro
+		/// If the macro has been pushed works the same as 'pop', otherwise the macro
+		/// is removed
+		/// </summary>
+		/// <param name="macroName"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object undef( string macroName )
 		{
 			return UndefineMacro( macroName );
@@ -309,11 +353,12 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public object dumpdef( params string [] macroNames )
-		{
-			bool toOutput = FirstElementMatches( "output", ref macroNames, true );
-			return DumpMacro( toOutput, macroNames );
-		}
+		//[Macro]
+		//public object dumpdef( params string [] macroNames )
+		//{
+		//	bool toOutput = FirstElementMatches( "output", ref macroNames, true );
+		//	return DumpMacro( toOutput, macroNames );
+		//}
 
 
 		///////////////////////////////////////////////////////////////////////////////
@@ -325,7 +370,13 @@ namespace Nmp.Builtin.Macros {
 		//
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Echos its arguments back
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object echo( params string [] args )
 		{
 			return EchoArguments( args );
@@ -333,98 +384,16 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// If running under the VS debugger breaks before evaluating and processing
+		/// the next macro parsed from the input
+		/// </summary>
 
-		// [Macro( "#breakNext" )]
+		[Macro]
 		public void BreakNext()
 		{
 			gc.BreakNext = true;
 		}
-
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object clearDivert( string divName )
-		//{
-		//	return diverter.clearDivert( divName );
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object pushDivert( string divName )
-		//{
-		//	return diverter.pushDivert( divName );
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object pushdivert( string divName )
-		//{
-		//	return diverter.pushDivert( divName );
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object popDivert()
-		//{
-		//	return diverter.popDivert();
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object popdivert()
-		//{
-		//	return diverter.popDivert();
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object divert( string divName )
-		//{
-		//	return diverter.divert( divName );
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object undivert( params string [] args )
-		//{
-		//	return diverter.undivert( args );
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object fetchDivert( string divName, bool clear )
-		//{
-		//	return diverter.fetchDivert( divName, clear );
-		//}
-		//
-		//
-		//public object includeDivert( string divName, bool clear )
-		//{
-		//	return diverter.includeDivert( divName, clear );
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object saveDivert( string fileName, string divName, bool clearDiv, bool append )
-		//{
-		//	return diverter.saveDivert( fileName, divName, clearDiv, append );
-		//}
-		//
-		//
-		///////////////////////////////////////////////////////////////////////////////
-		//
-		//public object dumpDivert( string divName, bool toOutput )
-		//{
-		//	return diverter.dumpDivert( divName, toOutput );
-		//}
-		//
 
 		/////////////////////////////////////////////////////////////////////////////
 

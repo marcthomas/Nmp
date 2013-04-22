@@ -209,19 +209,19 @@ namespace NmpTests {
 		}
 
 
-		/////////////////////////////////////////////////////////////////////////////////
-		//// 19
-		//
-		//[Fact]
-		//public void FileTest_CppMode()
-		//{
-		//	//
-		//	// #cpp()
-		//	//
-		//	Tuple<string, string> result = TestHelpers.RunMacro( "Cpp.nmp" );
-		//	Equal( result.Item1, result.Item2 );
-		//}
-		//
+		///////////////////////////////////////////////////////////////////////////////
+		// 19
+
+		[Fact]
+		public void FileTest_Is()
+		{
+			//
+			// #cpp()
+			//
+			Tuple<string, string> result = TestHelpers.RunMacro( "Is.nmp" );
+			Equal( result.Item1, result.Item2 );
+		}
+		
 
 		///////////////////////////////////////////////////////////////////////////////
 

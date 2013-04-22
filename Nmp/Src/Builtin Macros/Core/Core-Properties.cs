@@ -34,7 +34,11 @@ namespace Nmp.Builtin.Macros {
 	partial class CoreMacros {
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Nmp version
+		/// </summary>
 
+		[Macro]
 		public object version
 		{
 			get {

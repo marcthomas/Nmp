@@ -41,7 +41,13 @@ namespace Nmp.Builtin.Macros {
 		// #gettype
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Get the Type instance for a type
+		/// </summary>
+		/// <param name="typeName">Name of the type</param>
+		/// <returns>Type instance</returns>
 
+		[Macro]
 		public object getType( string typeName )
 		{
 			// ******
@@ -60,7 +66,13 @@ namespace Nmp.Builtin.Macros {
 		// #typeof
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Gets the Type of an object
+		/// </summary>
+		/// <param name="obj">object whose type to get</param>
+		/// <returns>Type instance or empty</returns>
 
+		[Macro]
 		public object @typeof( object obj )
 		{
 			// ******
@@ -78,8 +90,13 @@ namespace Nmp.Builtin.Macros {
 		// #newobject
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Loads a assembly
+		/// </summary>
+		/// <param name="assemblyPathIn">Path to the assembly</param>
 
-		public static void LoadAssembly( string assemblyPathIn )
+		[Macro]
+		public static void loadAssembly( string assemblyPathIn )
 		{
 			// ******
 			if( string.IsNullOrEmpty( assemblyPathIn ) ) {
@@ -104,6 +121,25 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// See loadAssembly()
+		/// </summary>
+		/// <param name="path"></param>
+
+		public static void LoadAssembly( string path )
+		{
+			loadAssembly( path );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates a new object
+		/// </summary>
+		/// <param name="assemblyPath">Path to assembly where type lives</param>
+		/// <param name="typeName">Name of type</param>
+		/// <param name="constructorArgs">Arguments for constructor</param>
+		/// <returns>The object</returns>
 
 		private object CreateNewObject( string assemblyPath, string typeName, object [] constructorArgs )
 		{
@@ -120,7 +156,14 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates a new object searching for 'typeName' in all loaded assemblies
+		/// </summary>
+		/// <param name="typeName">Name of type</param>
+		/// <param name="constructorArgs">Arguments for constructor</param>
+		/// <returns>The object</returns>
 
+		[Macro]
 		public object newObject( string typeName, params object [] constructorArgs )
 		{
 			// ******
@@ -130,7 +173,15 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates new object and places in a macro, 'typeName' is searched for in all loaded assemblies
+		/// </summary>
+		/// <param name="macroName">Output macro name</param>
+		/// <param name="typeName">Type name</param>
+		/// <param name="constructorArgs">Arguments for constructor</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object newObjectMacro( string macroName, string typeName, params object [] constructorArgs )
 		{
 			// ******
@@ -143,9 +194,15 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates a new object searching for 'typeName' in specific assembly
+		/// </summary>
+		/// <param name="assemblyPath">Path to assembly</param>
+		/// <param name="typeName">Name of type</param>
+		/// <param name="constructorArgs">Arguments for constructor</param>
+		/// <returns>The object</returns>
 
-		// with assembly path
-
+		[Macro]
 		public object newObject( string assemblyPath, string typeName, params object [] constructorArgs )
 		{
 			// ******
@@ -155,9 +212,16 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates a new object searching for 'typeName' in specific assembly
+		/// </summary>
+		/// <param name="macroName">Output macro name</param>
+		/// <param name="assemblyPath">Path to assembly</param>
+		/// <param name="typeName">Name of type</param>
+		/// <param name="constructorArgs">Arguments for constructor</param>
+		/// <returns>The object</returns>
 
-		// with assembly path
-
+		[Macro]
 		public object newObjectMacro( string macroName, string assemblyPath, string typeName, params object [] constructorArgs )
 		{
 			// ******
@@ -196,7 +260,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-
+		/// <summary>
+		/// Creates an object that "stands in" for the static members of an object, allows access to the static members
+		/// </summary>
+		/// <param name="typeName">Name of type</param>
+		/// <returns></returns>
+		/// 
+		[Macro]
 		public object newStatic( string typeName )
 		{
 			object standin = CreateNewStandin( typeName );
@@ -205,7 +275,14 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates an object that "stands in" for the static members of an object and places it in a macro
+		/// </summary>
+		/// <param name="macroName">Output macro name</param>
+		/// <param name="typeName">Name of type</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object newStaticMacro( string macroName, string typeName )
 		{
 			// ******

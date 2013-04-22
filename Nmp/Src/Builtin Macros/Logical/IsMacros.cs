@@ -53,53 +53,44 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-
-		public object Empty( string value, params string [] extra )
+		/// <summary>
+		/// Checks if the combination of all the passed arguments are empty
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns>True if empty string, otherwise false</returns>
+		/// 
+		[Macro]
+		public object Empty( params string [] args )
 		{
-			value = Combine( value, extra );
+			var value = Combine( string.Empty, args );
 			return string.IsNullOrEmpty( value );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Checks if the combination of all the passed arguments is not empty
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns>Returns true if not empty string, otherwise false</returns>
 
-		public object Empty()
+		[Macro]
+		public object NotEmpty( params string [] args )
 		{
-			return true;
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #isnotempty( string )
-		//
-		// return true or false
-		//
-		/////////////////////////////////////////////////////////////////////////////
-
-		public object NotEmpty( string value, params string [] extra )
-		{
-			value = Combine( value, extra );
+			var value = Combine( string.Empty, args );
 			return !string.IsNullOrEmpty( value );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Compares to objects
+		/// </summary>
+		/// <param name="lhs"></param>
+		/// <param name="rhs"></param>
+		/// <returns>Returns true if the two objects are the same, otherwise false</returns>
 
-		public object NotEmpty()
-		{
-			return false;
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #isequal( string 1, string 2 )
-		//
-		// return true or false
-		//
-		/////////////////////////////////////////////////////////////////////////////
-
+		[Macro]
 		public object Equal( object lhs, object rhs )
 		{
 			return lhs.Equals( rhs );
@@ -107,13 +98,14 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #isnotequal( string 1, string 2 )
-		//
-		// return true or false
-		//
-		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Compares two objects
+		/// </summary>
+		/// <param name="lhs"></param>
+		/// <param name="rhs"></param>
+		/// <returns>Returns true if the two objects are the same, otherwise false</returns>
 
+		[Macro]
 		public object NotEqual( object lhs, object rhs )
 		{
 			return ! lhs.Equals( rhs );
@@ -121,70 +113,43 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #istrue( string )
-		//
-		// return true or false
-		//
-		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates the first (or emtpy) argument
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns>True if true, false otherwise</returns>
 
-		public object True( object value, params object [] extra )
+		[Macro]
+		public object True( params object [] args )
 		{
-			return Helpers.IsMacroTrue( value );
+			return 0 == args.Length ? false : Helpers.IsMacroTrue( args[0] );
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates the first (or emtpy) argument
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns>True if true, false otherwise</returns>
+
+		[Macro]
+		public object False( params object [] args )
+		{
+			return 0 == args.Length ? true :  !Helpers.IsMacroTrue( args[0] );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates the first (or emtpy) argument
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns>True if defined, false otherwise</returns>
 
-		public object True()
+		[Macro]
+		public object Defined( params string [] args )
 		{
-			return false;
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #isfalse( string )
-		//
-		// return true or false
-		//
-		/////////////////////////////////////////////////////////////////////////////
-
-		public object False( object value, params object [] extra )
-		{
-			return !Helpers.IsMacroTrue( value );
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public object False()
-		{
-			return true;
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #defined
-		//
-		// true or false are returned if there are not
-		// enough return arguments
-		//
-		/////////////////////////////////////////////////////////////////////////////
-
-		public object Defined( string macroName, params string [] extra )
-		{
-			macroName = Combine( macroName, extra );
-			return mp.IsMacroName( macroName );
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public object Defined()
-		{
-			return false;
+			return 0 == args.Length ? false : mp.IsMacroName( args[0] );
 		}
 
 
@@ -195,18 +160,16 @@ namespace Nmp.Builtin.Macros {
 		// return true or false
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates the first (or emtpy) argument
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns>True if true not defined, false otherwise</returns>
 
-		public object NotDefined( string macroName, params string [] extra )
+		[Macro]
+		public object NotDefined( params string [] args )
 		{
-			return ! mp.IsMacroName( macroName );
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public object NotDefined()
-		{
-			return true;
+			return 0 == args.Length ? true : !mp.IsMacroName( args [ 0 ] );
 		}
 
 
@@ -215,7 +178,6 @@ namespace Nmp.Builtin.Macros {
 		public IsMacros( IMacroProcessor mp )
 			:	base(mp)
 		{
-			//this.mp = mp;
 		}
 
 

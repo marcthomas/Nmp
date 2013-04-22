@@ -45,7 +45,15 @@ namespace Nmp.Builtin.Macros {
 		// #nmpRegion( name [ options , ] )
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Does nothing macro, included to allow regions to be defined for use by a
+		/// text editor (sublime and others)
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="optionalArgs"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public string nmpRegion( string name, params object [] optionalArgs )
 		{
 			//
@@ -60,7 +68,15 @@ namespace Nmp.Builtin.Macros {
 		// #endNmpRegion( name [ options , ] )
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Does nothing macro, included to allow regions to be defined for use by a
+		/// text editor (sublime and others)
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="optionalArgs"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public string endNmpRegion( string name, params object [] optionalArgs )
 		{
 			//
@@ -75,7 +91,13 @@ namespace Nmp.Builtin.Macros {
 		// #sleep( milliseconds )
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Needs to go away, using Thread.Sleep() is not a good idea
+		/// </summary>
+		/// <param name="ms"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object sleep( int ms )
 		{
 			// ******
@@ -98,7 +120,7 @@ namespace Nmp.Builtin.Macros {
 		//
 		/////////////////////////////////////////////////////////////////////////////
 
-		public object CreateDateTime( Int64 ticksOrYear,
+		private object CreateDateTime( Int64 ticksOrYear,
 																	Int32 month, 
 																	Int32 day, 
 																	Int32 hour, 
@@ -129,7 +151,20 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates and returns a DateTime object
+		/// </summary>
+		/// <param name="ticksOrYear"></param>
+		/// <param name="month"></param>
+		/// <param name="day"></param>
+		/// <param name="hour"></param>
+		/// <param name="minute"></param>
+		/// <param name="second"></param>
+		/// <param name="ms"></param>
+		/// <param name="utc"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object newDateTime( Int64 ticksOrYear = -1, Int32 month = -1, Int32 day = 1, Int32 hour = -1, Int32 minute = 0, Int32 second = 0, Int32 ms = 0 )
 		{
 			return CreateDateTime( ticksOrYear, month, day, hour, minute, second, ms, false );
@@ -137,7 +172,20 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates and returns a DateTime object based on current Utc
+		/// </summary>
+		/// <param name="ticksOrYear"></param>
+		/// <param name="month"></param>
+		/// <param name="day"></param>
+		/// <param name="hour"></param>
+		/// <param name="minute"></param>
+		/// <param name="second"></param>
+		/// <param name="ms"></param>
+		/// <param name="utc"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object newDateTimeUtc( Int64 ticksOrYear = -1, Int32 month = -1, Int32 day = 1, Int32 hour = -1, Int32 minute = 0, Int32 second = 0, Int32 ms = 0 )
 		{
 			return CreateDateTime( ticksOrYear, month, day, hour, minute, second, ms, true );
@@ -149,7 +197,13 @@ namespace Nmp.Builtin.Macros {
 		// #datetime
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Formats the current date time
+		/// </summary>
+		/// <param name="format">Format string, empty for default</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object dateTime( string format = "" )
 		{
 			// ******
@@ -171,7 +225,13 @@ namespace Nmp.Builtin.Macros {
 		// #datetimeutc
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Formats the current Utc data time
+		/// </summary>
+		/// <param name="format">Format string, empty for default</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object dateTimeUtc( string format = "" )
 		{
 			// ******

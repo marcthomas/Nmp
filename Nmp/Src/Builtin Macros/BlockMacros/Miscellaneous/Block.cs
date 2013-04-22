@@ -43,8 +43,8 @@ namespace Nmp.Builtin.Macros {
 		// string		-	what needs to be invoked, macro or powershell with text as script
 		// object[]	- additional arguments to script
 		//
-		IEnumerable<Type> _argTypes = new Type[] { typeof(string), typeof(object[]) };
-		IEnumerable<object> _defArgs = new object[0];	// { "", "" };
+		IEnumerable<Type> _argTypes = new Type[] { typeof(string), typeof(string[]) };
+		IEnumerable<object> _defArgs = new object[] { string.Empty, new string[0] };
 
 		// ******
 		protected override IEnumerable<Type> 		ExpectedArgTypes		{ get { return _argTypes; } }
@@ -153,26 +153,63 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		private void Powershell( string blockText, string name )
+		private void Powershell( string blockText, object [] args )
+		{
+
+			////need to extract 'name' from args
+
+			//// ******
+			//if( null == mp.Powershell ) {
+			//	ThreadContext.MacroError( "block macro is unable to create Powershell script, Powershell is not loaded" );
+			//}
+
+			//// ******
+			//if( string.IsNullOrEmpty(name) ) {
+			//	//
+			//	// execute script
+			//	//
+			//	ThreadContext.MacroError( "block macro expected a macro name to save Powershell script under" );
+			//}
+			//else {
+			//	//
+			//	// create script macro
+			//	//
+			//	mp.Powershell.CreateScriptMacro( name, blockText );
+			//}
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		private object Markdown( string blockText, object [] args )
 		{
 			// ******
-			if( null == mp.Powershell ) {
-				ThreadContext.MacroError( "block macro is unable to create Powershell script, Powershell is not loaded" );
-			}
+			//if( null == mp.Powershell ) {
+			//	ThreadContext.MacroError( "block macro is unable to create Powershell script, Powershell is not loaded" );
+			//}
 
-			// ******
-			if( string.IsNullOrEmpty(name) ) {
-				//
-				// execute script
-				//
-				ThreadContext.MacroError( "block macro expected a macro name to save Powershell script under" );
-			}
-			else {
-				//
-				// create script macro
-				//
-				mp.Powershell.CreateScriptMacro( name, blockText );
-			}
+			//// ******
+			//if( string.IsNullOrEmpty( name ) ) {
+			//	//
+			//	// execute script
+			//	//
+			//	ThreadContext.MacroError( "block macro expected a macro name to save Powershell script under" );
+			//}
+			//else {
+			//	//
+			//	// create script macro
+			//	//
+			//	mp.Powershell.CreateScriptMacro( name, blockText );
+			//}
+
+		 //need access to core macros
+		 //?? get IMacro for '#'
+
+			IMacro target;
+			mp.FindMacro( "#", out target );
+			
+			var core = target.MacroObject as CoreMacros;
+			return core.markdown( blockText );
 		}
 
 
@@ -189,7 +226,7 @@ namespace Nmp.Builtin.Macros {
 		{
 			// ******
 			//var args = GetMacroArgsAsTuples( macroArgs.Expression, new Type [] { typeof( string ), typeof( object [] ) } ) as NmpTuple<string, object []>;
-			var args = GetMacroArgsAsTuples( macroArgs.Expression ) as NmpTuple<string, object []>;
+			var args = GetMacroArgsAsTuples( macroArgs.Expression ) as NmpTuple<string, string []>;
 			string macroName = args.Item1;
 			object [] argArray = args.Item2;
 
@@ -213,23 +250,29 @@ namespace Nmp.Builtin.Macros {
 		public override object Evaluate( IMacro macro, IMacroArguments argsIn )
 		{
 			const string POWERSHELL = "psscript";
+			const string MARKDOWN = "markdown";
 
 			// ******
 			//var args = GetMacroArgsAsTuples( macroArgs.Expression ) as NmpTuple<string, string, string>;
 			//string blockOperation = args.Item1;
 			//string name = args.Item2;
 
-			int skipCount;
-			ArgumentList argList = GetArguments( macro.Name, argsIn.Expression, out skipCount );
+			//int skipCount;
+			//ArgumentList argList = GetArguments( macro.Name, argsIn.Expression, out skipCount );
 
-			var macroArgs = new MacroArgs( mp, Name, ExpectedArgTypes, DefaultArgs );
-			var result = macroArgs.AsTuples( argList );
+			//var macroArgs = new MacroArgs( mp, Name, ExpectedArgTypes, DefaultArgs );
+			//var result = macroArgs.AsTuples( argList );
 
-			//var args = result as NmpTuple<string, string, string>;
+			////var args = result as NmpTuple<string, string, string>;
 
-			var args = result as NmpTuple<string, object[]>;
+			//var args = result as NmpTuple<string, object[]>;
+			//string blockOperation = args.Item1;
+			//string name = args.Item1;	//2 [ 0 ].ToString();
+
+			// ******
+			var args = GetMacroArgsAsTuples( argsIn.Expression ) as NmpTuple<string, string []>;
 			string blockOperation = args.Item1;
-			string name = args.Item1;	//2 [ 0 ].ToString();
+			string [] optArgs = args.Item2;
 
 
 
@@ -238,9 +281,12 @@ namespace Nmp.Builtin.Macros {
 			IMacro target = null;
 
 			if( POWERSHELL == blockOperation ) {
-				Powershell( argsIn.BlockText, name );
+				Powershell( argsIn.BlockText, optArgs );
 			}
-			else if( mp.FindMacro(blockOperation, out target) ) {
+			else if( MARKDOWN == blockOperation ) {
+				return Markdown( argsIn.BlockText, optArgs );
+			}
+			else if( mp.FindMacro( blockOperation, out target ) ) {
 				return MacroCall( target, argsIn );
 			}
 			else {

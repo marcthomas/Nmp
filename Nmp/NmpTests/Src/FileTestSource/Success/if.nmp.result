@@ -1,1 +1,53 @@
-"value is true", "again value is true", "still true (for the third time)!
+"value is true"
+"again value is true"
+"still true (for the third time)!
+
+
+*************************************************
+#if.True(..):
+
+1 is true
+2 is false
+0 is false
+babyBlue is not TRUE
+
+*************************************************
+#if.False(..):
+
+1 is not false
+2 is false
+0 is false
+babyBlue is FALSE
+
+*************************************************
+#if.Empty()
+
+it is empty
+it is not empty
+
+*************************************************
+#if.Empty()
+
+freddies not dead
+the string is empty
+
+*************************************************
+#if.Defined()
+
+the macro value is defined
+the macro Iron is not defined
+
+*************************************************
+#if.NotDefined()
+
+the macro value exists
+the macro Iron does not exist
+
+*************************************************
+#if.Else()
+
+equal match
+does not equal
+second time was the charm
+still no match
+success on the third try

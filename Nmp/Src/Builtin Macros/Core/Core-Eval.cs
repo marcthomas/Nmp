@@ -124,7 +124,15 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates the strings passed to eval(...) using 
+		/// Microsoft.JScript.Eval.JScriptEvaluate after concatenating all of the
+		/// strings passed in
+		/// </summary>
+		/// <param name="strs">Any number of strings</param>
+		/// <returns>The result</returns>
 
+		[Macro]
 		public object eval( params string [] strs )
 		{
 			// ******

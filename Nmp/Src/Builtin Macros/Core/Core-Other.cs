@@ -38,7 +38,12 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// There was a bozo the clown
+		/// </summary>
+		/// <returns></returns>
 
+		[Macro]
 		public object bozo()
 		{
 			return "Yes Virginia, Bozo was a clown!";
@@ -46,7 +51,15 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+		/// <summary>
+		/// Activate or deactivate the regular expression recognizer
+		/// </summary>
+		/// <param name="activate">True turns on, false off</param>
+		/// <param name="flags">"regexOnly" if you want to use just the regex recognizer, "checkWhiteSpace" to
+		/// include white space in regular expression checking</param>
+		/// <returns></returns>
+
+		[Macro]
 		public object setRegexRecognizer( bool activate, params string [] flags )
 		{
 			// ******
@@ -89,7 +102,18 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Add a regular expression to the regular expression recognizer
+		/// 
+		/// To remove regular expression call again with 'regExName' the same and
+		/// 'regExStr' empty
+		/// </summary>
+		/// <param name="regExName">Name for the regular expression</param>
+		/// <param name="regExStr">Regular expression</param>
+		/// <param name="macroToCall">Macro to call when regular expression matches</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object addRecognizerRegex( string regExName, string regExStr, string macroToCall )
 		{
 			// ******
@@ -106,7 +130,13 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Exits command line host
+		/// </summary>
+		/// <param name="exitCode"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object exit( int exitCode )
 		{
 			throw new ExitException( exitCode, "the Nmp exit macro has been called with the value: {0}", exitCode );
@@ -114,7 +144,13 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Gets an Nmp array where the keys are the names of macros
+		/// and their value is an IMacro instance
+		/// </summary>
+		/// <returns></returns>
 
+		[Macro]
 		public object getMacros()
 		{
 			// ******
@@ -134,7 +170,17 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Gets an Nmp array of macro names
+		/// Where the key "unsorted" an unsorted list of all macro names
+		/// Where the key "sorted" is a sorted list of all macro names
+		/// Where the key "builtin" is a sorted list of all Nmp supplied macros
+		/// Where the key "object" is a sorted list of all Object macros ?? including all Nmp supplied macros
+		/// And the key "text" is a sorted list of all text macros
+		/// </summary>
+		/// <returns></returns>
 
+		[Macro]
 		public object getMacroNames()
 		{
 			// ******
@@ -195,7 +241,13 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Writes a trace message to the error stream
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object trace( params object [] args )
 		{
 			// ******
@@ -218,7 +270,16 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Transforms the supplied text with the markdown translator as used by Stack Overflow
+		/// 
+		/// Note: markdown can also be invoked with (#block `markdown' ...)
+		/// </summary>
+		/// <param name="str">Required, the first string</param>
+		/// <param name="args">Any number of optional strings</param>
+		/// <returns></returns>
 
+		[Macro]
 		public string markdown( string str, params string [] args )
 		{
 			// ******

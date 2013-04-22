@@ -40,7 +40,18 @@ namespace Nmp.Builtin.Macros {
 		// #forloop( `start', `end', `increment', `macroName' [, extraArgs ...] )
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Executes a for loop
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		/// <param name="increment"></param>
+		/// <param name="macroNaME">If the macro name begins with '!' or '&" then the
+		/// text of 'macroName' will be used as the macro text</param>
+		/// <param name="extraArgs"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object forloop( int start, int end, int increment, string macroName, params object [] extraArgs )
 		{
 			// ******
@@ -72,7 +83,16 @@ namespace Nmp.Builtin.Macros {
 		// #foreach( `object', `macroName' [, extraArgs ...] )
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Executes a foreach loop
+		/// </summary>
+		/// <param name="objToEnumerate"></param>
+		/// <param name="macroToCall">If the macro name begins with '!' or '&" then the
+		/// text of 'macroToCall' will be used as the macro text</param>
+		/// <param name="extraArgs"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object @foreach( object objToEnumerate, string macroToCall, params object [] extraArgs )
 		{
 			// ******

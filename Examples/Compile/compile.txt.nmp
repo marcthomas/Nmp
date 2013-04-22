@@ -93,11 +93,11 @@ _genResponseFile()@[Divert]
 _genC#File()@[Divert]
 #.saveDivert( `Program.cs', `_genC#File', true)
 
-;; public object makersp( string rspPath, bool loadMacros, bool displayFoundMacros )
+;; public object makersp( string rspPath, bool loadLibrary )
 
-#.makersp( #responseFileName, true, false )
+#.makersp( #responseFileName, true )
 
-;; public object newObjectMacro( string macroName, string typeName, params object [] constructorArgs )
+;; public object newObjectMacro( string macroNameToPlaceMethodRefIn, string typeName, params object [] constructorArgs )
 
 #object.newObjectMacro( `example', `Library.Example' )
 

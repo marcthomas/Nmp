@@ -189,6 +189,10 @@ namespace NmpTests {
 				// of running the macro file, we are testing the results of
 				// a specific macro (which we do in the following section)
 				//
+				// here we run the macro text so that a macro that it contains
+				// is added to the macro table so we can execute it in the
+				// next step
+				//
 				mp.Evaluate( mp.GetStringContext(sourceText), true );
 
 				// ******

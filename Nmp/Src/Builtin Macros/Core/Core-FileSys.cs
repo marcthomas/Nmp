@@ -30,7 +30,11 @@ namespace Nmp.Builtin.Macros {
 	partial class CoreMacros {
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Path to Nmp.dll
+		/// </summary>
 
+		[Macro]
 		public object nmpAssemblyPath
 		{
 			get {
@@ -45,7 +49,11 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Nmp's current directory
+		/// </summary>
 
+		[Macro]
 		public object currentDirectory
 		{
 			get {
@@ -61,7 +69,11 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Default path - same as currentDirectory
+		/// </summary>
 
+		[Macro]
 		public object defpath
 		{
 			get {
@@ -71,7 +83,11 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// The current file Nmp is processing, can be empty if
+		/// </summary>
 
+		[Macro]
 		public object currentFile
 		{
 			get {
@@ -81,7 +97,11 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Parent file to currentFile
+		/// </summary>
 
+		[Macro]
 		public object parentFile
 		{
 			get {
@@ -91,7 +111,12 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Tells the command line host to not output a file
+		/// </summary>
+		/// <returns></returns>
 
+		[Macro]
 		public object nofile()
 		{
 			GetNMP().NoOutputFile = true;
@@ -100,7 +125,13 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Sets the file extension for the command line host
+		/// </summary>
+		/// <param name="ext"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object setOutputExtension( string ext )
 		{
 			GetNMP().OutputFileExt = ext;
@@ -117,17 +148,12 @@ namespace Nmp.Builtin.Macros {
 		/// </summary>
 		/// <param name="encoding">
 		/// 
-		/// Values can be:
-		/// 
-		///		ascii
-		///		utf7 
-		///		utf8 
-		///		utf32 
-		///		unicode  (16 bit)
+		/// Values can be: ascii, utf7, utf8, utf32, or unicode  (16 bit)
 		///		
 		///		</param>
 		/// <returns></returns>
 
+		[Macro]
 		public object setOutputEncoding( string encoding )
 		{
 			GetNMP().OutputEncoding = encoding;
@@ -200,7 +226,14 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Includes a file into the input
+		/// </summary>
+		/// <param name="fileName">fileName is relative to durrentDirectory if not a
+		/// full path</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object include( string fileName )
 		{
 			// ******
@@ -237,7 +270,18 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Reads a file into a text macro
+		/// </summary>
+		/// <param name="macroName">Name of the macro to place the text</param>
+		/// <param name="fileName">Source file name</param>
+		/// <param name="regExStr">Optional regular expression to extract the portion of
+		/// the file you want; if the string is NOT empty Nmp will use the string as is,
+		/// the outermost capture is used to set the macro - if there are no captures then
+		/// the entire mach is used</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object readFile( string macroName, string fileName, string regExStr )
 		{
 			// ******

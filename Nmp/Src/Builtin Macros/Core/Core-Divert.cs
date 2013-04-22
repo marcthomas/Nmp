@@ -50,7 +50,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Clears the diversion to an empty string
+		/// </summary>
+		/// <param name="divName">Name of diversion</param>
+		/// <returns>empty string</returns>
 
+		[Macro]
 		public object clearDivert( string divName )
 		{
 			GetOutput.ClearDivert( new List<string>() {divName} );
@@ -59,7 +65,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Pushes the current diversion on a stack and sets a new diversion
+		/// </summary>
+		/// <param name="divName">Name of diversion to switch too</param>
+		/// <returns>empty string</returns>
 
+		[Macro]
 		public object pushDivert( string divName )
 		{
 			GetOutput.PushDivert( divName );
@@ -68,7 +80,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// All lower case name for pushDivert
+		/// </summary>
+		/// <param name="divName"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object pushdivert( string divName )
 		{
 			return pushDivert( divName );
@@ -76,7 +94,12 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Pops the diversion stack
+		/// </summary>
+		/// <returns>empty string</returns>
 
+		[Macro]
 		public object popDivert()
 		{
 			GetOutput.PopDivert();
@@ -85,7 +108,12 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// All lower case name for popDivert
+		/// </summary>
+		/// <returns></returns>
 
+		[Macro]
 		public object popdivert()
 		{
 			return popDivert();
@@ -93,7 +121,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Changes to a new diversion
+		/// </summary>
+		/// <param name="divName">Name of diversion to switch too</param>
+		/// <returns>empty string</returns>
 
+		[Macro]
 		public object divert( string divName )
 		{
 			// ******
@@ -103,7 +137,13 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Retreives the text from all diversions requested and clears them
+		/// </summary>
+		/// <param name="args">List of diversion names</param>
+		/// <returns>Text of the diversions</returns>
 
+		[Macro]
 		public object undivert( params string [] args )
 		{
 			bool clear = CoreMacros.FirstElementMatches( "clear", ref args, true );
@@ -112,7 +152,14 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Fetches the text of a single diversion and optionaly clears it
+		/// </summary>
+		/// <param name="divName">Name of diversion</param>
+		/// <param name="clear">Clear diversion if true</param>
+		/// <returns>Text of the diversion</returns>
 
+		[Macro]
 		public object fetchDivert( string divName, bool clear )
 		{
 			return GetOutput.FetchDivert( divName, clear );
@@ -120,7 +167,16 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Need to test this, no longer sure what it does!
+		/// I think it appends the diversion to the input if an IInput is attached
+		/// to the macro arguments associated with the current (includeDivert) macro
+		/// </summary>
+		/// <param name="divName"></param>
+		/// <param name="clear"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object includeDivert( string divName, bool clear )
 		{
 			// ******
@@ -138,7 +194,16 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Saves the diversion to a text file
+		/// </summary>
+		/// <param name="fileName">Output file name, relative to currently active input
+		/// file or absolute (if full path provided)</param>
+		/// <param name="divName">Diversion to save</param>
+		/// <param name="clearDiv">If true clear diversion</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object saveDivert( string fileName, string divName, bool clearDiv )
 		{
 			return saveDivert( fileName, divName, clearDiv, false );
@@ -146,7 +211,17 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-
+		/// <summary>
+		/// Saves the diversion to a text file, optionally appending rather than replacing the file contents
+		/// </summary>
+		/// <param name="fileName">Output file name, relative to currently active input
+		/// file or absolute (if full path provided)</param>
+		/// <param name="divName">Diversion to save</param>
+		/// <param name="clearDiv">If true clear diversion</param>
+		/// <param name="append">If true appends the text to file name</param>
+		/// <returns></returns>
+		/// 
+		[Macro]
 		public object saveDivert( string fileName, string divName, bool clearDiv, bool append )
 		{
 			// ******
@@ -187,7 +262,16 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Outputs the contents of the diversion to the output or error stream
+		/// </summary>
+		/// <param name="divName">Diversion name</param>
+		/// <param name="toOutput">If true the text goest to the error stream, otherwise placed
+		/// in the output of macro processor is a way that it will receive not further processing
+		/// </param>
+		/// <returns></returns>
 
+		[Macro]
 		public object dumpDivert( string divName, bool toOutput )
 		{
 			// ******

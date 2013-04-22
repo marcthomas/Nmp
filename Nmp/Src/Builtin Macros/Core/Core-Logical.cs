@@ -42,7 +42,13 @@ namespace Nmp.Builtin.Macros {
 		// return true or false
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Negates the result of the input value
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns>Negated result</returns>
 
+		[Macro]
 		public object not( string value )
 		{
 			return ! Helpers.IsMacroTrue(value);

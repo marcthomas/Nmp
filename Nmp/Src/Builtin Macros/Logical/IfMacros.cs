@@ -23,7 +23,7 @@ using NmpBase;
 namespace Nmp.Builtin.Macros {
 
 
-	
+
 	/////////////////////////////////////////////////////////////////////////////
 
 	class IfMacros : MacroContainer {
@@ -32,44 +32,78 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #ifTrue( object, trueResult, falseResult )
-		//
-		/////////////////////////////////////////////////////////////////////////////
 
-		public object True( object obj, object isTrueResult, params object [] others )
+		object Select( bool firstArg, object [] args )
 		{
-			bool isTrue = null == obj ? false : Helpers.IsMacroTrue( obj );
-			return isTrue ? isTrueResult : (0 == others.Length ? string.Empty : others[0]);
+			return firstArg ? (args.Length < 2 ? string.Empty : args [ 1 ]) : (args.Length < 3 ? string.Empty : args [ 2 ]);
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Returns a value depending upon the truthfulness of the first argument
+		/// </summary>
+		/// <param name="args">Two or three arguments; first is value to evaluate; second is result if macro evaluates to true; optional third argument is returned for false, an empty string is returned if there is no third argument</param>
+		/// <returns>arg[1] for true, arg[2] for false; if arg [1] or [2] does not exist then the empty string</returns>
 
-		public object @true( object obj, object isTrueResult, params object [] others )
+		[Macro]
+		public object True( params object [] args )
 		{
-			return True( obj, isTrueResult, others );
+			// ******
+			if( args.Length < 2 ) {
+				ThreadContext.MacroError( "#if.True requires at least two arguments: #if.True(valueToCheck, trueResult [, falseResult])" );
+			}
+
+			// ******
+			return Select( Helpers.IsMacroTrue(args[0]), args );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #ifFalse( bool, falseResult, trueResult )
-		//
-		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// See True()
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
 
-		public object False( object obj, object isFalseResult, params object [] others )
+		[Macro]
+		public object @true( params object [] args )
 		{
-			bool isFalse = null == obj ? true : ! Helpers.IsMacroTrue( obj );
-			return isFalse ? isFalseResult : (0 == others.Length ? string.Empty : others[0]);
+			return True( args );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Returns a value depending upon the truthfulness of the first argument
+		/// </summary>
+		/// <param name="args">Two or three arguments; first is value to evaluate; second is result if macro evaluates to true; optional third argument is returned for false, an empty string is returned if there is no third argument</param>
+		/// <returns>arg[1] for true, arg[2] for false; if arg [1] or [2] does not exist then the empty string</returns>
 
-		public object @false( object obj, object isFalseResult, params object [] others )
+		[Macro]
+		public object False( params object [] args )
 		{
-			return False( obj, isFalseResult, others );
+			// ******
+			if( args.Length < 2 ) {
+				ThreadContext.MacroError( "#if.False requires at least two arguments: #if.False(valueToCheck, trueResult [, falseResult])" );
+			}
+
+			// ******
+			return Select( ! Helpers.IsMacroTrue( args [ 0 ] ), args );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// See False()
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+
+		[Macro]
+		public object @false( params object [] args )
+		{
+			return False( args );
 		}
 
 
@@ -81,47 +115,57 @@ namespace Nmp.Builtin.Macros {
 		// or false will be returned
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Checks a cascading sequence of value for true or false and returns a value
+		/// 
+		/// Compares the next two values in the input object array where the first pair are argsIn[0] and argsIn[1]; if there are three values and the result is true then the third value is returned and if false an empty string is returned; when there are four values and the result is true then the third value is returned, if false the fourth value is returned. When there are six or more values and the result is false then the first three are discarded and processing begins over.
+		/// </summary>
+		/// <param name="argsIn">Values to compare and/or return</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object Else( params object [] argsIn )
 		{
 			// ******
 			var args = new NmpObjectList( argsIn );
-				
+
+			// ******
+			if( args.Count < 3 ) {
+				ThreadContext.MacroError( "#if.Else requires at least three arguments: #if.Else(lhsValue, rhsValue, trueResult [, falseResult ...])" );
+			}
+
 			// ******			
 			while( true ) {
 				int numstrs = args.Count;
-				
-				// ******
-				if( numstrs < 2 ) {
-					ThreadContext.MacroError( "in the current iteration of the #ifelse() macro there are only 0 or 1 arguments, at least 2 are required" );
+				if( numstrs < 3 ) {
+					ThreadContext.MacroError( "in the current iteration of the #if.Else() there are fewer than 3 arguments, at least 3 are required:\n lhsValue, rhsValue, a result when comparison is true" );
 				}
 
 				// ******
-				bool match = args[0].Equals( args[1] );
-
-				if( 2 == numstrs ) {
-					return match;
-				}
-			
+				bool match = args [ 0 ].Equals( args [ 1 ] );
 				if( match ) {
-					return args[2];
+					return args [ 2 ];
 				}
 				else {
 					if( numstrs >= 6 ) {
 						args.RemoveRange( 0, 3 );
 					}
 					else {
-						return numstrs >= 4 ? args[3] : string.Empty;
+						return numstrs >= 4 ? args [ 3 ] : string.Empty;
 					}
 				}
 			}
-
-
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// See Else()
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
 
+		[Macro]
 		public object @else( params object [] args )
 		{
 			return Else( args );
@@ -136,167 +180,87 @@ namespace Nmp.Builtin.Macros {
 		// enough return arguments
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Returns a value depending upon the truthfulness of the first argument
+		/// </summary>
+		/// <param name="args">Two or three arguments; first is value to evaluate; second is result if macro evaluates to true; optional third argument is returned for false, an empty string is returned if there is no third argument</param>
+		/// <returns>arg[1] for true, arg[2] for false; if arg [1] or [2] does not exist then the empty string</returns>
 
-		public object Empty( params string [] argsIn )
+		[Macro]
+		public object Empty( params string [] args )
 		{
 			// ******
-			var args = new NmpStringList( argsIn );
+			if( args.Length < 2 ) {
+				ThreadContext.MacroError( "#if.Empty requires at least two arguments: #if.Empty(valueToCheck, trueResult [, falseResult])" );
+			}
 
 			// ******
-			if( 0 == args.Count ) {
-				return false;
-			}
-			
+			return Select( string.IsNullOrEmpty(args[0]), args );
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Returns a value depending upon the truthfulness of the first argument
+		/// </summary>
+		/// <param name="args">Two or three arguments; first is value to evaluate; second is result if macro evaluates to true; optional third argument is returned for false, an empty string is returned if there is no third argument</param>
+		/// <returns>arg[1] for true, arg[2] for false; if arg [1] or [2] does not exist then the empty string</returns>
+
+		[Macro]
+		public object NotEmpty( params string [] args )
+		{
 			// ******
-			if( string.IsNullOrEmpty(args.NextArg()) ) {
-				//
-				// if the next argument exist then return it, else return true
-				//
-				if( 0 == args.Count ) {
-					return true;
-				}
-				else {
-					return args.NextArg();
-				}
+			if( args.Length < 2 ) {
+				ThreadContext.MacroError( "#if.NotEmpty requires at least two arguments: #if.NotEmpty(valueToCheck, trueResult [, falseResult])" );
 			}
-			else {
-				//
-				// if there are two strings then return the second (false)
-				//
-				if( args.Count > 1 ) {
-					return args[ 1 ];
-				}
-				else {
-					return false;
-				}
-			}
+
+			// ******
+			return Select( ! string.IsNullOrEmpty( args [ 0 ] ), args );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #ifnotempty( string, ifNotValue, ifNotValue )
-		//
-		// true or false are returned if there are not
-		// enough return arguments
-		//
-		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Returns a value depending upon the truthfulness of the first argument
+		/// </summary>
+		/// <param name="args">Two or three arguments; first is value to evaluate; second is result if macro evaluates to true; optional third argument is returned for false, an empty string is returned if there is no third argument</param>
+		/// <returns>arg[1] for true, arg[2] for false; if arg [1] or [2] does not exist then the empty string</returns>
 
-		public object NotEmpty( params string [] argsIn )
+		[Macro]
+		public object Defined( params string [] args )
 		{
 			// ******
-			var args = new NmpStringList( argsIn );
+			if( args.Length < 2 ) {
+				ThreadContext.MacroError( "#if.Defined requires at least two arguments: #if.Defined(valueToCheck, trueResult [, falseResult])" );
+			}
 
 			// ******
-			if( 0 == args.Count ) {
-				return false;
-			}
-			
-			// ******
-			if( ! string.IsNullOrEmpty(args.NextArg()) ) {
-				//
-				// if the next argument exist then return it, else return true
-				//
-				if( 0 == args.Count ) {
-					return true;
-				}
-				else {
-					return args.NextArg();
-				}
-			}
-			else {
-				//
-				// if there are two strings then return the second (false)
-				//
-				if( args.Count > 1 ) {
-					return args[ 1 ];
-				}
-				else {
-					return false;
-				}
-			}
+			return Select( mp.IsMacroName( args [ 0 ] ), args );
 		}
 
-
 		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #ifDefined
-		//
-		// true or false are returned if there are not
-		// enough return arguments
-		//
-		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Returns a value depending upon the truthfulness of the first argument
+		/// </summary>
+		/// <param name="args">Two or three arguments; first is value to evaluate; second is result if macro evaluates to true; optional third argument is returned for false, an empty string is returned if there is no third argument</param>
+		/// <returns>arg[1] for true, arg[2] for false; if arg [1] or [2] does not exist then the empty string</returns>
 
-		public object Defined( params string [] argsIn )
-		{
-			// ******
-			var args = new NmpStringList( argsIn );
-
-			// ******
-			if( 0 == args.Count ) {
-				return false;
-			}
-			
-			// ******
-			if( mp.IsMacroName(args[0]) ) {
-				if( args.Count > 1 ) {
-					return args[ 1 ];
-				}
-				else {
-					return true;
-				}
-			}
-			else {
-				if( args.Count > 2 ) {
-					return args[ 2 ];
-				}
-				else {
-					return false;
-				}
-			}
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #ifndef
-		//
-		// return true or false
-		//
-		/////////////////////////////////////////////////////////////////////////////
-
+		[Macro]
 		public object NotDefined( params string [] args )
 		{
 			// ******
-			if( 0 == args.Length ) {
-				return false;
-			}
-			
-			// ******
-			if( ! mp.IsMacroName(args[0]) ) {
-				if( args.Length > 1 ) {
-					return args[ 1 ];
-				}
-				else {
-					return true;
-				}
-			}
-			else {
-				if( args.Length > 2 ) {
-					return args[ 2 ];
-				}
-				else {
-					return false;
-				}
+			if( args.Length < 2 ) {
+				ThreadContext.MacroError( "#if.NotDefined requires at least two arguments: #if.NotDefined(valueToCheck, trueResult [, falseResult])" );
 			}
 
+			// ******
+			return Select( !mp.IsMacroName( args [ 0 ] ), args );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
 
 		public IfMacros( IMacroProcessor mp )
-			:	base(mp)
+			: base( mp )
 		{
 			//this.mp = mp;
 		}

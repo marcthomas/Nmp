@@ -242,22 +242,51 @@ namespace Nmp.Builtin.Macros {
 		}
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Does a simple make for a C# project that is defined by a response file
+		/// </summary>
+		/// <param name="rspPath">Path to a response file for the C# command line compiler</param>
+		/// <param name="loadMacros">Load macros as defined by the IMacroContainer interface</param>
+		/// <param name="displayFoundMacros">If true, output the names of the macros found</param>
+		/// <returns></returns>
 
-		public object makersp( string rspPath, bool loadMacros, bool displayFoundMacros )
+		//[Macro]
+		//public object makersp( string rspPath, bool loadMacros, bool displayFoundMacros )
+		//{
+		//	// ******
+		//	var mr = new MakeResponse( mp );
+		//	string dllPath = mr.Make( rspPath );
+
+		//	// ******
+		//	if( loadMacros ) {
+		//		AutoRegisterMacros.RegisterMacroContainers( mp, dllPath, displayFoundMacros );
+		//	}
+
+		//	// ******
+		//	return string.Empty;
+		//}
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Does a simple make for a C# project that is defined in a response file
+		/// </summary>
+		/// <param name="rspPath">Path to the response file</param>
+		/// <param name="loadLibrary">If true the library built by the make will be loaded</param>
+
+		[Macro]
+		public void makersp( string rspPath, bool loadLibrary )
 		{
 			// ******
 			var mr = new MakeResponse( mp );
 			string dllPath = mr.Make( rspPath );
 
 			// ******
-			if( loadMacros ) {
-				AutoRegisterMacros.RegisterMacroContainers( mp, dllPath, displayFoundMacros );
+			if( loadLibrary ) {
+				ObjectMacros.LoadAssembly( dllPath );
 			}
-
-			// ******
-			return string.Empty;
 		}
 
 
+	
 	}
 }

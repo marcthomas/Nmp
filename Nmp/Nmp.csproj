@@ -25,6 +25,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>..\Current\Nmp\Debug\Nmp.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -138,6 +140,7 @@
     <Compile Include="Src\GrandCentral\GrandCentral.cs" />
     <Compile Include="Src\Main\InvokeMacro.cs" />
     <Compile Include="Src\Main\LibInfo.cs" />
+    <Compile Include="Src\Main\MacroAttribute.cs" />
     <Compile Include="Src\Main\NmpBaseEvaluator.cs" />
     <Compile Include="Src\Main\Nmp.cs" />
     <Compile Include="Src\Main\NmpEvaluator.cs" />

@@ -39,7 +39,13 @@ namespace Nmp.Builtin.Macros {
 		// #.newStringList
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates a new string list
+		/// </summary>
+		/// <param name="objs"> Any number of objects to be added to the list when it is created</param>
+		/// <returns>The list as an object</returns>
 
+		[Macro]
 		public object newStringList( params object [] objs )
 		{
 			return  new NmpStringList( objs );
@@ -51,7 +57,13 @@ namespace Nmp.Builtin.Macros {
 		// #.newObjectList
 		//
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates a new object list
+		/// </summary>
+		/// <param name="objs"> Any number of objects to be added to the list when it is created</param>
+		/// <returns>The list as an object</returns>
 
+		[Macro]
 		public object newObjectList( params object [] objs )
 		{
 			return  new NmpObjectList( objs );
@@ -100,7 +112,22 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Creates an Nmp array which is a string object dictionary
+		/// 
+		/// The strings that can be passed to the method can be in one of three formats.
+		/// + key = value (or key : value)
+		///  + added as a key/value pair
+		/// + key
+		///  + added as key with an empty value
+		/// + json
+		///  + atempts to parse the string as json, on success is appended to the array, this
+		///  implies the json look like: "name" : [ ... ] or "name" : { ... }
+		/// </summary>
+		/// <param name="strs">Any number of strings</param>
+		/// <returns>object that is the Nmp array</returns>
 
+		[Macro]
 		public object newArray( params string [] strs )
 		{
 			// ******

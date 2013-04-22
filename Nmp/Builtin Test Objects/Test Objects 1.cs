@@ -189,8 +189,32 @@ namespace Nmp {
 
 		public Func<object, object> QuoteArg;
 
+		/// <summary>
+		/// An enum!
+		/// </summary>
+		public enum AnEnum { one, two, three };
+
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Returns a simple string
+		/// </summary>
+
+		public string AString
+		{
+			get
+			{
+				return "a string";
+			}
+		}
+
+	
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Quotes the "ToString()" result of its argument
+		/// </summary>
+		/// <param name="obj">Object on whose "ToString()" result will be quoted</param>
+		/// <returns>The quoted string</returns>
 
 		public object QuoteString( object obj )
 		{

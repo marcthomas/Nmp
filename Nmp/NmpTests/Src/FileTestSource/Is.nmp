@@ -1,0 +1,82 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+#.define( `emptyValue', `')
+#.define( `notEmptyValue', `Hello')
+#.define( `equalValue', `Equal')
+#.define( `otherValue', `Other')
+#.define( `trueValue', `true')
+#.define( `notTrueValue', `false')
+#.define( `macro', `is defined')
+
+(#defmacro `_Test')
+	.trim.
+	
+;;	(#if value)
+;;		.{"`value' is true", }.
+;;	(#endif)
+;;	
+;;	(#if #.not(value) )
+;;		.{this would be wrong}.
+;;	(#elseif value)
+;;		.{"again `value' is true", }.
+;;	(#endif)
+;;	
+;;	(#if #.not(value))
+;;		.{wrong again}.
+;;	(#else)
+;;		.{"still true (for the third time)!}.
+;;	(#endif)
+	
+	(#if #is.Empty(emptyValue))
+		.{`emptyValue' "emptyValue" is empty .nl.}.
+	(#endif)
+
+	(#if #is.NotEmpty(notEmptyValue))
+		.{`notEmptyValue' "notEmptyValue" is not empty .nl.}.
+	(#endif)
+
+	(#if #is.Equal(equalValue, equalValue))
+		.{"equalValue" == "equalValue" .nl.}.
+	(#endif)
+
+	(#if #is.NotEqual(equalValue, otherValue))
+		.{"equalValue" != "otherValue" .nl.}.
+	(#endif)
+
+.{"`#is.True('emptyValue`)'" is #is.True(emptyValue) .nl.}.
+
+.{"`#is.True('notEmptyValue`)'" is #is.True(notEmptyValue) .nl.}.
+
+.{"`#is.True('1`)'" is #is.True(1) .nl.}.
+/
+.{"`#is.True('trueValue`)'" is #is.True(trueValue) .nl.}.
+
+.{"`#is.False('emptyValue`)'" is #is.False(emptyValue) .nl.}.
+
+.{"`#is.False('trueValue`)'" is #is.False(trueValue) .nl.}.
+
+.{"`#is.False('notTrueValue`)'" is #is.False(notTrueValue) .nl.}.
+
+.{"`#is.Defined(macro)'" is #is.Defined(`macro') .nl.}.
+
+.{"`#is.NotDefined(someOtherMacro)'" is #is.NotDefined(`someOtherMacro') .nl.}.
+
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+
+(#endif)
+
+

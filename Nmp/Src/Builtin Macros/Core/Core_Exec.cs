@@ -36,15 +36,45 @@ namespace Nmp.Builtin.Macros {
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Executes a program and waits for it to complete or five seconds whichever is shorter
+		/// 
+		/// Returns an object with the following properties:
+		/// 
+		/// public string StdOut { get; }
+		/// public string StdErr { get; }
+		/// public int ExitCode { get; }
+		/// public bool Success { get; }
+		/// 
+		/// </summary>
+		/// <param name="exeName">Name of the executable</param>
+		/// <param name="cmdLine">Command line</param>
+		/// <returns>returns object as described in the summary</returns>
+		/// 
 
-			public object exec( string exeName, string cmdLine )
+		[Macro]
+		public object exec( string exeName, string cmdLine )
 		{
 			return HandleExec( exeName, cmdLine );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Executes the current shell
+		/// 
+		/// Returns an object with the following properties:
+		/// 
+		/// public string StdOut { get; }
+		/// public string StdErr { get; }
+		/// public int ExitCode { get; }
+		/// public bool Success { get; }
+		/// 
+		/// </summary>
+		/// <param name="cmdLine">Command line</param>
+		/// <returns></returns>
 
+		[Macro]
 		public object shell( string cmdLine )
 		{
 			// ******

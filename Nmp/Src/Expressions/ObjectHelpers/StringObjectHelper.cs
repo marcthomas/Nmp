@@ -542,7 +542,14 @@ namespace Nmp.Expressions {
 				int index = lookup.IndexOf( ch );
 				if( index >= 0 ) {
 					if( index < replace.Length ) {
-						sb.Append( replace[index] );
+						//sb.Append( replace[index] );
+						//
+						// '\0' gets eliminated
+						//
+						var replaceChar = replace [ index ];
+						if( '\0' != replaceChar ) {
+							sb.Append( replace [ index ] );
+						}
 					}
 				}
 				else {

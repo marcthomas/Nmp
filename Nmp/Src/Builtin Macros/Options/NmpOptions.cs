@@ -35,39 +35,47 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public bool	MacroTraceOn		{ get { return gc.MacroTraceOn; } }
+		[Macro]
+		public bool macroTraceOn { get { return gc.MacroTraceOn; } }
 
-		public void SetMacroTraceOn( bool value )
+		[Macro]
+		public void setMacroTraceOn( bool value )
 		{
 			gc.MacroTraceOn = value;
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
-		public int	MacroTraceLevel		{ get { return gc.MacroTraceLevel; } }
-		
-		public void SetMacroTraceLevel( int value )
+
+		[Macro]
+		public int macroTraceLevel { get { return gc.MacroTraceLevel; } }
+
+		[Macro]
+		public void setMacroTraceLevel( int value )
 		{
 			gc.MacroTraceLevel = value;
 		}
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
-		
-		public bool	PushbackResult		{ get { return gc.PushbackResult; } }
-		
-		public void SetPushbackResult( bool value )
+
+		[Macro]
+		public bool pushbackResult { get { return gc.PushbackResult; } }
+
+		[Macro]
+		public void setPushbackResult( bool value )
 		{
 			gc.PushbackResult = value;
 		}
 		
 
 		/////////////////////////////////////////////////////////////////////////////
-		
-		public bool	ExpandAndScan		{ get { return gc.ExpandAndScan; } }
-		
-		public void SetExpandAndScan( bool value )
+
+		[Macro]
+		public bool expandAndScan { get { return gc.ExpandAndScan; } }
+
+		[Macro]
+		public void setExpandAndScan( bool value )
 		{
 			gc.ExpandAndScan = value;
 		}
@@ -75,9 +83,11 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public int	MaxMacroScanDepth		{ get { return gc.MaxMacroScanDepth; } }
+		[Macro]
+		public int maxMacroScanDepth { get { return gc.MaxMacroScanDepth; } }
 
-		public void SetMaxMacroScanDepth( int value )
+		[Macro]
+		public void setMaxMacroScanDepth( int value )
 		{
 			gc.MaxMacroScanDepth = value;
 		}
@@ -85,9 +95,11 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public int	MaxRunTime		{ get { return gc.MaxRunTime; } }
+		[Macro]
+		public int maxRunTime { get { return gc.MaxRunTime; } }
 
-		public void SetMaxRunTime( int value )
+		[Macro]
+		public void setMaxRunTime( int value )
 		{
 			gc.MaxRunTime = value;
 		}
@@ -95,19 +107,23 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public int	MaxExecTime		{ get { return gc.MaxExecTime; } }
+		[Macro]
+		public int maxExecTime { get { return gc.MaxExecTime; } }
 
-		public void SetMaxExecTime( int value )
+		[Macro]
+		public void setMaxExecTime( int value )
 		{
 			gc.MaxExecTime = value;
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
-		public bool	BreakNext		{ get { return gc.BreakNext; } }
-		
-		public void SetBreakNext( bool value )
+
+		[Macro]
+		public bool breakNext { get { return gc.BreakNext; } }
+
+		[Macro]
+		public void setBreakNext( bool value )
 		{
 			gc.BreakNext = value;
 		}
@@ -115,9 +131,11 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public bool	AltTokenFmtOnly		{ get { return gc.AltTokenFmtOnly; } }
+		[Macro]
+		public bool altTokenFmtOnly { get { return gc.AltTokenFmtOnly; } }
 
-		public void SetAltTokenFmtOnly( bool value )
+		[Macro]
+		public void setAltTokenFmtOnly( bool value )
 		{
 			gc.AltTokenFmtOnly = value;
 		}
@@ -125,10 +143,14 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public string	OpenQuote		{ get { return gc.OpenQuote; } }
-		public string	CloseQuote	{ get { return gc.CloseQuote; } }
+		[Macro]
+		public string openQuote { get { return gc.OpenQuote; } }
 
-		public void SetQuotes( string openQuoteStr, string closeQuoteStr )
+		[Macro]
+		public string closeQuote { get { return gc.CloseQuote; } }
+
+		[Macro]
+		public void setQuotes( string openQuoteStr, string closeQuoteStr )
 		{
 			gc.SetQuotes( openQuoteStr, closeQuoteStr );
 		}
