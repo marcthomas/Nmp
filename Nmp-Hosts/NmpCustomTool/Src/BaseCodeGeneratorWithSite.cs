@@ -12,17 +12,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.Runtime.InteropServices;
+using EnvDTE;
+using EnvDTE100;
+//using VSLangProj;
 
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
+using System.Runtime.InteropServices;
 
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
 
-using EnvDTE;
-using EnvDTE100;
-using VSLangProj;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+
 
 
 namespace NmpCustomTool {
@@ -32,8 +33,8 @@ namespace NmpCustomTool {
 	public abstract class BaseCodeGeneratorWithSite : BaseCodeGenerator, IObjectWithSite
 	{
 
-		private ServiceProvider globalProvider;
-		private ServiceProvider serviceProvider;
+		private Microsoft.VisualStudio.Shell.ServiceProvider globalProvider;
+		private Microsoft.VisualStudio.Shell.ServiceProvider serviceProvider;
 		private object site;
 
 		/////////////////////////////////////////////////////////////////////////////
@@ -99,7 +100,7 @@ namespace NmpCustomTool {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		protected ServiceProvider GlobalServiceProvider
+		protected Microsoft.VisualStudio.Shell.ServiceProvider GlobalServiceProvider
 		{
 			get
 			{
@@ -127,7 +128,7 @@ namespace NmpCustomTool {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		protected ServiceProvider SiteServiceProvider
+		protected Microsoft.VisualStudio.Shell.ServiceProvider SiteServiceProvider
 		{
 			get
 			{

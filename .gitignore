@@ -136,16 +136,19 @@ pip-log.txt
 # added for broken glass and time
 
 AppPackages/
+Current/
 
 __*
 _*.cs
 
-Current
 
 *.png
 *.jpg
 *.jpeg
 *.psd
+
+*.sublime-workspace
+
 
 
 

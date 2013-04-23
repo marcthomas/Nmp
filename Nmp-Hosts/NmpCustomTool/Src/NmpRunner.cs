@@ -14,24 +14,35 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
+//using System.Runtime.InteropServices;
+
+//using Microsoft.VisualStudio;
+//using Microsoft.VisualStudio.Shell;
+
+
+//using Microsoft.VisualStudio.Shell.Interop;
+////using Microsoft.VisualStudio.OLE.Interop;
+//using Microsoft.VisualStudio.Designer.Interfaces;
+
+////using Microsoft.VisualStudio.TextManager.Interop;
+
+//using EnvDTE;
+//using EnvDTE80;
+//using EnvDTE100;
+//using VSLangProj;
+//using VSLangProj80;
+
+using EnvDTE;
+using EnvDTE100;
+//using VSLangProj;
+
 using System.Runtime.InteropServices;
-
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-
 
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Designer.Interfaces;
 
-//using Microsoft.VisualStudio.TextManager.Interop;
-
-using EnvDTE;
-using EnvDTE80;
-using EnvDTE100;
-using VSLangProj;
-using VSLangProj80;
-
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 
 using System.CodeDom.Compiler;
 using System.CodeDom;
@@ -560,7 +571,7 @@ namespace NmpCustomTool {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public NmpRunner( DTE Dte, ServiceProvider GlobalServiceProvider )
 		{
 			this.Dte = Dte;
