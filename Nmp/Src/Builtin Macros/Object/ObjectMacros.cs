@@ -94,9 +94,15 @@ namespace Nmp.Builtin.Macros {
 		/// Loads a assembly
 		/// </summary>
 		/// <param name="assemblyPathIn">Path to the assembly</param>
+		/// <example>
+		/// ;;
+		/// ;; load a library
+		/// ;;
+		/// ;; #object.loadAssembly( `pathToAssembly.dll' )
+		/// </example>
 
 		[Macro]
-		public static void loadAssembly( string assemblyPathIn )
+		public static void LoadAssembly( string assemblyPathIn )
 		{
 			// ******
 			if( string.IsNullOrEmpty( assemblyPathIn ) ) {
@@ -126,7 +132,7 @@ namespace Nmp.Builtin.Macros {
 		/// </summary>
 		/// <param name="path"></param>
 
-		public static void LoadAssembly( string path )
+		public static void loadAssembly( string path )
 		{
 			loadAssembly( path );
 		}
@@ -162,6 +168,17 @@ namespace Nmp.Builtin.Macros {
 		/// <param name="typeName">Name of type</param>
 		/// <param name="constructorArgs">Arguments for constructor</param>
 		/// <returns>The object</returns>
+		/// <example>
+		/// ;;
+		/// ;; load a library
+		/// ;;
+		/// ;; #object.loadAssembly( `pathToAssembly.dll' )
+		/// ;;
+		/// ;; create an object macro with a instance of a class `aType' whose ctor 
+		/// ;; takes a single argument of type IMacroProcessor
+		/// ;;
+		/// #object.define( `macro', newObject( `aType', `@#mp')
+		/// </example>
 
 		[Macro]
 		public object newObject( string typeName, params object [] constructorArgs )

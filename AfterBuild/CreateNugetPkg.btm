@@ -1,0 +1,70 @@
+@echo off
+cd
+echo %1
+
+if "1" == "%NmpBuildMachine" goto passGo
+
+echo ************************************************************************
+echo *
+echo *
+echo *
+echo *
+echo * This TCC batch file can only be run on machines that have
+echo *
+echo *     NmpBuildMachine=1
+echo *
+echo * set in the environment.
+echo *
+echo *
+echo *
+echo *
+echo *
+echo ************************************************************************
+
+cancel
+
+:passGo
+
+set afterBuild=%@full[%1]
+set config=%2
+
+set netVersion=45
+set dest=lib\Net%netVersion
+
+echo ***
+echo *** create Nmp.Core
+echo ***
+md /d Nmp.Core
+
+echo ***
+echo *** create "%dest"
+echo ***
+md "%dest"
+
+echo ***
+echo *** delete files in "%dest"
+echo ***
+del /y /q "%dest"
+
+echo ***
+echo *** copy nuspec file
+echo ***
+copy /U /y "%afterBuild\nmp.nuspec.nmp"
+nmp nmp.nuspec.nmp
+
+echo ***
+echo *** copy Nmp core files
+echo ***
+echo %config
+copy /U /y "..\Nmp\%config\*.dll" "%dest"
+copy /U /y "..\Nmp\%config\*.xml" "%dest"
+
+::
+:: run nuget
+::
+nuget pack nmp.nuspec -Exclude *.nmp -Exclude *.txt
+
+
+
+
+exit 0

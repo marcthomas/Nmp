@@ -1,0 +1,110 @@
+#pushDivert(-1)
+
+;;
+;; source files for "init.ps1" and the "readme.txt" file
+;;
+;;#include( `.NmpInclude\init_ps1.nmp')
+;;#include( `.NmpInclude\NET.Macro.Processor.readme.nmp')
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+(#defmacro `_nuspec')
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>(#_id)</id>
+    <version>(#_version)</version>
+    <title>(#_title)</title>
+    <authors>(#_author)</authors>
+    <owners>(#_author)</owners>
+;;    <licenseUrl>http://www.netmacros.net/licenses/nmp</licenseUrl>
+;;    <projectUrl>http://www.netmacros.net</projectUrl>
+    <iconUrl>http://www.netmacros.net/content/icons/nmp.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+			(#_description)
+		</description>
+    <summary />
+    <language>en-US</language>
+    <tags>(#_tags)</tags>
+  </metadata>
+</package>
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#defmacro `genPublishBtm')
+@echo off
+echo ***
+echo uploading "Nmp.Core.`'_version`'.nupkg"
+echo ***
+
+nuget Push Nmp.Core.`'_version`'.nupkg
+
+pause Done ...
+exit 0
+
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; get version from one of the dll's that is not loaded by our
+;; runtime instance - this is important because the version of NMP
+;; processing this file may NOT be the version that we're building
+;; the nupkg for
+;;
+;; SO, DO NOT PROCESS THIS FILE WITH THE Visual Studio Custom Tool !!
+;;
+
+#define( `#Assembly', `@#object.newStatic(System.Reflection.Assembly)')
+;;#define( `taskDll', `@#Assembly.LoadFrom(#directory\tools\NmpMSBuildTask.dll)')
+;;#define( `taskDll', `@#Assembly.LoadFrom(#Directory.GetCurrentDirectory()\lib\Net45\Nmp.dll)')
+;;#define( `taskDll', `@#Assembly.LoadFrom(#.currentDirectory\..\..\Current\Nmp\Debug\Nmp.dll)')
+#define( `taskDll', `@#Assembly.LoadFrom(#.currentDirectory\..\Nmp\Debug\Nmp.dll)')
+
+#define( `_version', taskDll.GetName().Version.ToString().MatchEx(`^([0-9]*?\.[0-9]*?\.[0-9]*)\.'))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+#define( `_id',	`Nmp.Core')
+#define( `_title', `Nmp.Core')
+#define( `_author', `Joe McLain')
+#define( `_tags', `macro processor NMP Razor templates code generation Visual Studio 2012 T4')
+
+(#defmacro `_description')
+The .NET Macro Processor (NMP) is a general purpose text macro processor. This package contains the core assemblies required to host Nmp in a .Net project.
+(#endmacro)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; generate init.ps1 into the tools directory.GetCurrentDirectory()
+;;
+;;_init_ps1( _id, _version )@[divert]
+;;#saveDivert( `tools\init.ps1', `_init_ps1')
+
+;;
+;; generate NET.Macro.Processor.readme.txt into the App_Readme folder
+;;
+;;_readmeFile()@[divert]
+;;#saveDivert( `Content\App_Readme\NET.Macro.Processor.readme.txt', `_readmeFile')
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; and finally generate the contents of the .nuspec file (which is our output)
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#popDivert()-
+_nuspec()
+
+genPublishBtm()@[divert]
+#.saveDivert( `upload.btm', `genPublishBtm', true)
+
+
+

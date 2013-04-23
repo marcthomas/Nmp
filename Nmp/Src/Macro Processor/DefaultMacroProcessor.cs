@@ -1186,6 +1186,7 @@ namespace Nmp {
 			//
 			AddObjectMacro( "#", builtins );
 			AddObjectMacro( "#nmp", builtins );
+			AddObjectMacro( "#mp", this );
 			
 			// ******
 	var objectMacros = new ObjectMacros( this );
@@ -1236,8 +1237,6 @@ namespace Nmp {
 			//
 			// builtin object helpers
 			//
-			//gc.GetTypeHelpers().Add( typeof(string), StringObjectHelper.Create );
-			//gc.GetTypeHelpers().Add( typeof(string []), StringArrayObjectHelper.Create );
 			var typeHelpers = hub.Get<TypeHelperDictionary>();
 			typeHelpers.Add( typeof( string ), StringObjectHelper.Create );
 			typeHelpers.Add( typeof( string [] ), StringArrayObjectHelper.Create );

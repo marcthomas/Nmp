@@ -140,6 +140,8 @@ AppPackages/
 __*
 _*.cs
 
+Current
+
 *.png
 *.jpg
 *.jpeg

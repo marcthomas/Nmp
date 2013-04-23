@@ -18,7 +18,7 @@ using System.Text;
 
 
 [assembly: AssemblyCompany( "netmacros.net" )]
-[assembly: AssemblyProduct( "Net Macro Processor(NMP) 3.0.0" )]
+[assembly: AssemblyProduct( "Net Macro Processor(NMP) 3.0.1" )]
 [assembly: AssemblyCopyright( "Copyright © Joe McLain 2013" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
@@ -35,9 +35,9 @@ using System.Text;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "3.0.0" )]
+[assembly: AssemblyVersion( "3.0.1" )]
 
-[assembly: AssemblyProductVersion( "3.0.0" )]
+[assembly: AssemblyProductVersion( "3.0.1" )]
 
 
 /////////////////////////////////////////////////////////////////////////////
