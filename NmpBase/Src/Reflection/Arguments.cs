@@ -41,6 +41,35 @@ namespace NmpBase {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		static object CastEnum( object value, Type enumType )
+		{
+			// ******
+			if( null == enumType || !enumType.IsEnum ) {
+				throw new ArgumentException( "unexpected enum type" );
+			}
+
+			// ******
+			try {
+				if( value is string ) {
+					return Enum.Parse( enumType, (string) value );
+				}
+				else {
+					var i = Convert.ToInt32( value );
+					return Enum.ToObject( enumType, i );
+				}
+
+			}
+			catch {
+			}
+
+			// ******
+			return null;
+		}
+
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
 		public static object ChangeType( object objIn, Type type )	//TypeCode typeCode )
 		{
 
@@ -103,6 +132,10 @@ namespace NmpBase {
 
 			if( TypeCode.Boolean == typeCode ) {
 				return Helpers.IsMacroTrue( objIn );
+			}
+
+			else if( type.IsEnum ) {
+				return CastEnum( objIn, type );
 			}
 
 			// ******
