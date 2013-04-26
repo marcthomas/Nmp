@@ -49,20 +49,36 @@ cancel
 :: outputs to skydrive: "C:\Users\joe\SkyDrive\Portable\NMP\v3.0 Testing"
 ::
 set dest=%@full[%1]
-
-@echo dest is %dest
-
-::
-:: debug or release
-::
 set config=%2
+set zipName=Nmp-v3-net40- %_day-%_monthf-%_year.zip
 
-::dir
+::
+:: delete any files currently in %des
+::
+del /y /q "%dest"
 
+::
+:: copy files
+::
 copy /U /y "Nmp\%config\*.*"    "%dest"
 copy /U /y "CmdLineHost\%config\*.exe;*.dll;*.config"    "%dest"
 copy /U /y "CustomTool\%config\*.*" "%dest"
 copy /U /y "MsBuildTask\%config\NmpMsBuild*.*" "%dest"
+
+::
+:: zip them up
+::
+7z -tzip a "%dest\%zipName" "%dest\*.*"
+
+echo *
+echo *
+echo *
+echo nmp_version %nmp_version
+echo *
+echo *
+echo *
+
+
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::

@@ -23,46 +23,70 @@ echo ************************************************************************
 
 cancel
 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :passGo
 
+::
+:: set some env vars
+::
 set afterBuild=%@full[%1]
-set config=%2
+set framework=%2
+set config=%3
 
-set netVersion=45
-set dest=lib\Net%netVersion
+iff "v4.0" == "%framework" then
+set framework=40
+else
+set framework=45
+endiff
+
+set dest=lib\Net%framework
+::set bin=%@cwd[%_disk:]
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+:: note: the 'exec' we issue in Target Build in AfterBuild.csproj places us in
+:: the solution "Current" directory
+::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+cd
+echo afterBuild %afterBuild
+echo framework  %framework
+echo config     %config
+echo dest       %dest
 
 echo ***
-echo *** create Nmp.Core
+echo *** create Nmp.Core then - in case it already existed - delete any files
 echo ***
 md /d Nmp.Core
-
+del /y /q *.*
+ 
 echo ***
-echo *** create "%dest"
+echo *** create "%dest" - in case it already existed - delete any files
 echo ***
 md "%dest"
-
-echo ***
-echo *** delete files in "%dest"
-echo ***
 del /y /q "%dest"
-
-echo ***
-echo *** copy nuspec file
-echo ***
-copy /U /y "%afterBuild\nmp.nuspec.nmp"
-nmp nmp.nuspec.nmp
-
-echo ***
-echo *** copy Nmp core files
-echo ***
+ 
+:: 
+:: echo ***
+:: echo *** copy Nmp core files
+:: echo ***
 echo %config
 copy /U /y "..\Nmp\%config\*.dll" "%dest"
 copy /U /y "..\Nmp\%config\*.xml" "%dest"
 
+
+echo ***
+echo *** copy nuspec.nmp file and run nmp against it
+echo ***
+copy /U /y "%afterBuild\nmp.nuspec.nmp"
+nmp -d:#lib=%dest\Nmp.dll nmp.nuspec.nmp
+
 ::
 :: run nuget
 ::
-nuget pack nmp.nuspec -Exclude *.nmp -Exclude *.txt
+nuget pack nmp.nuspec -Exclude *.nmp -Exclude *.txt -Exclude *.btm
 
 
 

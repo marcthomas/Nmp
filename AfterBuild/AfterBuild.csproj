@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -90,11 +90,11 @@
   -->
   <PropertyGroup>
     <CopyFiles>tcc /C "$(MSBuildProjectDirectory)\copy-files-local.btm" "C:\Users\joe\SkyDrive\Portable\NMP\v3.0 Testing" "$(Configuration)"</CopyFiles>
-    <NugetPkg>tcc /C "$(MSBuildProjectDirectory)\CreateNugetPkg.btm" "$(MSBuildProjectDirectory)" "$(Configuration)" </NugetPkg>
+    <NugetPkg>tcc /C "$(MSBuildProjectDirectory)\CreateNugetPkg.btm" "$(MSBuildProjectDirectory)"  $(TargetFrameworkVersion) "$(Configuration)" </NugetPkg>
   </PropertyGroup>
   <Target Name="Build">
-    <Exec WorkingDirectory="$(SolutionDir)Current" Command="$(CopyFiles)" />
     <Exec WorkingDirectory="$(SolutionDir)Current" Command="$(NugetPkg)" />
+    <Exec WorkingDirectory="$(SolutionDir)Current" Command="$(CopyFiles)" />
   </Target>
   <Target Name="ReBuild" DependsOnTargets="Build">
   </Target>
