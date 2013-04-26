@@ -46,7 +46,7 @@ namespace Nmp {
 			using( new EvalLock( this ) ) {
 				try {
 					using( var input = gc.GetMasterParseReader( new ParseStringReader( evx.Text, evx.FileName ) ) ) {
-						MasterOutput output = new MasterOutput( gc );
+						MasterOutput output = GetMasterOutput( newOutput );
 						string result = string.Empty;
 
 						// ******

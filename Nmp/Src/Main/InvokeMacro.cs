@@ -76,7 +76,7 @@ namespace Nmp {
 			using( new EvalLock(this) ) {
 
 				// ******
-				MasterOutput output = new MasterOutput( gc );
+				MasterOutput output = GetMasterOutput( newOutput );
 
 				using( new UsingHelper(() => SetMacroProcessorOutputInstance(output), () => SetMacroProcessorOutputInstance(null)) ) {
 					object result = MacroProcessor.InvokeMacro( input, mir, expression, true );

@@ -105,6 +105,33 @@ namespace Nmp {
 		}
 
 
+		/////////////////////////////////////////////////////////////////////////////
+
+		MasterOutput _masterOutput = null;
+
+		public MasterOutput MasterOutput
+		{
+			get
+			{
+				return _masterOutput;
+			}
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
+
+		MasterOutput GetMasterOutput( bool newOutput )
+		{
+			// ******
+			if( null == _masterOutput || newOutput ) {
+				_masterOutput = new MasterOutput( gc );
+			}
+
+			// ******
+			return _masterOutput;
+		}
+
+
 		///////////////////////////////////////////////////////////////////////////////
 
 		public void SetMacroProcessorOutputInstance( MasterOutput output )

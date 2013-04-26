@@ -226,14 +226,13 @@ namespace Nmp {
 		{
 			// ******
 			using( new NMP.NmpMakeCurrent(nmp) ) {
-				var output = nmp.MacroProcessor.OutputInstance as MasterOutput;
+				var output = nmp.MasterOutput;
 				if( null == output ) {
 					//
 					// should never happend
 					//
 					return null;
 				}
-
 				// ******
 				//
 				// if does not exist will issue a warning and return empty string
