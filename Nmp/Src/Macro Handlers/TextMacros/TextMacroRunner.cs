@@ -61,9 +61,10 @@ namespace Nmp {
 		NmpArray				localArray;
 
 		// ******
-		IMacro		argsMacro;
-		IMacro		specials;
-		IMacro		localArrayMacro;
+		IMacro	argsMacro;
+		IMacro	specials;
+		IMacro	localArrayMacro;
+		IMacro	objArgsMacro;
 
 		bool argsRefed = false;				// arguments referenced so we've created a list
 		bool printBlockRefed = false;	// print blocks detected -> .{ }.
@@ -116,11 +117,11 @@ namespace Nmp {
 		//
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		protected string ArgSubstMatch( Match match )
 		{
-		int index;
-		
+			int index;
+
 			// ******
 			string value = match.Value;
 			string untouchedValue = value;
@@ -136,25 +137,25 @@ namespace Nmp {
 			// ******
 			//
 			// '\\' catches -> \$ 
-			
+
 			// backslash escapes the pattern so that it can be used by .NET regex replacements;
 			// this problem happens when a regex is used in one of the parameters string to a
 			// macro, it gets seen first by us and we replace it - so escape it
 			//
-			
-// TODO: refigure this out, \$ also catches -> somedir\$replacementPathPart
-			
-			
+
+			// TODO: refigure this out, \$ also catches -> somedir\$replacementPathPart
+
+
 			//if( ('\\' == value[0] || '$' == value[0]) && '$' == value[1] ) {
 
-			if( '$' == value[0] && '$' == value[1] ) {
+			if( '$' == value [ 0 ] && '$' == value [ 1 ] ) {
 				//
 				// \$something or $$something
 				//
 				return value.Substring( 1 );
 			}
 
-			if( '.' == value[0] && '-' == value[1] ) {
+			if( '.' == value [ 0 ] && '-' == value [ 1 ] ) {
 				//
 				// ..something
 				//
@@ -162,7 +163,7 @@ namespace Nmp {
 			}
 
 			// ******
-//jpm 1 March 13, lower case dot command string
+			//jpm 1 March 13, lower case dot command string
 
 			switch( match.Value.ToLower() ) {
 				//
@@ -170,19 +171,19 @@ namespace Nmp {
 				//
 				case "$#":
 					return arguments.Count.ToString();
-					
+
 				case "$*":
 					//
 					// all arguments, no quoting
 					//
 					return arguments.Join( "," );
-				
+
 				case "$@":
 					//
 					// all arguments, quoted
 					//
-					return arguments.Join( ",", s => mp.GrandCentral.QuoteWrapString(s) );
-					
+					return arguments.Join( ",", s => mp.GrandCentral.QuoteWrapString( s ) );
+
 				case "$macroName":
 					//
 					// macro name
@@ -196,6 +197,12 @@ namespace Nmp {
 					argsRefed = true;
 					return argsMacro.Name;
 
+				case "$objArgs":
+					//
+					// actual object list
+					//
+					return objArgsMacro.Name;
+				
 				case "$local":
 					//
 					// $local vars
@@ -219,7 +226,7 @@ namespace Nmp {
 					//
 					// argument list is being referenced
 					//
-					if( ! printBlockRefed ) {
+					if( !printBlockRefed ) {
 						//
 						// only allow a close print block if we've seen an open block
 						//
@@ -233,27 +240,27 @@ namespace Nmp {
 					//
 					embededChars = true;
 					return SC.EMBED_SPACE_STR;
-				
+
 				case ".nl.":
 					//
 					// embed a newline
 					//
 					embededChars = true;
 					return SC.EMBED_NEWLINE_STR;
-				
+
 				case ".tab.":
 					//
 					// embed a tab
 					//
 					embededChars = true;
 					return SC.EMBED_TAB_STR;
-					
+
 				case ".data.":
 					//
 					// no forward expand, no pushback
 					//
 
-//TODO: look at this
+					//TODO: look at this
 
 					dataOptionFound = true;
 					//options.FwdExpand = false;
@@ -291,31 +298,31 @@ namespace Nmp {
 					//
 					options.Pushback = true;
 					break;
-									
+
 				case ".noquote.":
-				//case ".noquoteresult.":
+					//case ".noquoteresult.":
 					options.Quote = false;
 					break;
-					
+
 				case ".quote.":
-				//case ".quoteresult.":
+					//case ".quoteresult.":
 					options.Quote = true;
 					break;
-					
+
 				case ".trim.":
 					//
 					// strip leading and trailing white space
 					//
 					options.Trim = true;
 					break;
-					
+
 				case ".nlstrip.":
 					//
 					// strip newline sequences from text
 					//
 					options.NLStrip = true;
 					break;
-					
+
 				case ".ilcompressws.":
 				case ".ilcws.":
 					//
@@ -323,7 +330,7 @@ namespace Nmp {
 					//
 					options.ILCompressWhiteSpace = true;
 					break;
-					
+
 				case ".normalize.":
 				case ".wscompress.":
 				case ".cws.":
@@ -332,7 +339,7 @@ namespace Nmp {
 					//
 					options.CompressAllWhiteSpace = true;
 					break;
-					
+
 				case ".tbwrap.":
 					options.TextBlockWrap = true;
 					break;
@@ -349,7 +356,7 @@ namespace Nmp {
 				case ".eval.":
 					options.Eval = true;
 					break;
-					
+
 				case ".razor.":
 					options.Razor = true;
 					break;
@@ -373,19 +380,23 @@ namespace Nmp {
 					// that text with leading ".-" and a trailing '.' will always
 					// be stripped
 					//
-					if( '.' == value[ 0 ] && '.' == value[ value.Length - 1 ] ) {
-						return '-' == value[1] ? string.Empty : 
+					if( '.' == value [ 0 ] && '.' == value [ value.Length - 1 ] ) {
+						return '-' == value [ 1 ] ? string.Empty :
 						value;
 					}
 
 					// ******			
-					if( '$' == value[0] ) {
-						value = value.Substring(1);
-						
-						if( char.IsDigit(value[0]) ) {
-							if( Int32.TryParse(value, out index) &&index >= 0 && index <= 9 ) {
+					if( value.StartsWith( "$[]" ) ) {
+						var objArgStr = RefObjectArgument( value.Substring(3) );
+						return string.IsNullOrEmpty(objArgStr) ? untouchedValue : objArgStr;
+					}
+					if( '$' == value [ 0 ] ) {
+						value = value.Substring( 1 );
+
+						if( char.IsDigit( value [ 0 ] ) ) {
+							if( Int32.TryParse( value, out index ) && index >= 0 && index <= 9 ) {
 								if( index < arguments.Count ) {
-									return arguments[ index ];
+									return arguments [ index ];
 								}
 							}
 						}
@@ -396,13 +407,13 @@ namespace Nmp {
 							if( null != macro.ArgumentNames ) {
 								index = macro.ArgumentNames.IndexOf( value );
 								if( index >= 0 && index < arguments.Count ) {
-									return arguments[ index ];
+									return arguments [ index ];
 								}
 								else {
 									//
 									// named arg but was not passed in
 									//
-// jpm: 13 Dec 2012
+									// jpm: 13 Dec 2012
 									return string.Empty;
 								}
 							}
@@ -416,16 +427,35 @@ namespace Nmp {
 					}
 
 					return untouchedValue;	//string.Empty;
-					//break;
+				//break;
 			}
-			
-			
-		
+
+
+
 			// ******
 			return string.Empty;
 		}
-		
 
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		string RefObjectArgument( string value )
+		{
+			// ******
+			var index = macro.ArgumentNames.IndexOf( value );
+			if( index < 0 ) {
+				return string.Empty;
+			}
+
+			// ******
+
+			// __macroArgs122Objects[ 4 ]
+
+			return string.Format( "{0}[{1}]", objArgsMacro.Name, index );
+
+		}
+
+	
 		/////////////////////////////////////////////////////////////////////////////
 
 		//private static string userMacroSubstStr = @"(?xs)([\\$]?[$][0-9#*@])|([\\$]?[$][a-zA-Z_][a-zA-Z0-9_]*)|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
@@ -436,36 +466,38 @@ namespace Nmp {
 		//
 		// removed for \$  -  [\\$]?  is now [$]?
 		//
-		private static string userMacroSubstStr = @"(?xs)([$]?[$][a-zA-Z_#][a-zA-Z0-9_#]*)|([\\$]?[$][0-9#*@])|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
+		//private static string userMacroSubstStr = @"(?xs)([$]?[$][a-zA-Z_#][a-zA-Z0-9_#]*)|([\\$]?[$][0-9#*@])|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
+
+		private static string userMacroSubstStr = @"(?xs)([$]?[$][a-zA-Z_#][a-zA-Z0-9_#]*)|([$]?\$\[\][a-zA-Z_#][a-zA-Z0-9_#]*)|([\\$]?[$][0-9#*@])|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
 
 		private static Regex userMacroRegex = new Regex( userMacroSubstStr );
 
 		protected string ArgumentSubstitutions( string text )
 		{
-		/*	where:
+			/*	where:
 				
-						$macroName	is the macro name
+							$macroName	is the macro name
 
-						$0-$9				positional macro argument		- args[1] ... args[9]
+							$0-$9				positional macro argument		- args[1] ... args[9]
 						
-						$#					number of args  ?? include macro name
+							$#					number of args  ?? include macro name
 						
-						$*					expands to all args separated by commas
+							$*					expands to all args separated by commas
 
-						$@					expands to all args quoted and separated by commas
+							$@					expands to all args quoted and separated by commas
 						
 
-				the  [\\$] allow \$ or $$ for escaping (one level gets removed)
+					the  [\\$] allow \$ or $$ for escaping (one level gets removed)
 				
-			*/
-			
+				*/
+
 			// ******
 			//
 			// should compile this into a static member
 			//
-			string result = userMacroRegex.Replace( text, match => { return ArgSubstMatch(match); } );
+			string result = userMacroRegex.Replace( text, match => { return ArgSubstMatch( match ); } );
 			if( reExpand ) {
-				result = userMacroRegex.Replace( result, match => { return ArgSubstMatch(match); } );
+				result = userMacroRegex.Replace( result, match => { return ArgSubstMatch( match ); } );
 			}
 
 			// ******
@@ -490,7 +522,7 @@ namespace Nmp {
 		protected string PostProcessText( string input )
 		{
 			// ******
-			if( ! printBlockRefed && ! embededChars ) {
+			if( !printBlockRefed && !embededChars ) {
 				return input;
 			}
 
@@ -506,8 +538,8 @@ namespace Nmp {
 
 			// ******
 			for( int i = 0; i < strLen; i++ ) {
-				char ch = input[ i ];
-				
+				char ch = input [ i ];
+
 				// ******
 				if( beginBlock == ch ) {
 					copying = true;
@@ -524,7 +556,7 @@ namespace Nmp {
 						case SC.EMBED_SPACE_CHAR:
 							ch = SC.SPACE;
 							break;
-							
+
 						case SC.EMBED_NEWLINE_CHAR:
 							ch = SC.NEWLINE;
 							break;
@@ -533,7 +565,7 @@ namespace Nmp {
 							ch = SC.TAB;
 							break;
 					}
-					
+
 					// ******
 					sb.Append( ch );
 				}
@@ -578,7 +610,7 @@ namespace Nmp {
 				try {
 					finalResult = string.Format( finalResult, objectArgs );
 				}
-				catch ( Exception ex ) {
+				catch( Exception ex ) {
 					ThreadContext.MacroError( ExceptionHelpers.RecursiveMessage( ex, "calling string.Format() on Text macro \"{0}\" an exception was thrown: {1}", macro.Name, ex.Message ) );
 				}
 			}
@@ -587,12 +619,12 @@ namespace Nmp {
 			//
 			// check localArray for additional instructions
 			//
-			if( localArray.Contains("eval") || options.Eval ) {
+			if( localArray.Contains( "eval" ) || options.Eval ) {
 				finalResult = EvalResult( finalResult );
 			}
 
-			if( localArray.Contains("divert") ) {
-				options.Divert = Helpers.IsMacroTrue( localArray["divert"] );
+			if( localArray.Contains( "divert" ) ) {
+				options.Divert = Helpers.IsMacroTrue( localArray [ "divert" ] );
 			}
 
 			if( options.TabsToSpaces ) {
@@ -608,11 +640,12 @@ namespace Nmp {
 
 		public void Dispose()
 		{
+			mp.DeleteMacro( objArgsMacro );
 			mp.DeleteMacro( localArrayMacro );
 			mp.DeleteMacro( specials );
 			mp.DeleteMacro( argsMacro );
 		}
-	
+
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -632,10 +665,10 @@ namespace Nmp {
 			///flags = new BitArray( (int)MDIndexes.COUNT_DIRECTIVES, false );
 
 			// ******
-			argsMacro = mp.AddObjectMacro( mp.GenerateArgListName(macro.Name), this.arguments );
-			specials = mp.AddObjectMacro( mp.GenerateLocalName(macro.Name+"_specials"), args.SpecialArgs );
-
-			localArrayMacro = mp.AddObjectMacro( mp.GenerateLocalName(macro.Name), localArray = new NmpArray() );
+			argsMacro = mp.AddObjectMacro( mp.GenerateArgListName( macro.Name ), this.arguments );
+			specials = mp.AddObjectMacro( mp.GenerateLocalName( macro.Name + "_specials" ), args.SpecialArgs );
+			localArrayMacro = mp.AddObjectMacro( mp.GenerateLocalName( macro.Name ), localArray = new NmpArray() );
+			objArgsMacro = mp.AddObjectMacro( mp.GenerateArgListName( macro.Name + "Objects" ), objArgsIn );
 		}
 
 
