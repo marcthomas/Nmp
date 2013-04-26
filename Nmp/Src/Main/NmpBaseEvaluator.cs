@@ -384,7 +384,7 @@ namespace Nmp {
 
 		public NmpBaseEvaluator( INmpHost host )
 		{
-			Initialize( host );
+			Initialize( null == host ? new DefaultNmpHost() : host );
 		}
 
 	

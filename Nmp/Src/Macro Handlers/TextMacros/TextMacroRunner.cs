@@ -609,6 +609,7 @@ namespace Nmp {
 		public void Dispose()
 		{
 			mp.DeleteMacro( localArrayMacro );
+			mp.DeleteMacro( specials );
 			mp.DeleteMacro( argsMacro );
 		}
 	
