@@ -965,7 +965,33 @@ namespace Nmp {
 		{
 			return string.Format( "__array{0}{1}", macroDataNameIndex++, appendText );
 		}
-		
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public bool IsGeneratedName( string name )
+		{
+			// ******
+			if( name.StartsWith( "__macro" ) ) {
+				//
+				// catches both "__macro" and "__macroArgs"
+				//
+				return true;
+			}
+			else if( name.StartsWith( "__local" ) ) {
+				return true;
+			}
+			else if( name.StartsWith( "__list" ) ) {
+				return true;
+			}
+			else if( name.StartsWith( "__array" ) ) {
+				return true;
+			}
+
+			// ******
+			return false;
+		}
+
 
 		/////////////////////////////////////////////////////////////////////////////
 

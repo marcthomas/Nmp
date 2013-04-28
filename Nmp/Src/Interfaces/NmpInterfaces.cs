@@ -668,6 +668,7 @@ namespace Nmp {
 		string	GenerateLocalName( string appendText );
 		string	GenerateListName( string appendText );
 		string	GenerateArrayName( string appendText );
+		bool IsGeneratedName( string name );
 
 
 		// ******
