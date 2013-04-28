@@ -274,6 +274,22 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 		/// <summary>
+		/// Clears the master output buffer so the next invocation of the macro
+		/// processor will have a clear output buffer; allows the caller to
+		/// clear the buffer after having called InvokeMacro( ... newOutput=false)
+		/// without setting newOutput to true on the next invocation
+		/// </summary>
+
+		public void ClearMasterOutput()
+		{
+			using( new NMP.NmpMakeCurrent( nmp ) ) {
+				nmp.ClearMasterOutput();
+			}
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
 		/// Invokes a macro by name
 		/// </summary>
 		/// <param name="macroName"></param>

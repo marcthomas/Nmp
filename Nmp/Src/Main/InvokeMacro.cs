@@ -32,7 +32,7 @@ namespace Nmp {
 		/////////////////////////////////////////////////////////////////////////////
 
 		public MacroNotFoundException( string macroName )
-			:	base(macroName)
+			:	base(string.Format("could not locate macro named \"{0}\"", macroName))
 		{
 			this.MacroName = macroName;
 		}

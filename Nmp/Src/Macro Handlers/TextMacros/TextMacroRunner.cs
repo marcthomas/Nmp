@@ -388,7 +388,7 @@ namespace Nmp {
 					// ******			
 					if( value.StartsWith( "$[]" ) ) {
 						var objArgStr = RefObjectArgument( value.Substring(3) );
-						return string.IsNullOrEmpty(objArgStr) ? untouchedValue : objArgStr;
+						return null == objArgStr ? untouchedValue : objArgStr;
 					}
 					if( '$' == value [ 0 ] ) {
 						value = value.Substring( 1 );
@@ -414,6 +414,7 @@ namespace Nmp {
 									// named arg but was not passed in
 									//
 									// jpm: 13 Dec 2012
+									ThreadContext.MacroWarning( "${0} was found but there were too few arguments passed to macro \"{1}\"", value, macro.Name );
 									return string.Empty;
 								}
 							}
@@ -444,14 +445,54 @@ namespace Nmp {
 			// ******
 			var index = macro.ArgumentNames.IndexOf( value );
 			if( index < 0 ) {
-				return string.Empty;
+				return null;
 			}
 
 			// ******
-
+			//
 			// __macroArgs122Objects[ 4 ]
+			//
+			// objArgsMacro is a macro whose object is the list of input object which
+			// we index to give access
+			//
+			//    $[]fred  in  (#defmacro `macro', `tina', `fred' ...)
+			//
+			//       gives us __macroArgs122Objects[ 1 ]  which will be invoked as an indexer
+			//
+			// if `fred' was the name of a macro we could also access it like this
+			//
+			//   $fred
+			//
+			//    which is translated as:  arguments[ 1 ]
+			//
+			//      where arguments[] is a string list of all the input objects where ToString() was called on each
+			//        arguments[1]'s text (the macro name) might be "isDead" so
+			//
+			//           $fred  ->  isDead      which will invoke that macro
 
-			return string.Format( "{0}[{1}]", objArgsMacro.Name, index );
+			if( index >= arguments.Count ) {
+				//
+				// macro caller did not pass enought arguments, return empty string because
+				// too few arguments is not an error
+				//
+				ThreadContext.MacroWarning( "$[]{0} was found but there were too few arguments passed to macro \"{1}\"", value, macro.Name );
+				return string.Empty;
+			}
+
+			var argumentName = arguments [ index ];
+			if( mp.IsGeneratedName(argumentName) ) {
+				//
+				// if the object is a macro or an object this allows two things
+				//
+				// (1) it short circuit's the indexer call
+				//
+				// (2) it allows $[] to be used on the generated object and macros passed to to the macro, such as foreach target macro
+				//
+				return arguments [ index ];
+			}
+			else {
+				return string.Format( "{0}[{1}]", objArgsMacro.Name, index );
+			}
 
 		}
 

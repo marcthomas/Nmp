@@ -43,20 +43,16 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		private NmpTuple<string, int, int> CurrentLocation( IMacroInvocationRecord item )
+		private NmpTuple<string, int, int> CurrentLocation()
 		{
 			// ******
-			//IMacroInvocationRecord item = stack.Peek();
-			
-			// ******
-			//if( null == item.Macro ) {
-			//	//
-			//	// should not happen
-			//	//
-			//	throw new ShouldNeverHappenException( "null == item.Macro" );
-			//}
+			if( invocationStack.Empty ) {
+				return new NmpTuple<string, int, int>( string.Empty, 0, 0 );
+			}
 
 			// ******
+			var item = invocationStack.Peek();
+
 			string fileName = item.SourceName;
 			int line = item.Line;
 			int column = item.Column;
@@ -82,6 +78,15 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		private ExecutionInfo GetExecutionInfo( int level, string msg )
+		{
+			NmpTuple<string, int, int> currentLocation = CurrentLocation();
+			return new ExecutionInfo( level, currentLocation.Item1, currentLocation.Item2, currentLocation.Item3, msg );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
 		private NmpTuple<string, int, int> GenerateInvocationStackDump( StringBuilder sb )
 		{
 			// ******
@@ -102,29 +107,13 @@ namespace Nmp {
 					sb.AppendFormat( "Root file: \"{0}\"\n", item.SourceName );
 				}
 				else {
-					//line = item.Line;
-					//column = item.Column;
-					//fileName = item.SourceName;
-
-					// ******
 					string macroName = string.Empty;
 					if( null != item.Macro ) {
 						macroName = item.Macro.Name;
 					}
 
-					//// ******
-					//if( item.CalledFromMacro ) {
-					//	//
-					//	// file/line info from the macro that called the macro
-					//	// represented by the current 'item' - the next lower item
-					//	// on the stack
-					//	//
-					//	IMacro macro = stack.GetCallingMacro( item );
-					//	fileName = macro.MacroType == MacroType.Text ? macro.SourceFile : macro.MacroType.ToString() + " Macro";
-					//	line += macro.MacroStartLine;
-					//}
-
-					NmpTuple<string, int, int> currentLocation = CurrentLocation( item );
+					// ******
+					NmpTuple<string, int, int> currentLocation = CurrentLocation();
 					fileName = currentLocation.Item1;
 					line = currentLocation.Item2;
 					column = currentLocation.Item3;
@@ -176,24 +165,6 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		private ExecutionInfo GetExecutionInfo( StringBuilder stackDumpResult, string msg )
-		{								
-			// ******
-			StringBuilder sb = new StringBuilder();
-			NmpTuple<string, int, int> currentLocation = GenerateInvocationStackDump( sb );
-
-			// ******
-			if( null != stackDumpResult ) {
-				stackDumpResult = sb;
-			}
-
-			// ******
-			return new ExecutionInfo( 0, currentLocation.Item1, currentLocation.Item2, currentLocation.Item3, msg );
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
 		private void PreErrorWarningText( string fmt, params object [] args )
 		{
 			if( 0 == args.Length ) {
@@ -231,7 +202,12 @@ namespace Nmp {
 
 			// ******
 			StringBuilder sb = new StringBuilder();
-			NmpTuple<string, int, int> currentLocation = GenerateInvocationStackDump( sb );
+			if( invocationStack.Empty ) {
+				sb.AppendLine( "*** the invocation stack is empty ***" );
+			}
+			else {
+				GenerateInvocationStackDump( sb );
+			}
 
 			// ******
 			sb.Append( preErrorWarningText );
@@ -250,12 +226,13 @@ namespace Nmp {
 			}
 
 			// ******
-			notifier.ExecutionInfo = new ExecutionInfo(	0,
-																									currentLocation.Item1,
-																									currentLocation.Item2,
-																									currentLocation.Item3,
-																									sb.ToString()
-																								);
+			//notifier.ExecutionInfo = new ExecutionInfo(	0,
+			//																						currentLocation.Item1,
+			//																						currentLocation.Item2,
+			//																						currentLocation.Item3,
+			//																						sb.ToString()
+			//																					);
+			notifier.ExecutionInfo = GetExecutionInfo( 0, sb.ToString() );
 
 			// ******
 			if( null == notifier.ExceptionToThrow ) {
@@ -298,13 +275,7 @@ namespace Nmp {
 			sb.AppendFormat( safeText );
 
 			// ******
-			NmpTuple<string, int, int> currentLocation = CurrentLocation( invocationStack.Peek() );
-			notifier.ExecutionInfo = new ExecutionInfo(	0,
-																									currentLocation.Item1,
-																									currentLocation.Item2,
-																									currentLocation.Item3,
-																									sb.ToString()
-																								);
+			notifier.ExecutionInfo = GetExecutionInfo( 0, sb.ToString() );
 
 			// ******
 			host.Warning( notifier, idNmpInstance + safeText );
@@ -316,14 +287,15 @@ namespace Nmp {
 		public void WriteMessage( string fmt, params object [] args )
 		{					
 			// ******			
-			NmpTuple<string, int, int> currentLocation = CurrentLocation( invocationStack.Peek() );
 			string message = Helpers.SafeStringFormat( fmt, args );
-			var ei = new ExecutionInfo(	0,
-																	currentLocation.Item1,
-																	currentLocation.Item2,
-																	currentLocation.Item3,
-																	message
-																);
+			//NmpTuple<string, int, int> currentLocation = CurrentLocation();
+			//var ei = new ExecutionInfo(	0,
+			//														currentLocation.Item1,
+			//														currentLocation.Item2,
+			//														currentLocation.Item3,
+			//														message
+			//													);
+			var ei = GetExecutionInfo( 0, message );
 
 			// ******
 			host.WriteMessage( ei, idNmpInstance + message );
@@ -335,14 +307,16 @@ namespace Nmp {
 		public void Trace( string fmt, params object [] args )
 		{	
 			// ******			
-			NmpTuple<string, int, int> currentLocation = CurrentLocation( invocationStack.Peek() );
 			string message = Helpers.SafeStringFormat( fmt, args );
-			var ei = new ExecutionInfo(	0,
-																	currentLocation.Item1,
-																	currentLocation.Item2,
-																	currentLocation.Item3,
-																	string.Empty
-																);
+			//NmpTuple<string, int, int> currentLocation = CurrentLocation();
+			//var ei = new ExecutionInfo(	0,
+			//														currentLocation.Item1,
+			//														currentLocation.Item2,
+			//														currentLocation.Item3,
+			//														string.Empty
+			//													);
+			var ei = GetExecutionInfo( 0, message );
+			
 
 			// ******
 			host.WriteMessage( ei, idNmpInstance + message );

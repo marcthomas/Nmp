@@ -61,7 +61,7 @@ namespace Nmp {
 
 				// ******
 				if( nmp.inEval ) {
-					throw new Exception( "evaluation already in progress" );
+					throw new Exception( "Nmp: evaluation already in progress, Nmp is not reentrant" );
 				}
 				
 				// ******

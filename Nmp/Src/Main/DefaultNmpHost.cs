@@ -42,7 +42,8 @@ namespace Nmp {
 			Console.WriteLine( "{0} ({1},0): error: {2}", fileName, ei.Line, Helpers.SafeStringFormat( fmt, args ) );
 
 			// ******
-			throw new ExitException(1);
+			//throw new ExitException(1);
+			Environment.Exit( 1 );
 		}
 
 
