@@ -132,9 +132,9 @@ namespace Nmp.Builtin.Macros {
 			mp.AddMacro( tempMacro );
 			
 			// ******
-			for( int i = 0; i < extraArgs.Length; i++ ) {
-				extraArgs[ i ] = extraArgs[ i ].ToString();
-			}
+			//for( int i = 0; i < extraArgs.Length; i++ ) {
+			//	extraArgs[ i ] = extraArgs[ i ].ToString();
+			//}
 
 			object [] argsToMacro = new object[ 5 + extraArgs.Length ];
 			AddExtraArgs( 5, argsToMacro, extraArgs );
