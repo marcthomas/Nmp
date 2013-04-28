@@ -36,12 +36,6 @@ namespace Nmp.Builtin.Macros {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		//
-		// #not
-		//
-		// return true or false
-		//
-		/////////////////////////////////////////////////////////////////////////////
 		/// <summary>
 		/// Negates the result of the input value
 		/// </summary>
@@ -49,11 +43,114 @@ namespace Nmp.Builtin.Macros {
 		/// <returns>Negated result</returns>
 
 		[Macro]
-		public object not( string value )
+		public bool not( string value )
 		{
 			return ! Helpers.IsMacroTrue(value);
 		}
 
 
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates all arguments passed for truthfullness
+		/// </summary>
+		/// <param name="args">arguments</param>
+		/// <returns>true if all arguments evaluate to true</returns>
+
+		[Macro]
+		public bool allTrue( params object [] args )
+		{
+			// ******
+			if( 0 == args.Length ) {
+				return false;
+			}
+
+			foreach( var arg in args ) {
+				if( !Helpers.IsMacroTrue( arg ) ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates all arguments passed for truthfullness
+		/// </summary>
+		/// <param name="args">arguments</param>
+		/// <returns>true if any argument evaluates to true</returns>
+
+		[Macro]
+		public bool anyTrue( params object [] args )
+		{
+			// ******
+			if( 0 == args.Length ) {
+				return false;
+			}
+
+			foreach( var arg in args ) {
+				if( Helpers.IsMacroTrue( arg ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates all arguments passed for truthfullness
+		/// </summary>
+		/// <param name="args">arguments</param>
+		/// <returns>true if all arguments evaluate to true</returns>
+
+		[Macro]
+		public bool allFalse( params object [] args )
+		{
+			// ******
+			if( 0 == args.Length ) {
+				return false;
+			}
+
+			foreach( var arg in args ) {
+				if( Helpers.IsMacroTrue( arg ) ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Evaluates all arguments passed for truthfullness
+		/// </summary>
+		/// <param name="args">arguments</param>
+		/// <returns>true if any argument evaluates to true</returns>
+
+		[Macro]
+		public bool anyFalse( params object [] args )
+		{
+			// ******
+			if( 0 == args.Length ) {
+				return false;
+			}
+
+			foreach( var arg in args ) {
+				if( !Helpers.IsMacroTrue( arg ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+	
+	
+	
 	}
 }
