@@ -78,10 +78,16 @@ echo *
 echo *
 echo *
 
-
-
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::
+:: copy to any projects am currently working on
 ::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+::copy "%dest\*.*"  ???
+::copy "%dest\*.dll;*.pdb"  ???
+::copy "%dest\*.dll;*.pdb;*.xml"  ???
+
+copy "%dest\*.dll;*.pdb;*.xml"  "D:\Work\2013 Forward\Templating\NetDocHelper\packages\Nmp.Core.3.0.5\lib\Net40"
+
+

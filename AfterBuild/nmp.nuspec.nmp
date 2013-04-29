@@ -95,7 +95,7 @@ _nuspec()
 genPublishBtm()@[divert]
 #.saveDivert( `upload.btm', `genPublishBtm', true)
 
-;;#Environment.SetEnvironmentVariable( `nmp_version', #version, (EnvironmentVariableTarget )1)
+;;#Environment.SetEnvironmentVariable( `nmp_version', #version)
 
 
 

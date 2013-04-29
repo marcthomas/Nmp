@@ -74,6 +74,7 @@ del /y /q "%dest"
 :: echo ***
 echo %config
 copy /U /y "..\Nmp\%config\*.dll" "%dest"
+copy /U /y "..\Nmp\%config\*.pdb" "%dest"
 copy /U /y "..\Nmp\%config\*.xml" "%dest"
 
 
@@ -88,7 +89,7 @@ nmp -d:#lib=%dest\Nmp.dll nmp.nuspec.nmp
 ::
 nuget pack nmp.nuspec -Exclude *.nmp -Exclude *.txt -Exclude *.btm
 
-
+copy *.nupkg ".....\_Nuget-Packages"
 
 
 exit 0
