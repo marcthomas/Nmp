@@ -45,6 +45,7 @@ namespace Nmp.Expressions {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string [] SplitHelper( string macroName, string splitOrRegex, bool usingRegex )
 		{
 			// ******
@@ -85,6 +86,7 @@ namespace Nmp.Expressions {
 		/// <returns>	. </returns>
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string [] SplitEx( string regExStr )
 		{
 			return SplitHelper( "SplitEx", regExStr, true );
@@ -100,6 +102,7 @@ namespace Nmp.Expressions {
 		/// <returns>	. </returns>
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string [] Split( string splitStr )
 		{
 			return SplitHelper( "Split", splitStr, false );
@@ -115,6 +118,7 @@ namespace Nmp.Expressions {
 		/// <returns>	. </returns>
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string MatchEx( string regExStr )
 		{
 			//
@@ -162,7 +166,8 @@ namespace Nmp.Expressions {
 		///
 		/// <returns>	. </returns>
 		////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+
+		[Macro]
 		public NmpArray ExtractSubexpressions( string regExStr )
 		{
 			return ExtractSubexpressions( regExStr, MaxParseItems );
@@ -197,7 +202,8 @@ namespace Nmp.Expressions {
 		///		a subexpression did not match any text then it will be empty.
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+
+		[Macro]
 		public NmpArray ExtractSubexpressions( string regExStr, int maxItems )
 		{
 			// ******
@@ -274,6 +280,7 @@ namespace Nmp.Expressions {
 		/// <returns>	An array of extractes strings </returns>
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string [] Extract( string regExStr )
 		{
 			return Extract( regExStr, MaxParseItems );
@@ -290,6 +297,7 @@ namespace Nmp.Expressions {
 		/// <returns>	An array of extracted strings </returns>
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string [] Extract( string regExStr, int maxItems )
 		{
 			// ******
@@ -367,7 +375,7 @@ namespace Nmp.Expressions {
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
 
-
+		[Macro]
 		public string ReplaceEx( string regExStr, params object [] args )
 		{
 			const string NO_REPLACE = "/nr";
@@ -509,6 +517,7 @@ namespace Nmp.Expressions {
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string Translate( string lookup, string replace )
 		{
 			// ******
@@ -575,6 +584,7 @@ namespace Nmp.Expressions {
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string Reverse()
 		{
 			// ******
@@ -611,6 +621,7 @@ namespace Nmp.Expressions {
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string TranslateEscapes()
 		{
 			return theString.TranslateEscapes();
@@ -630,6 +641,7 @@ namespace Nmp.Expressions {
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string EscapeEscapes()
 		{
 			return theString.EscapeEscapes();
@@ -653,7 +665,8 @@ namespace Nmp.Expressions {
 		/// 	.
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
-		
+
+		[Macro]
 		public string HtmlEncode( bool encodeAngleBrackets )
 		{
 			return theString.HtmlEncode( encodeAngleBrackets );
@@ -672,7 +685,8 @@ namespace Nmp.Expressions {
 		/// 	.
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
-		
+
+		[Macro]
 		public string HtmlDecode()
 		{
 			return theString.HtmlDecode();
@@ -681,6 +695,7 @@ namespace Nmp.Expressions {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string SetString( char ch, int count )
 		{
 			if( count <= 0 ) {
@@ -693,6 +708,7 @@ namespace Nmp.Expressions {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string SetString( string str, int count )
 		{
 			if( count <= 0 ) {

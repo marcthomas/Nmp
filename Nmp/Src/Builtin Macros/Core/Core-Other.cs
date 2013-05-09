@@ -271,7 +271,53 @@ namespace Nmp.Builtin.Macros {
 
 		/////////////////////////////////////////////////////////////////////////////
 		/// <summary>
-		/// Transforms the supplied text with the markdown translator as used by Stack Overflow
+		/// see node_markdown()
+		/// </summary>
+		/// <param name="str">Required, the first string</param>
+		/// <param name="args">Any number of optional strings</param>
+		/// <returns></returns>
+
+		//[Macro]
+		//public string markdown( string str, params string [] args )
+		//{
+		//	// ******
+		//	try {
+		//		var markdown = new Markdown { };
+		//		var sb = new StringBuilder();
+
+		//		if( !string.IsNullOrEmpty( str ) ) {
+		//			sb.Append( markdown.Transform( str ) );
+		//		}
+
+		//		foreach( var arg in args ) {
+		//			if( !string.IsNullOrEmpty( arg ) ) {
+		//				sb.Append( markdown.Transform( arg ) );
+		//			}
+		//		}
+
+		//		// ******
+		//		return sb.ToString();
+		//	}
+		//	catch ( Exception ex ){
+		//		ThreadContext.MacroError( "while processing markdown text: {0}", ex.Message );
+		//	}
+
+		//	return string.Empty;
+		//}
+
+		[Macro]
+		public string markdown( string str, params string [] args )
+		{
+			return node_markdown( str, args );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Transforms the supplied text with the 'marked' markdown converter 
+		/// package for node
+		/// 
+		/// node.exe must be in your path and 'marked' must have been installed
 		/// 
 		/// Note: markdown can also be invoked with (#block `markdown' ...)
 		/// </summary>
@@ -280,34 +326,59 @@ namespace Nmp.Builtin.Macros {
 		/// <returns></returns>
 
 		[Macro]
-		public string markdown( string str, params string [] args )
+		public string node_markdown( string str, params string [] args )
 		{
 			// ******
-			try {
-				var markdown = new Markdown { };
-				var sb = new StringBuilder();
-
-				if( !string.IsNullOrEmpty( str ) ) {
-					sb.Append( markdown.Transform( str ) );
-				}
-
-				foreach( var arg in args ) {
-					if( !string.IsNullOrEmpty( arg ) ) {
-						sb.Append( markdown.Transform( arg ) );
-					}
-				}
-
-				// ******
-				return sb.ToString();
-			}
-			catch ( Exception ex ){
-				ThreadContext.MacroError( "while processing markdown text: {0}", ex.Message );
+			if( string.IsNullOrEmpty( External.FindExe( "node.exe" ) ) ) {
+				ThreadContext.MacroError( "could not locate node.exe in the path" );
 			}
 
-			return string.Empty;
+			// ******
+			var sb = new StringBuilder();
+
+			if( !string.IsNullOrEmpty( str ) ) {
+				sb.Append( str );
+			}
+
+			foreach( var arg in args ) {
+				if( !string.IsNullOrEmpty( arg ) ) {
+					sb.Append( arg );
+				}
+			}
+
+
+			// ******
+			string format = @"
+var fs = require( 'fs');
+var marked = require( 'marked');
+console.log( marked.parse(fs.readFileSync('{0}',{{encoding:'utf8'}})));
+";
+
+			var mdTempFileName = Path.GetTempFileName();
+			File.WriteAllText( mdTempFileName, sb.ToString() );
+			var jsSource = string.Format( format, mdTempFileName.Replace( "\\", "\\\\" ) );
+
+			var jsTempFileName = Path.GetTempFileName();
+			File.WriteAllText( jsTempFileName, jsSource );
+
+			// ******
+			var waitTime = 15 * 1000;
+			ExecResult result = External.RunNode( null, '"' + jsTempFileName + '"', waitTime );
+
+			if( 0 != result.ExitCode ) {
+				ThreadContext.MacroError( "executing node.exe failed:\n" + result.StdOut );
+			}
+
+			// ******
+			File.Delete( jsTempFileName );
+			File.Delete( mdTempFileName );
+
+			// ******
+			return result.StdOut;
 		}
-	
-	
+
+
+
 	
 	}
 

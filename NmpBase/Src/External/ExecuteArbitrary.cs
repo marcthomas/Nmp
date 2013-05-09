@@ -54,7 +54,7 @@ namespace NmpBase {
 		protected	string	stdInput = string.Empty;
 		protected	string	error = string.Empty;	
 		
-		protected	string	path = string.Empty;
+		protected	string	envPath = string.Empty;
 
 		protected	StringBuilder output = new StringBuilder();
 		protected	StringBuilder errOutput = new StringBuilder();
@@ -65,7 +65,7 @@ namespace NmpBase {
 		/////////////////////////////////////////////////////////////////////////////
 		
 		public string	StdInput		{ set { stdInput = value; } get { return stdInput; } }
-		public string	Path				{ set { path = value; } get { return path; } }
+		public string EnvPath { set { envPath = value; } get { return envPath; } }
 		
 		public int		ExitCode		{ get { return exitCode; } }
 		public string	Error				{ get { return error; } }
@@ -137,13 +137,13 @@ namespace NmpBase {
 				lastCmdLine = si.Arguments;
 
 				// ******
-				if( ! String.IsNullOrEmpty(path) ) {
+				if( ! String.IsNullOrEmpty(envPath) ) {
 					//
 					// prepend path
 					//
 					string curPath = si.EnvironmentVariables[ "path" ];
 					sb.Length = 0;
-					sb.AppendFormat( "{0};{1}", path, curPath );
+					sb.AppendFormat( "{0};{1}", envPath, curPath );
 					si.EnvironmentVariables[ "path" ] = sb.ToString();
 				}
 
@@ -224,8 +224,62 @@ namespace NmpBase {
 
 			return result;
 		}
-		
-		
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static ExecResult RunNode( string pathToNode, string cmdLine, int waitTime )
+		{
+			// ******
+			if( string.IsNullOrEmpty( pathToNode ) ) {
+				pathToNode = FindExe( "node.exe" );
+			}
+
+			// ******
+			var external = new External();
+			return external.Execute( pathToNode, cmdLine, waitTime );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		//public static ExecResult RunNodeWithFile( string pathToNode, string inputText, int waitTime )
+		//{
+		//	const string defJsFileName = "_temp.js";
+
+		//	// ******
+		//	var filePath = Path.Combine( Directory.GetCurrentDirectory(), defJsFileName );
+		//	File.WriteAllText( filePath, inputText );
+
+		//	// ******
+		//	return RunNode( pathToNode, filePath, waitTime );
+		//}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Locate exe file using the path environmental variable
+		/// </summary>
+		/// <param name="exeName"></param>
+		/// <returns>path including exe name, or emptyr string</returns>
+
+		public static string FindExe( string exeName )
+		{
+			// ******
+			var varPath = Environment.GetEnvironmentVariable( "path" );
+			var pathStrings = varPath.Split( ';' );
+
+			foreach( var path in pathStrings ) {
+				var fullPath = System.IO.Path.Combine( path, exeName );
+				if( File.Exists( fullPath ) ) {
+					return fullPath;
+				}
+			}
+
+			// ******
+			return string.Empty;
+		}
+
 	}
 	
 }
