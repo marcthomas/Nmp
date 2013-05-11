@@ -414,8 +414,22 @@ namespace Nmp {
 									// named arg but was not passed in
 									//
 									// jpm: 13 Dec 2012
-									ThreadContext.MacroWarning( "${0} was found but there were too few arguments passed to macro \"{1}\"", value, macro.Name );
-									return string.Empty;
+									//
+									if( macro.ArgumentNames.Count > 1 ) {
+										//
+										// too few arguments - not just one being empty, a comma would have to be left out
+										//
+										ThreadContext.MacroWarning( "there were too few arguments passed to macro \"{0}\", the parameter named \"{1}\" could not be set", macro.Name, value );
+										return '$' + value;
+									}
+									else {
+										//
+										// the single argument expected was not passed OR it was empty, the parser would have had no way to
+										// know ??? really ???
+										//
+										//ThreadContext.MacroWarning( "the macro \"{0}\" expected a single argument was empty", macro.Name );
+										return string.Empty;
+									}
 								}
 							}
 
@@ -445,7 +459,12 @@ namespace Nmp {
 			// ******
 			var index = macro.ArgumentNames.IndexOf( value );
 			if( index < 0 ) {
-				return null;
+				if( 1 == value.Length ) {
+					index = "0123456789".IndexOf( value[0] );
+					if( index < 0 ) {
+						return null;
+					}
+				}
 			}
 
 			// ******
@@ -509,7 +528,10 @@ namespace Nmp {
 		//
 		//private static string userMacroSubstStr = @"(?xs)([$]?[$][a-zA-Z_#][a-zA-Z0-9_#]*)|([\\$]?[$][0-9#*@])|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
 
-		private static string userMacroSubstStr = @"(?xs)([$]?[$][a-zA-Z_#][a-zA-Z0-9_#]*)|([$]?\$\[\][a-zA-Z_#][a-zA-Z0-9_#]*)|([\\$]?[$][0-9#*@])|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
+		//private static string userMacroSubstStr = @"(?xs)([$]?[$][a-zA-Z_#][a-zA-Z0-9_#]*)|([$]?\$\[\][a-zA-Z_#][a-zA-Z0-9_#]*)|([\\$]?[$][0-9#*@])|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
+
+
+		private static string userMacroSubstStr = @"(?xs)([$]?[$][a-zA-Z_#][a-zA-Z0-9_#]*)|([$]?\$\[\][a-zA-Z0-9_#][a-zA-Z0-9_#]*)|([\\$]?[$][0-9#*@])|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
 
 		private static Regex userMacroRegex = new Regex( userMacroSubstStr );
 
