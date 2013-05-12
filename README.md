@@ -6,7 +6,7 @@ Nmp (Net Macro Processor) is a text templating engine that runs under .Net 4.0 a
 
 You can use Nmp in one of four ways:
 
-* From the **command line** using the NmpCommandLineHost "_nmp.exe_"
+* From the **command line** using the NmpCommandLineHost _nmp.exe_
 * Using **Visual Studio 2012** and the _NmpCustomTool.dll_
 * Using **MSBuild** with the _NmpMSBuildTask.dll_
 * As a **library** from your own project using the _NmpBaseEvaluator_ class in _Nmp.dll_
@@ -80,7 +80,7 @@ With the Nmp directory in your path running nmp.exe is as simple as:
 The file "nmpScriptFile.txt" will be output by Nmp because the command line host defaults to naming the output file the same as the input file with the trailing file extension removed. You can add a file extension from within a script by using the #.setOutputExtension(.ext) macro.
 
 ### Visual Studio Custom Tool:
-You will need the command line versions of Nmp (nmp.exe) in your path - if you have everything installed in the same diretory (as would be the case if you download the pre-built binaries in the zip file) you're good to go. In the install directory you need to run the macro script file "NmpRegister.reg.nmp" through nmp.exe.
+You will need the command line versions of Nmp (nmp.exe) in your path - if you have everything installed in the same directory (as would be the case if you download the pre-built binaries in the zip file) you're good to go. In the install directory you need to run the macro script file "NmpRegister.reg.nmp" through nmp.exe.
 
       nmp NmpRegister.reg.nmp
 
@@ -102,7 +102,7 @@ To use the Nmp custom tool create a new text file in VS and name it with the ".n
 
 You can view, compile and play with the source by cloning the 'dev' branch from [GitHub](https://github.com/jmclain/Nmp). If you don't want to mess with git you can download the source via zip file at the same location.
 
-To compile the source you **must** have **nuget.exe** in your path. Before you compile Nmp with VS 2012 you must go to the "packages" directory (off the Nmp root directory) and execute the "_**get-packages.bat**_" file to download the "xunit" and "xunit.extension" nuget packages.
+To compile the source you **must** have **nuget.exe** in your path. Before you compile Nmp with VS 2012 you must go to the "packages" directory (off the Nmp root directory) and execute the "**get-packages.bat**" file to download the "xunit" and "xunit.extension" nuget packages.
 
 Once compiled you will find various combinations of files in the "Current" directory that will located off the the Nmp root directory.
 
