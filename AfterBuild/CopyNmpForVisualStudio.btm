@@ -1,9 +1,9 @@
 @echo off
 
-del /y /q "C:\Program Files (x86)\Digital Writing\Net Macro Processor"
+del /y /q "C:\Program Files (x86)\Net Macro Processor"
 
 
-copy /U /y "C:\Users\joe\SkyDrive\Portable\NMP\v3.0 Testing\*.*" "C:\Program Files (x86)\Digital Writing\Net Macro Processor"
+copy /U /y "C:\Users\joe\SkyDrive\Portable\NMP\v3.0 Testing\*.*" "C:\Program Files (x86)\Net Macro Processor"
 
 pause
 exit

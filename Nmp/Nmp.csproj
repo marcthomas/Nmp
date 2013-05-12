@@ -44,9 +44,6 @@
     <AssemblyOriginatorKeyFile>Nmp Key File.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MarkdownSharp">
-      <HintPath>..\Lib\Net 4.0\MarkdownSharp.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.JScript" />
     <Reference Include="System" />

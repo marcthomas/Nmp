@@ -13,7 +13,7 @@
 	.tbwrap.
     .trim.
 	.wscompress.
-The .NET Macro Processor (NMP) is a general purpose text macro processor. This package contains the core assemblies required to host Nmp in a .Net project.
+Nmp is a templating macro processor that allows you to generated text fragments or entire files. This package contains the core assemblies required to host Nmp in a .Net project.
 (#endmacro)
 
 
@@ -93,7 +93,7 @@ exit 0
 _nuspec()
 
 genPublishBtm()@[divert]
-#.saveDivert( `upload.btm', `genPublishBtm', true)
+#.saveDivert( `push_nuget.btm', `genPublishBtm', true)
 
 ;;#Environment.SetEnvironmentVariable( `nmp_version', #version)
 

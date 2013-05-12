@@ -91,5 +91,7 @@ nuget pack nmp.nuspec -Exclude *.nmp -Exclude *.txt -Exclude *.btm
 
 copy *.nupkg ".....\_Nuget-Packages"
 
+:::copy *.nupkg ..\
+
 
 exit 0

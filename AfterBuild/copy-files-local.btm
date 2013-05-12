@@ -1,4 +1,7 @@
 @echo off
+::
+:: this batch file uses TCC from jpsoft.com - not free
+::
 cd
 
 if "1" == "%NmpBuildMachine" goto passGo
@@ -46,19 +49,47 @@ cancel
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
+::
+:: this cute bit of batch-filery reads the version of the Nmp.dll and stores it in
+:: a variable - GetAssemblyVersion can be found at "jmclain/get-assembly-version" on
+:: github
+::
+echo nmp_version=^ >version
+getassemblyversion nmp/debug/nmp.dll >>version
+set /r version
+del version
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
 :: outputs to skydrive: "C:\Users\joe\SkyDrive\Portable\NMP\v3.0 Testing"
 ::
 set dest=%@full[%1]
 set config=%2
-set zipName=Nmp-v3-net40- %_day-%_monthf-%_year.zip
+set zipName=Nmp%nmp_version.zip
+
 
 ::
 :: delete any files currently in %des
 ::
 del /y /q "%dest"
 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-:: copy files
+:: current directory is $(SolutionDir)Current
+::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+:: copy files to All directory for installer
+::
+md All
+del /y /q All
+copy /U /y "Nmp\%config\*.dll;*.xml"    "All"
+copy /U /y "CmdLineHost\%config\nmp.exe;*.dll;nmp.config"    "All"
+copy /U /y "CustomTool\%config\*.dll;*.nmp" "All"
+copy /U /y "MsBuildTask\%config\NmpMsBuild*.dll" "All"
+
+::
+:: copy files to my local (skydrive) run directory
 ::
 copy /U /y "Nmp\%config\*.*"    "%dest"
 copy /U /y "CmdLineHost\%config\*.exe;*.dll;*.config"    "%dest"
@@ -77,6 +108,44 @@ echo nmp_version %nmp_version
 echo *
 echo *
 echo *
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+:: copy to a deployment directory
+::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+set deploy=Deploy/%config
+md /s "%deploy"
+del /y /q "%deploy"
+
+echo *
+echo *
+echo *
+@echo copy files to deploy
+echo *
+echo *
+echo *
+
+copy /U /y "Nmp.Core/Nmp.Core.*.nupkg;push_nuget.btm"  "%deploy"
+echo *
+echo *
+echo *
+copy /U /y "%dest\%zipName" "%deploy"
+
+echo *
+echo *
+echo *
+echo *
+
+echo @echo off                                                                >"%deploy/copy-zip-to-skydrive.btm"
+echo echo ***                                                                 >>"%deploy/copy-zip-to-skydrive.btm"
+echo echo copying %zipName to skydrive                                        >>"%deploy/copy-zip-to-skydrive.btm"
+echo echo ***                                                                 >>"%deploy/copy-zip-to-skydrive.btm"
+echo copy /U /y "%zipName" "C:\Users\joe\SkyDrive\Public\Net Macro Processor" >>"%deploy/copy-zip-to-skydrive.btm"
+echo pause Done ...                                                           >>"%deploy/copy-zip-to-skydrive.btm"
+echo exit 0                                                                   >>"%deploy/copy-zip-to-skydrive.btm"
+
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::

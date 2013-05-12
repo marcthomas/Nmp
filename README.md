@@ -1,15 +1,14 @@
 Readme.txt
 ==========
 
-##April 2013 - 3.0.1
 
-Nmp (Net Macro Processor) is a text macro processor that runs under .Net 4.5, it should compile without changes on .Net 4.0 and (at one point) under 3.5 and Mono - not sure about those last two at this point.
+Nmp (Net Macro Processor) is a text macro processor that runs under .Net 4.0, Mono (2.10.9), and will compile without changes on .Net 4.5.
 
 You can use Nmp in one of four ways:
 
 * From the command line using the NmpCommandLineHost "nmp.exe".
-* Using Visual Studio 2012 and NmpCustomTool, more about that later.
-* Using MSBuild with the NmpMSBuildTask. Have not tested this in a while, it should still work?
+* Using Visual Studio 2012 and the NmpCustomTool
+* Using MSBuild with the NmpMSBuildTask
 * As a library from your own project using the NmpBaseEvaluator class in Nmp.dll.
 
 Before we go any futher here's an example using a macro file from the command line:
