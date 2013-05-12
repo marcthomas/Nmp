@@ -161,7 +161,6 @@ namespace Nmp.Builtin.Macros {
 		/// <param name="minute"></param>
 		/// <param name="second"></param>
 		/// <param name="ms"></param>
-		/// <param name="utc"></param>
 		/// <returns></returns>
 
 		[Macro]

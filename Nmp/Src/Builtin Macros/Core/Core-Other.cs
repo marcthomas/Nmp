@@ -18,8 +18,6 @@ using System.Reflection;
 using Microsoft.JScript;
 using Microsoft.JScript.Vsa;
 
-using MarkdownSharp;
-
 using NmpBase;
 using Nmp;
 using Global;
