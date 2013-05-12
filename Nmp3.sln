@@ -44,6 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Common", ".Common", "{FDD8
 	ProjectSection(SolutionItems) = preProject
 		Common\Attributes.cs = Common\Attributes.cs
 		Common\SharedAssemblyInfo.cs = Common\SharedAssemblyInfo.cs
+		Common\SharedAssemblyInfo.cs.nmp = Common\SharedAssemblyInfo.cs.nmp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Documentation", ".Documentation", "{48B2E038-434D-4F0F-85F2-BB3F2BAAD932}"
