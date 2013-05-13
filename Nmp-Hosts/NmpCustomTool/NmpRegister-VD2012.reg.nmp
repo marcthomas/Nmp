@@ -1,0 +1,46 @@
+;;
+;; the following generates NmpRegister.reg file which can be used to register the
+;; Nmp Custom Tool for Visual Studio
+;;
+#pushDivert(-1)
+;;
+;; must be unicode for Registry Editor
+;;
+#.setOutputEncoding( `unicode')
+
+#.define( `#Root', `HKEY_CURRENT_USER\Software\Microsoft\WDExpress\\`'$0')
+
+;;
+;; Codebase for custom tool dll - current currentDirectory
+;;
+#.define( `#Codebase', #.echo(#.currentDirectory\NmpCustomTool.dll).Replace(`\\', `\\\'))
+
+(#defmacro `#register', `version')
+[#Root($version)\CLSID\{d707539d-6d2a-4213-bee2-ec0469b392dc}]
+@="Net Macro Processor 3"
+"Class"="NmpCustomTool.NetMacroProcessor"
+"CodeBase"="#Codebase"
+"InprocServer32"="mscoree.dll"
+"ThreadingModel"="Both"
+
+[#Root($version)\Generators\{164B10B9-B200-11D0-8C61-00A0C91E29D5}\NMP]
+@="Net Macro Processor"
+"CLSID"="{d707539d-6d2a-4213-bee2-ec0469b392dc}"
+"GeneratesDesignTimeSource"=dword:00000001
+
+[#Root($version)\Generators\{164B10B9-B200-11D0-8C61-00A0C91E29D5}\.nmp]
+@="NMP"
+
+[#Root($version)\Generators\{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}\NMP]
+@="Net Macro Processor"
+"CLSID"="{d707539d-6d2a-4213-bee2-ec0469b392dc}"
+"GeneratesDesignTimeSource"=dword:00000001
+
+[#Root($version)\Generators\{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}\.nmp]
+@="NMP"
+(#endmacro)
+#popDivert()-
+Windows Registry Editor Version 5.00
+
+#register(`11.0')
+#register(`11.0_Config')
