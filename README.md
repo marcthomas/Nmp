@@ -7,7 +7,7 @@ Nmp (Net Macro Processor) is a text templating engine that runs under .Net 4.0 a
 You can use Nmp in one of four ways:
 
 * From the **command line** using the NmpCommandLineHost _nmp.exe_
-* Using **Visual Studio 2012** and the _NmpCustomTool.dll_
+* Using **Visual Studio 2012** and **Windows Desktop Express 2012** using the _NmpCustomTool.dll_
 * Using **MSBuild** with the _NmpMSBuildTask.dll_
 * As a **library** from your own project using the _NmpBaseEvaluator_ class in _Nmp.dll_
 
@@ -80,15 +80,25 @@ With the Nmp directory in your path running nmp.exe is as simple as:
 The file "nmpScriptFile.txt" will be output by Nmp because the command line host defaults to naming the output file the same as the input file with the trailing file extension removed. You can add a file extension from within a script by using the #.setOutputExtension(.ext) macro.
 
 ### Visual Studio Custom Tool:
-You will need the command line versions of Nmp (nmp.exe) in your path - if you have everything installed in the same directory (as would be the case if you download the pre-built binaries in the zip file) you're good to go. In the install directory you need to run the macro script file "NmpRegister.reg.nmp" through nmp.exe.
 
-      nmp NmpRegister.reg.nmp
+You will need the command line versions of Nmp (nmp.exe) in your path - if you have everything installed in the same directory (as would be the case if you download the pre-built binaries in the zip file) you're good to go. In the install directory you need to run the macro script file **"NmpRegister.reg.nmp"**, or **"NmpRegister-VD2012.reg.nmp"** through nmp.exe.
 
-The file "NmpRegister.reg" should be generated. If you look at the file you'll see its a reg file with all the registry entries for adding a custom tool to Visual Studio. It should automatically figure out if you're running on a 32 or 64 bit system (important for registery locations); it defaults to Visual Studio 2012 (version 11.0). The location of the DLL's (Codebase) is the directory in which the reg file lives. To register:
+      nmp NmpRegister.reg.nmp  for Visual Studio 2012
+
+or
+
+      nmp NmpRegister-VD2012.reg.nmp for Windows Desktop Express 2012
+
+The file **"NmpRegister.reg"**, or **"NmpRegister-VD2012.reg"** should be generated. If you look at the file you'll see its a reg file with all the registry entries for adding a custom tool to Visual Studio. It should automatically figure out if you're running on a 32 or 64 bit system (important for registery locations); it defaults to Visual Studio 2012 (version 11.0). The location of the DLL's (Codebase) is the directory in which the reg file lives. You need to use this file to register Nmp with with the version of Visual Studio you are using. To do this run the command processor (cmd.exe) as Administrator and execute 'regedit':
 
       regedit NmpRegister.reg
 
-One more thing, you need to run Visual Studio with the /setup switch.
+or
+
+      regedit NmpRegister-VD2012.reg
+
+
+One more thing, if you are running Visual Studio 2012 (NOT the desktop version) you need to run Visual Studio with the /setup switch.
 
       devenv /setup
 
@@ -105,6 +115,8 @@ You can view, compile and play with the source by cloning the 'dev' branch from 
 To compile the source you **must** have **nuget.exe** in your path. Before you compile Nmp with VS 2012 you must go to the "packages" directory (off the Nmp root directory) and execute the "**get-packages.bat**" file to download the "xunit" and "xunit.extension" nuget packages.
 
 Once compiled you will find various combinations of files in the "Current" directory that will located off the the Nmp root directory.
+
+Note: Nmp will compile with both **Visual Studio 2012** and **Windows Desktop Express 2012**.
 
 ### MSBuild task
 
