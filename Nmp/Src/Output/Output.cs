@@ -264,7 +264,36 @@ namespace Nmp.Output {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public string FetchDivert( string divName, bool remove )
+		string PrependString( StringBuilder sb, int count, string str )
+		{
+			// ******
+			string prependStr = string.Empty;
+
+			switch( str.Trim() ) {
+				case "tab":
+				case ".tab.":
+					prependStr = new string( '\t', count );
+					break;
+
+				case "space":
+				case "spc":
+				case ".spc.":
+					prependStr = new string( ' ', count );
+					break;
+
+				default:
+					prependStr = new StringBuilder( str, count ).ToString();
+					break;
+			}
+
+			// ******
+			return sb.PrependTextInPlace( prependStr ).ToString();
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public string FetchDivert( string divName, bool remove, int prependCount, string prependStr )
 		{
 			// ******
 			Diversion div = diversions.GetExistingDiversion( divName );
@@ -284,7 +313,20 @@ namespace Nmp.Output {
 			}
 
 			// ******
-			return div.Value.ToString();
+			if( prependCount > 0 && ! string.IsNullOrEmpty(prependStr) ) {
+				return PrependString( div.Value, prependCount, prependStr );
+			}
+			else {
+				return div.Value.ToString();
+			}
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public string FetchDivert( string divName, bool remove )
+		{
+			return FetchDivert( divName, remove, 0, string.Empty );
 		}
 
 

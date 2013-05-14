@@ -112,7 +112,7 @@ To use the Nmp custom tool create a new text file in VS and name it with the ".n
 
 You can view, compile and play with the source by cloning the 'dev' branch from [GitHub](https://github.com/jmclain/Nmp). If you don't want to mess with git you can download the source via zip file at the same location.
 
-To compile the source you **must** have **nuget.exe** in your path. Before you compile Nmp with VS 2012 you must go to the "packages" directory (off the Nmp root directory) and execute the "**get-packages.bat**" file to download the "xunit" and "xunit.extension" nuget packages.
+To compile the source you **must** have **nuget.exe** in your path. Before you compile Nmp with VS 2012 you must go to the "packages" directory (off the Nmp root directory) and execute the **"get-packages.bat"** file to download the "xunit" and "xunit.extension" nuget packages.
 
 Once compiled you will find various combinations of files in the "Current" directory that will located off the the Nmp root directory.
 

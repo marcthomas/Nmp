@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -53,7 +53,6 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>bin\Release\NmpBase.XML</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
@@ -76,11 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\Attributes.cs">
-      <Link>Code\Code\Attributes.cs</Link>
+      <Link>Properties\Attributes.cs</Link>
     </Compile>
     <Compile Include="..\Common\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Src\Code\StringBuilderExtensions.cs" />
     <Compile Include="Src\JSON\JSONInterfaces.cs" />
     <Compile Include="Src\Reflection\Arguments.cs" />
     <Compile Include="Src\Code\FileGroup.cs" />
@@ -167,7 +167,6 @@
   <ItemGroup>
     <None Include="NmpBase Key File.snk" />
   </ItemGroup>
-
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
