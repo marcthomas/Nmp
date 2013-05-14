@@ -420,7 +420,8 @@ namespace Nmp {
 										// too few arguments - not just one being empty, a comma would have to be left out
 										//
 										ThreadContext.MacroWarning( "there were too few arguments passed to macro \"{0}\", the parameter named \"{1}\" could not be set", macro.Name, value );
-										return '$' + value;
+										//return '$' + value;
+										return string.Empty;
 									}
 									else {
 										//
