@@ -53,11 +53,11 @@ namespace NmpBase {
 			var lastIndex = sb.Length - 1;
 			for( var index = lastIndex; index >= 0; index-- ) {
 				if( index < lastIndex ) {
-					if( 0 == index ) {
-						sb.Insert( 0, text );
-					}
-					else if( SC.NEWLINE == sb [ index ] ) {
+					if( SC.NEWLINE == sb [ index ] ) {
 						sb.Insert( 1 + index, text );
+					}
+					else if( 0 == index ) {
+						sb.Insert( 0, text );
 					}
 				}
 			}
