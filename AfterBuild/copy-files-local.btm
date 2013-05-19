@@ -157,6 +157,6 @@ echo exit 0                                                                   >>
 ::copy "%dest\*.dll;*.pdb"  ???
 ::copy "%dest\*.dll;*.pdb;*.xml"  ???
 
-copy "%dest\*.dll;*.pdb;*.xml"  "D:\Work\2013 Forward\Templating\NetDocHelper\packages\Nmp.Core.3.0.5\lib\Net40"
+copy "%dest\*.dll;*.pdb;*.xml"  "D:\Work\2013 Forward\Templating\NetDocHelper\packages\Nmp.Core.3.0.6\lib\Net40"
 
 

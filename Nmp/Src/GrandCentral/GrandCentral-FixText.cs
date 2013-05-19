@@ -110,29 +110,57 @@ namespace Nmp {
 					//
 					// check for open/close quote being escaped
 					//
-					if( SC.BACKSLASH == ch && checkQuotes ) {
-						if( SeqOpenQuote.FirstChar == chNext || SeqCloseQuote.FirstChar == chNext ) {
-							if( SC.BACKSLASH == lastCh ) {
-								//
-								// \\` or \\' - escaping the backslash and leaving the quote in place
-								//
-								// \` or \'
-								//
-								lastCh = SC.BACKSLASH;
-							}
-							else {
-								//
-								// embed open quote
-								//
-								++iCh;
-								lastCh = GetEscapedChars().Add(chNext);
-								sb.Append( lastCh );
-							}
+					//if( SC.BACKSLASH == ch && checkQuotes ) {
+					//	if( SeqOpenQuote.FirstChar == chNext || SeqCloseQuote.FirstChar == chNext ) {
+					//		if( SC.BACKSLASH == lastCh ) {
+					//			//
+					//			// \\` or \\' - escaping the backslash and leaving the quote in place
+					//			//
+					//			// \` or \'
+					//			//
+					//			lastCh = SC.BACKSLASH;
+					//		}
+					//		else {
+					//			//
+					//			// embed open quote
+					//			//
+					//			++iCh;
+					//			lastCh = GetEscapedChars().Add(chNext);
+					//			sb.Append( lastCh );
+					//		}
 							
+					//		continue;
+					//	}
+					//}
+
+					if( SC.BACKSLASH == ch ) {
+						if( SC.BACKSLASH == lastCh ) {
+							//
+							// \\` or \\' - escaping the backslash and leaving the quote in place
+							//
+							// \` or \'
+							//
+							lastCh = SC.BACKSLASH;
+						}
+						else if( checkQuotes && (SeqOpenQuote.FirstChar == chNext || SeqCloseQuote.FirstChar == chNext) ) {
+							//
+							// embed open quote
+							//
+							++iCh;
+							lastCh = GetEscapedChars().Add( chNext );
+							sb.Append( lastCh );
 							continue;
 						}
+						else if( SC.COMMA == chNext ) {
+							++iCh;
+							lastCh = GetEscapedChars().Add( chNext );
+							sb.Append( lastCh );
+							continue;
+						}
+
 					}
-				
+
+			
 					// ******
 					switch( ch ) {
 						case SC.CR:
