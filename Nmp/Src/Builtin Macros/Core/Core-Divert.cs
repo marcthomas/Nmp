@@ -155,14 +155,24 @@ namespace Nmp.Builtin.Macros {
 		/// <summary>
 		/// Fetches the text of a single diversion and optionaly clears it
 		/// </summary>
-		/// <param name="divName">Name of diversion</param>
-		/// <param name="clear">Clear diversion if true</param>
-		/// <returns>Text of the diversion</returns>
+		/// <param name="divName"></param>
+		/// <param name="clear"></param>
+		/// <param name="count"></param>
+		/// <param name="prependStr"></param>
+		/// <param name="suppressWarnings"></param>
+		/// <returns></returns>
+
+		[Macro]
+		public object fetchDivert( string divName, bool clear, int count, string prependStr, bool suppressWarnings )
+		{
+			return GetOutput.FetchDivert( divName, clear, count, prependStr, suppressWarnings );
+		}
+
 
 		[Macro]
 		public object fetchDivert( string divName, bool clear, int count, string prependStr )
 		{
-			return GetOutput.FetchDivert( divName, clear, count, prependStr );
+			return GetOutput.FetchDivert( divName, clear, count, prependStr, false );
 		}
 
 
@@ -178,6 +188,13 @@ namespace Nmp.Builtin.Macros {
 		public object fetchDivert( string divName, bool clear )
 		{
 			return fetchDivert( divName, clear, 0, string.Empty );
+		}
+
+
+		[Macro]
+		public object fetchDivert( string divName, bool clear, bool suppressWarnings )
+		{
+			return fetchDivert( divName, clear, 0, string.Empty, suppressWarnings );
 		}
 
 
