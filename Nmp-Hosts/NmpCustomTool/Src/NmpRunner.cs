@@ -561,7 +561,9 @@ namespace NmpCustomTool {
 					
 					// ******
 					result = nmpResult.MacroResult;
-					defaultExtension = nmpResult.FileExt;
+					//defaultExtension = nmpResult.FileExt;
+					var ext = nmpResult.FileExt;
+					defaultExtension = string.IsNullOrEmpty( ext ) ? null : ext;
 				}
 			}
 				
