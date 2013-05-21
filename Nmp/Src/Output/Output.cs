@@ -293,19 +293,23 @@ namespace Nmp.Output {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public string FetchDivert( string divName, bool remove, int prependCount, string prependStr )
+		public string FetchDivert( string divName, bool remove, int prependCount, string prependStr, bool suppressWarnings = false )
 		{
 			// ******
 			Diversion div = diversions.GetExistingDiversion( divName );
 			if( null == div ) {
-				ThreadContext.MacroWarning( "diversion \"{0}\" does not exist", divName );
+				if( !suppressWarnings ) {
+					ThreadContext.MacroWarning( "diversion \"{0}\" does not exist", divName );
+				}
 				return string.Empty;
 			}
 
 			// ******
 			if( remove ) {
 				if( divName == current.Name ) {
-					ThreadContext.MacroWarning( "can't remove active diversion: \"{0}\"", divName );
+					if( !suppressWarnings ) {
+						ThreadContext.MacroWarning( "can't remove active diversion: \"{0}\"", divName );
+					}
 				}
 				else {
 					diversions.Remove( divName );
