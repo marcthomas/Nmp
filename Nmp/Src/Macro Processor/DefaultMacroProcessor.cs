@@ -221,6 +221,14 @@ namespace Nmp {
 				value = Helpers.StripNewlines( value );
 			}
 
+			if( options.HtmlEncode ) {
+				value = value.HtmlEncode( true );
+			}
+
+			if( options.Echo ) {
+				ThreadContext.WriteMessage( "echo: " + value );
+			}
+
 			// ******
 			if( options.Quote ) {
 				value = gc.QuoteWrapString( value );

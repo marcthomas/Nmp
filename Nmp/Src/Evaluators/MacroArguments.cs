@@ -51,6 +51,10 @@ namespace Nmp {
 
 		public bool TabsToSpaces { get; set; }
 
+		public bool HtmlEncode { get; set; }
+		
+		public bool Echo { get; set; }
+
 		//
 		// other options
 		//
@@ -114,6 +118,10 @@ namespace Nmp {
 			Empty = false;
 
 			TabsToSpaces = false;
+
+			HtmlEncode = false;
+
+			Echo = false;
 
 			//
 			// other options
@@ -238,6 +246,14 @@ namespace Nmp {
 
 						case "empty":
 							Empty = true;
+							break;
+
+						case "htmlencode":
+							HtmlEncode = true;
+							break;
+
+						case "echo":
+							Echo = true;
 							break;
 
 						default:

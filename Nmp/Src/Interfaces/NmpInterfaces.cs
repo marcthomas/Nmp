@@ -564,6 +564,10 @@ namespace Nmp {
 
 		bool TabsToSpaces { get; set; }
 
+		bool HtmlEncode { get; set; }
+
+		bool Echo { get; set; }
+
 		//
 		// other options
 		//

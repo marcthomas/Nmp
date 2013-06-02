@@ -202,7 +202,7 @@ namespace Nmp {
 					// actual object list
 					//
 					return objArgsMacro.Name;
-				
+
 				case "$local":
 					//
 					// $local vars
@@ -373,6 +373,14 @@ namespace Nmp {
 					options.TabsToSpaces = true;
 					break;
 
+				case ".htmlencode.":
+					options.HtmlEncode = true;
+					break;
+
+				case ".echo.":
+					options.Echo = true;
+					break;
+
 				default:
 					//
 					// check for unknown dot directive, a '-' following the first dot
@@ -387,7 +395,7 @@ namespace Nmp {
 
 					// ******			
 					if( value.StartsWith( "$[]" ) ) {
-						var objArgStr = RefObjectArgument( value.Substring(3) );
+						var objArgStr = RefObjectArgument( value.Substring( 3 ) );
 						return null == objArgStr ? untouchedValue : objArgStr;
 					}
 					if( '$' == value [ 0 ] ) {
@@ -461,10 +469,13 @@ namespace Nmp {
 			var index = macro.ArgumentNames.IndexOf( value );
 			if( index < 0 ) {
 				if( 1 == value.Length ) {
-					index = "0123456789".IndexOf( value[0] );
+					index = "0123456789".IndexOf( value [ 0 ] );
 					if( index < 0 ) {
 						return null;
 					}
+				}
+				else {
+					ThreadContext.MacroError( "the macro \"{0}\" does not have an argument named \"$[]{1}\"", macro.Name, value );
 				}
 			}
 
@@ -495,12 +506,12 @@ namespace Nmp {
 				// macro caller did not pass enought arguments, return empty string because
 				// too few arguments is not an error
 				//
-				ThreadContext.MacroWarning( "$[]{0} was found but there were too few arguments passed to macro \"{1}\"", value, macro.Name );
+				ThreadContext.MacroWarning( "$[]{0} was found but there were too few arguments passed to macro \"{1}\" to give it a value", value, macro.Name );
 				return string.Empty;
 			}
 
-			var argumentName = arguments [ index ];
-			if( mp.IsGeneratedName(argumentName) ) {
+			var argumentName  = arguments [ index ];
+			if( mp.IsGeneratedName( argumentName ) ) {
 				//
 				// if the object is a macro or an object this allows two things
 				//
@@ -516,7 +527,7 @@ namespace Nmp {
 
 		}
 
-	
+
 		/////////////////////////////////////////////////////////////////////////////
 
 		//private static string userMacroSubstStr = @"(?xs)([\\$]?[$][0-9#*@])|([\\$]?[$][a-zA-Z_][a-zA-Z0-9_]*)|([$]args)|(\.{)|(}\.)|(\.[+\-a-zA-Z0-9_]*?\.)";
