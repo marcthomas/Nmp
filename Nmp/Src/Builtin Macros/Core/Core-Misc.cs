@@ -245,8 +245,33 @@ namespace Nmp.Builtin.Macros {
 			// ******
 			return DateTime.UtcNow.ToString( format );
 		}
-		
-		
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public string repeatString( string str, int count )
+		{
+			// ******
+			if( string.IsNullOrEmpty( str ) || count < 1 ) {
+				return string.Empty;
+			}
+
+			switch( str.ToLower() ) {
+				case "space":
+					str = " ";
+					break;
+				case "tab":
+					str = "\t";
+					break;
+				case "newline":
+					str = "\n";
+					break;
+			}
+
+			// ******
+			return new StringBuilder().Insert( 0, str, count ).ToString();
+		}
+
 
 
 	}
