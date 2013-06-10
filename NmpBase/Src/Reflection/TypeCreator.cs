@@ -43,7 +43,7 @@ namespace NmpBase.Reflection {
 			object [] ctorArgs = null;
 
 			try {
-				ctorArgs = Invoker.MatchArgs( ctors, constructorArgs, out mi );
+				ctorArgs = ArgumentMatcher.MatchArgs( ctors, constructorArgs, out mi );
 			}
 			catch {
 				mi = null;

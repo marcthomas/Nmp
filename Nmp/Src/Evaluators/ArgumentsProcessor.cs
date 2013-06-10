@@ -16,9 +16,9 @@ using System.Text;
 using NmpBase;
 using NmpBase.Reflection;
 using Nmp;
-using Nmp.Expressions;
+using NmpExpressions;
 
-namespace NmpExpressions {
+namespace NmpEvaluators {
 
 	//
 	// converts a list of text arguments into individual ArgumentExpresion's and

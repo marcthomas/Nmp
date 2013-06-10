@@ -17,16 +17,18 @@ namespace NmpBase {
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	abstract public class Invoker {
+	public class ArgumentMatcher {
+
+		//static MethodCache methodCache = new MethodCache { };
 
 
-		/////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////
 		
-		//
-		// abstract method
-		//
+		////
+		//// abstract method
+		////
 
-		abstract public object Invoke( object [] args );
+		//abstract public object Invoke( object [] args );
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
@@ -35,10 +37,10 @@ namespace NmpBase {
 		// calls abstract method above
 		//
 
-		public object Invoke()
-		{
-			return Invoke( new object [ 0 ] );
-		}
+		//public object Invoke()
+		//{
+		//	return Invoke( new object [ 0 ] );
+		//}
 
 
 		/////////////////////////////////////////////////////////////////////////////
@@ -291,6 +293,16 @@ namespace NmpBase {
 			return args;
 		}
 
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static Tuple<MethodBase, object[]> MatchArgs2( IList<MethodBase> methods, object [] argsIn )
+		{
+			MethodBase mb;
+			var result = MatchArgs( methods, argsIn, out mb );
+			return null == result ? null : new Tuple<MethodBase, object []>( mb, result );
+		}
+		
 
 		/////////////////////////////////////////////////////////////////////////////
 

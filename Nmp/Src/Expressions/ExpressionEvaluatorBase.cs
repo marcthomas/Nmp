@@ -13,7 +13,7 @@ using NmpBase;
 using Nmp;
 
 
-namespace Nmp.Expressions {
+namespace NmpExpressions {
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +33,7 @@ namespace Nmp.Expressions {
 		// ******
 		protected IMacroProcessor macroProcessor;
 		protected TypeHelperDictionary typeHelpers;
+		protected ExtensionTypeDictionary methodExtensions;
 
 		// ******
 		public abstract object EvalMemberAccessExpression( object obj, MemberAccessExpression exp );
@@ -163,6 +164,7 @@ namespace Nmp.Expressions {
 		{
 			macroProcessor = mp;
 			typeHelpers = mp.Get<TypeHelperDictionary>();
+			methodExtensions = mp.Get<ExtensionTypeDictionary>();
 		}
 
 	}

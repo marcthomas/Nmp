@@ -221,7 +221,7 @@ namespace NmpTests {
 			Tuple<string, string> result = TestHelpers.RunMacro( "Is.nmp" );
 			Equal( result.Item1, result.Item2 );
 		}
-		
+
 
 		///////////////////////////////////////////////////////////////////////////////
 
@@ -233,149 +233,149 @@ namespace NmpTests {
 
 
 
-/*
+		/*
 
 
-#newlist
-#newarray
-#eval
+		#newlist
+		#newarray
+		#eval
 
-#startEncodeHtml
-#endEncodeHtml
-
-
-#String
-#Path
-#DateTime
-#Directory
-#File
-
-stringTest
+		#startEncodeHtml
+		#endEncodeHtml
 
 
-#getmacros
-#trace
-#nofile
+		#String
+		#Path
+		#DateTime
+		#Directory
+		#File
 
-#setoutputextension
-
-#loadmacros
-#include
-#readfile
-#cleardivert
-#pushdivert
-#popdivert
-#divert
-#undivert
-#fetchdivert
-#includedivert
-#savedivert
-#dumpdivert
-#forloop
-#foreach
-#forEachTest
-#define
-#push
-#popdef
-#dumpdef
-#echo
-#undef
-
-#exit( value )
+		stringTest
 
 
+		#getmacros
+		#trace
+		#nofile
+
+		#setoutputextension
+
+		#loadmacros
+		#include
+		#readfile
+		#cleardivert
+		#pushdivert
+		#popdivert
+		#divert
+		#undivert
+		#fetchdivert
+		#includedivert
+		#savedivert
+		#dumpdivert
+		#forloop
+		#foreach
+		#forEachTest
+		#define
+		#push
+		#popdef
+		#dumpdef
+		#echo
+		#undef
+
+		#exit( value )
 
 
-Current Object macros:
-
-#DateTime
-#Directory
-#File
-#Path
-#String
-stringTest
 
 
-Current Builtin macros:
+		Current Object macros:
 
-#&
-#addRecognizerRegex
-#clearDivert
-#cpp
-#currentFile
-#dateTime
-#dateTimeUtc
-#define
-#defpath
-#directory
-#divert
-#dumpdef
-#dumpDivert
-#echo
-#endEncodeHtml
-#eval
-#exit
-#fetchDivert
-#foreach
-#forEachTest
-#forloop
-#getMacroNames
-#getMacros
-#getType
-#ifDefined
-#ifelse
-#ifElse
-#ifEmpty
-#ifNotDefined
-#ifNotEmpty
-#include
-#includeDivert
-#isDefined
-#isEmpty
-#isEqual
-#isFalse
-#isNotDefined
-#isNotEmpty
-#isNotEqual
-#isTrue
-#loadMacros
-#newArray
-#newDateTime
-#newList
-#newObject
-#newObjectMacro
-#newStatic
-#newStaticMacro
-#nofile
-#not
-#parentFile
-#popdef
-#popdivert
-#popDivert
-#push
-#pushdivert
-#pushDivert
-#readFile
-#saveDivert
-#setOutputExtension
-#setRegexRecognizer
-#startEncodeHtml
-#trace
-#typeof
-#undef
-#undivert
-defarray
-define
-deflist
-defmacro
-foreach
-forloop
-if
-include
-pushdef
-tb
-undef
-*/
+		#DateTime
+		#Directory
+		#File
+		#Path
+		#String
+		stringTest
+
+
+		Current Builtin macros:
+
+		#&
+		#addRecognizerRegex
+		#clearDivert
+		#cpp
+		#currentFile
+		#dateTime
+		#dateTimeUtc
+		#define
+		#defpath
+		#directory
+		#divert
+		#dumpdef
+		#dumpDivert
+		#echo
+		#endEncodeHtml
+		#eval
+		#exit
+		#fetchDivert
+		#foreach
+		#forEachTest
+		#forloop
+		#getMacroNames
+		#getMacros
+		#getType
+		#ifDefined
+		#ifelse
+		#ifElse
+		#ifEmpty
+		#ifNotDefined
+		#ifNotEmpty
+		#include
+		#includeDivert
+		#isDefined
+		#isEmpty
+		#isEqual
+		#isFalse
+		#isNotDefined
+		#isNotEmpty
+		#isNotEqual
+		#isTrue
+		#loadMacros
+		#newArray
+		#newDateTime
+		#newList
+		#newObject
+		#newObjectMacro
+		#newStatic
+		#newStaticMacro
+		#nofile
+		#not
+		#parentFile
+		#popdef
+		#popdivert
+		#popDivert
+		#push
+		#pushdivert
+		#pushDivert
+		#readFile
+		#saveDivert
+		#setOutputExtension
+		#setRegexRecognizer
+		#startEncodeHtml
+		#trace
+		#typeof
+		#undef
+		#undivert
+		defarray
+		define
+		deflist
+		defmacro
+		foreach
+		forloop
+		if
+		include
+		pushdef
+		tb
+		undef
+		*/
 
 
 		///////////////////////////////////////////////////////////////////////////////
@@ -438,7 +438,7 @@ undef
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public FromFileTests()
 		{
 			// ******

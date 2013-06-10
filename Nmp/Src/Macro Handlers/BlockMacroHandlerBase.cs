@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 
 using NmpBase;
-using Nmp.Expressions;
+using NmpExpressions;
 
 
 namespace Nmp {

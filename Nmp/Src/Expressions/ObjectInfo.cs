@@ -20,22 +20,24 @@ using System.Text;
 
 using NmpBase;
 using Nmp;
+using NmpBase.Reflection;
+//using NmpExpressions;
 
 
-namespace Nmp.Expressions {
+namespace NmpExpressions {
 
 
 	/////////////////////////////////////////////////////////////////////////////
 
 	interface IStaticStandin {
-		
-		Type	GetStaticClassType();
+
+		Type GetStaticClassType();
 
 	}
 
 
 	/////////////////////////////////////////////////////////////////////////////
-		
+
 	class StaticStandin : IStaticStandin {
 
 		Type type;
@@ -65,7 +67,10 @@ namespace Nmp.Expressions {
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	class ObjectInfo {
+	public class ObjectInfo {
+
+		// ******
+		//protected static ExtensionTypeDictionary _extDict = new ExtensionTypeDictionary { };
 
 		// ******
 		protected object	_obj;
@@ -81,20 +86,32 @@ namespace Nmp.Expressions {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public object			Object					{ get { return isStatic ? null : _obj; } }
-		public Type				ObjectType			{ get { return _objType; } }
-		public string			MemberName			{ get { return _memberName; } }
-		
-		public List<MemberInfo>	Members			{ get { return _members; } }
+		public object Object { get { return isStatic ? null : _obj; } }
+		public Type ObjectType { get { return _objType; } }
+		public string MemberName { get { return _memberName; } }
 
-		public bool				IsStatic				{ get { return isStatic; } }
+		public List<MemberInfo> Members { get { return _members; } }
+
+		public bool IsStatic { get { return isStatic; } }
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		//public static ExtensionTypeDictionary Extensions
+		//{
+		//	get
+		//	{
+		//		return _extDict;
+		//	}
+		//}
+
 
 		/////////////////////////////////////////////////////////////////////////////
 
 		public PropertyInfo GetPropertyInfo
 		{
-			get {
-				return _members[0] as PropertyInfo;
+			get
+			{
+				return _members [ 0 ] as PropertyInfo;
 			}
 		}
 
@@ -103,8 +120,9 @@ namespace Nmp.Expressions {
 
 		public FieldInfo GetFieldInfo
 		{
-			get {
-				return _members[0] as FieldInfo;
+			get
+			{
+				return _members [ 0 ] as FieldInfo;
 			}
 		}
 
@@ -113,7 +131,7 @@ namespace Nmp.Expressions {
 
 		public T MemberAs<T>() where T : class
 		{
-			return _members[0] as T;
+			return _members [ 0 ] as T;
 		}
 
 
@@ -133,7 +151,8 @@ namespace Nmp.Expressions {
 
 		public MemberTypes MembersType
 		{
-			get {
+			get
+			{
 				//
 				// don't call unles HaveMembers is true
 				//
@@ -151,7 +170,8 @@ namespace Nmp.Expressions {
 
 		public bool HaveMembers
 		{
-			get {
+			get
+			{
 				return _haveMembers;
 			}
 		}
@@ -162,7 +182,8 @@ namespace Nmp.Expressions {
 		public bool IsField
 		{
 			// ******
-			get {
+			get
+			{
 				return _haveMembers && MemberTypes.Field == _membersType;
 			}
 		}
@@ -173,7 +194,8 @@ namespace Nmp.Expressions {
 		public bool IsMethod
 		{
 			// ******
-			get {
+			get
+			{
 				return _haveMembers && MemberTypes.Method == _membersType;
 			}
 		}
@@ -184,19 +206,21 @@ namespace Nmp.Expressions {
 		public bool IsIndexer
 		{
 			// ******
-			get {
+			get
+			{
 				return _haveMembers && isIndexer;
 			}
 		}
 
-	
+
 		/////////////////////////////////////////////////////////////////////////////
 
 		public bool IsProperty
 		{
 			// ******
-			get {
-				return _haveMembers && MemberTypes.Property == _membersType && ! isIndexer;
+			get
+			{
+				return _haveMembers && MemberTypes.Property == _membersType && !isIndexer;
 			}
 		}
 
@@ -206,7 +230,8 @@ namespace Nmp.Expressions {
 		public bool IsDelegate
 		{
 			// ******
-			get {
+			get
+			{
 				if( IsField || IsProperty ) {
 					object value = GetFieldOrProperty();
 					return null != value && value is Delegate;
@@ -234,15 +259,15 @@ namespace Nmp.Expressions {
 			//
 			// ?? is this cheating ??
 			//
-			members.Sort( (x, y) => x.DeclaringType == y.DeclaringType ? 0 : (x.DeclaringType.IsSubclassOf(y.DeclaringType) ? -1 : 1) );
+			members.Sort( ( x, y ) => x.DeclaringType == y.DeclaringType ? 0 : (x.DeclaringType.IsSubclassOf( y.DeclaringType ) ? -1 : 1) );
 
-			var memberType = members[0].MemberType;
+			var memberType = members [ 0 ].MemberType;
 
 			for( int iEntry = members.Count - 1; iEntry >= 1; iEntry-- ) {
 				//
 				// backward through list remvoving any of a different memberType
 				//
-				if( memberType != members[iEntry].MemberType ) {
+				if( memberType != members [ iEntry ].MemberType ) {
 					members.RemoveAt( iEntry );
 				}
 			}
@@ -280,7 +305,7 @@ namespace Nmp.Expressions {
 				_haveMembers = false;
 				return false;
 			}
-			
+
 			// ******
 			//
 			// should all be the same type - I hope
@@ -295,14 +320,14 @@ namespace Nmp.Expressions {
 			//		Debug.Fail( "didn't know you could overload a Field ???" );
 			//	}
 			//}
-			
+
 			if( _members.Count > 1 ) {
 				//
 				// more than one member
 				//
-				_membersType = _members[0].MemberType;
+				_membersType = _members [ 0 ].MemberType;
 
-				if( MemberTypes.Field == _members[0].MemberType ) {
+				if( MemberTypes.Field == _members [ 0 ].MemberType ) {
 					Debug.Fail( "didn't know you could overload a Field ???" );
 				}
 
@@ -318,7 +343,7 @@ namespace Nmp.Expressions {
 				_members = PruneMembers( _objType, _members );
 			}
 
-			_membersType = _members[0].MemberType;
+			_membersType = _members [ 0 ].MemberType;
 
 
 			if( MemberTypes.Property == _membersType ) {
@@ -342,19 +367,19 @@ namespace Nmp.Expressions {
 					//
 					// this way is quicker
 					//
-					PropertyInfo pi = _members[iMember] as PropertyInfo;
-					_members[iMember] = pi.GetGetMethod();
+					PropertyInfo pi = _members [ iMember ] as PropertyInfo;
+					_members [ iMember ] = pi.GetGetMethod();
 				}
 
 				isIndexer = MemberAs<MethodInfo>().GetParameters().Length > 0;
 			}
-			else if( MemberTypes.Method == _membersType && _objType.IsArray && "GetValue" == _memberName) {
+			else if( MemberTypes.Method == _membersType && _objType.IsArray && "GetValue" == _memberName ) {
 				//
 				// .net Array
 				//
 				isIndexer = true;
 			}
-			
+
 			// ******
 			_haveMembers = true;
 			return true;

@@ -8,6 +8,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Web;
 using NmpBase;
 using NmpBase.Reflection;
+using NmpEvaluators;
 using NmpExpressions;
 
 namespace Nmp {
@@ -181,6 +182,8 @@ namespace Nmp {
 			// MUST be initialized before DefaultMacroProcessor (dependency)
 			//
 			SetInstance<TypeHelperDictionary>( new TypeHelperDictionary { } );
+
+			SetInstance<ExtensionTypeDictionary>( new ExtensionTypeDictionary { } );
 			
 			// ******
 			//

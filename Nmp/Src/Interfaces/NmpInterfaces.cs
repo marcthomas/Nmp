@@ -16,7 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using NmpBase;
-using Nmp.Expressions;
+using NmpExpressions;
 //using Nmp.Powershell;
 
 /*
@@ -127,6 +127,8 @@ namespace Nmp {
 		EscapedCharList GetEscapedChars();
 		NmpStringList GetSearchPaths();
 		NmpStack<string> GetDirectoryStack();
+		
+		//ExtensionTypeDictionary GetMethodExtensions();
 
 		string FindFile( string name );
 		string ReadFile( string fileNameIn, out string filePathOut, Regex regex = null );

@@ -16,6 +16,7 @@ using System.Text;
 
 using NmpBase;
 using Nmp.Output;
+using NmpExpressions;
 
 namespace Nmp {
 
@@ -173,6 +174,30 @@ namespace Nmp {
 				string text = nmp.GrandCentral.FixText( macroText );
 				return nmp.MacroProcessor.AddTextMacro( macroName, text, argNames );
 			}
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// Registers method extensions, may be called multiple times for some or all 
+		/// 'extTypes' (extensions can be implemented in multiple classes)
+		/// </summary>
+		/// <param name="extTypeHandlerClass"></param>
+		/// <param name="extTypes"></param>
+
+		public void AddMethodExtensions( Type extTypeHandlerClass, params Type [] extTypes )
+		{
+			// ******
+			if( null == extTypeHandlerClass ) {
+				throw new ArgumentNullException( "extTypeHandlerClass" );
+			}
+
+			if( 0 == extTypes.Length ) {
+				throw new ArgumentNullException( "extTypes" );
+			}
+			
+			// ******
+			nmp.Get<ExtensionTypeDictionary>().AddMethodExtensions( extTypeHandlerClass, extTypes );
 		}
 
 

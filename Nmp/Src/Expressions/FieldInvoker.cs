@@ -14,7 +14,7 @@ using NmpBase;
 using Nmp;
 
 
-namespace Nmp.Expressions {
+namespace NmpExpressions {
 
 
 	/////////////////////////////////////////////////////////////////////////////

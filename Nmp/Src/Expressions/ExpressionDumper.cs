@@ -20,7 +20,7 @@ using NmpBase;
 using Nmp;
 
 
-namespace Nmp.Expressions {		//ExpressionDump {
+namespace NmpExpressions {		//ExpressionDump {
 
 
 
@@ -309,7 +309,7 @@ namespace Nmp.Expressions {		//ExpressionDump {
 
 /////////////////////////////////////////////////////////////////////////////
 
-namespace Nmp.Expressions {
+namespace NmpExpressions {
 
 
 	/////////////////////////////////////////////////////////////////////////////

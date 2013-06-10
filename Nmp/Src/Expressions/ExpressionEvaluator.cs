@@ -21,7 +21,7 @@ using NmpBase;
 using Nmp;
 
 
-namespace Nmp.Expressions {
+namespace NmpExpressions {
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace Nmp.Expressions {
 				objResult = invoker.Invoke();
 			}
 			else {
-				objResult = Invokers.EvalMemberHelper( objIn, exp.MemberName, typeHelpers );
+				objResult = Invokers.EvalMemberHelper( objIn, exp.MemberName, typeHelpers, methodExtensions );
 			}
 
 			// ******
@@ -154,7 +154,7 @@ namespace Nmp.Expressions {
 			
 			// ******
 			//Invoker invoker = Invokers.GetMethodInvoker( objIn, exp.MethodName );
-			Invoker invoker = Invokers.GetMethodInvoker( objIn, exp.MethodName, typeHelpers );
+			Invoker invoker = Invokers.GetMethodInvoker( objIn, exp.MethodName, typeHelpers, methodExtensions );
 			if( null != invoker ) {
 				objResult = invoker.Invoke( args );
 			}

@@ -21,7 +21,7 @@ using System.Reflection;
 //#pragma warning disable 169
 
 using NmpBase;
-using Nmp.Expressions;
+using NmpExpressions;
 
 
 namespace Nmp {

@@ -17,7 +17,7 @@ using System.Reflection;
 
 using NmpBase;
 using NmpBase.Reflection;
-using Nmp.Expressions;
+using NmpExpressions;
 
 #pragma warning disable 618
 
@@ -264,7 +264,6 @@ namespace Nmp.Builtin.Macros {
 			}
 
 			// ******
-			//Type type = Helpers.FindType( null, typeName, true );
 			Type type = TypeLoader.GetType( typeName );
 			if( null == type ) {
 				ThreadContext.MacroError( "the #newstatic macro could not locate the type \"{0}\"", typeName );
@@ -281,6 +280,7 @@ namespace Nmp.Builtin.Macros {
 		/// Creates an object that "stands in" for the static members of an object, allows access to the static members
 		/// </summary>
 		/// <param name="typeName">Name of type</param>
+		/// <param name="extTypes">Name of type</param>
 		/// <returns></returns>
 		/// 
 		[Macro]
@@ -297,6 +297,7 @@ namespace Nmp.Builtin.Macros {
 		/// </summary>
 		/// <param name="macroName">Output macro name</param>
 		/// <param name="typeName">Name of type</param>
+		/// <param name="extTypes">Name of type</param>
 		/// <returns></returns>
 
 		[Macro]
@@ -308,6 +309,55 @@ namespace Nmp.Builtin.Macros {
 
 			// ******
 			return string.Empty;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+		//
+		// #newstatic
+		//
+		/////////////////////////////////////////////////////////////////////////////
+
+		[Macro]
+		public void addExtensionClasses( string typeName, string extTypeName, string [] moreExtTypes )
+		{
+			// ******
+			if( string.IsNullOrEmpty( typeName ) ) {
+				ThreadContext.MacroError( "the \"type\" name argument for the #object.addExtensionClasses macro is empty" );
+			}
+
+			if( string.IsNullOrEmpty( extTypeName ) ) {
+				ThreadContext.MacroError( "the \"extTypeName\" name argument for the #object.addExtensionClasses macro is empty" );
+			}
+
+			//// ******
+			//Type type = TypeLoader.GetType( typeName );
+			//if( null == type ) {
+			//	ThreadContext.MacroError( "the #object.addExtensionClasses macro could not locate the type \"{0}\"", typeName );
+			//}
+
+			//// ******
+			//Type extType = TypeLoader.GetType( extTypeName );
+			//if( null == type ) {
+			//	ThreadContext.MacroError( "the #object.addExtensionClasses macro could not locate the type \"{0}\"", typeName );
+			//}
+
+			//// ******
+			//var dict = mp.GrandCentral.GetMethodExtensions(); //ObjectInfo.Extensions;
+			//dict.AddExtension( type, extType );
+
+			//foreach( var name in moreExtTypes ) {
+			//	extType = TypeLoader.GetType( name );
+
+			//	if( null == extType ) {
+			//		ThreadContext.MacroError( "the #object.addExtensionClasses macro could not locate the type \"{0}\"", typeName );
+			//	}
+
+			//	// ******
+			//	dict.AddExtension( type, extType );
+			//}
+
+			mp.Get<ExtensionTypeDictionary>().AddMethodExtensions( typeName, extTypeName, moreExtTypes );
 		}
 
 

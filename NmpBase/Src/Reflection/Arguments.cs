@@ -280,6 +280,27 @@ namespace NmpBase {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		public static object [] PrependArgs( object [] argsIn, params object [] moreArgs )
+		{
+			// ******
+			var moreArgsLength = moreArgs.Length;
+			if( 0 == moreArgsLength ) {
+				return argsIn;
+			}
+
+			// ******
+			var argsInLength = argsIn.Length;
+
+			var newArgs = new object [ moreArgsLength + argsInLength ];
+			Array.Copy( argsIn, 0, newArgs, moreArgsLength, argsInLength );
+
+			Array.Copy( moreArgs, 0, newArgs, 0, moreArgsLength );
+
+			return newArgs;
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
 		public static Type [] GetTypes( ParameterInfo [] piArray )
 		{
 			// ******

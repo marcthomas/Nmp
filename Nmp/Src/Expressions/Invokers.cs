@@ -22,7 +22,7 @@ using NmpBase;
 using Nmp;
 
 
-namespace Nmp.Expressions {
+namespace NmpExpressions {
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -36,12 +36,20 @@ namespace Nmp.Expressions {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public static Invoker GetMethodInvoker( object parent, string methodName, TypeHelperDictionary typeHelpers )
+		public static Invoker GetMethodInvoker( object parent, string methodName, TypeHelperDictionary typeHelpers, ExtensionTypeDictionary methodExtensions )
 		{
 			// ******
 			var objInfo = new ObjectInfo( parent, methodName );
 			if( objInfo.IsMethod ) {
 				return new MethodInvoker( objInfo );
+			}
+			else if( methodExtensions.IsPossibleExtension( parent.GetType(), methodName ) ) {
+				//
+				// there is at least one possible method extension; MethodInvoker.MethodInvoke() will
+				// fail when looking up method "memberName", however it will search for an extension
+				// method and use it if found
+				//
+				return new MethodExtensionInvoker( parent, methodName, methodExtensions );
 			}
 
 			// ******
@@ -151,7 +159,7 @@ namespace Nmp.Expressions {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public static object EvalMemberHelper( object parent, string memberName, TypeHelperDictionary typeHelpers )
+		public static object EvalMemberHelper( object parent, string memberName, TypeHelperDictionary typeHelpers, ExtensionTypeDictionary methodExtensions )
 		{
 			// ******
 			object value;
@@ -160,6 +168,9 @@ namespace Nmp.Expressions {
 			var oo = new ObjectInfo( parent, memberName );
 			if( null != (value = oo.GetValue()) ) {
 				return value;
+			}
+			else if( methodExtensions.IsPossibleExtension( parent.GetType(), memberName ) ) {
+				return new MethodExtensionInvoker( parent, memberName, methodExtensions );
 			}
 
 			// ******

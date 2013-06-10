@@ -17,8 +17,8 @@ using System.IO;
 using System.Reflection;
 
 using NmpBase;
+using NmpEvaluators;
 using NmpExpressions;
-using Nmp.Expressions;
 
 #pragma warning disable 169
 

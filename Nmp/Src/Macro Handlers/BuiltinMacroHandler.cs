@@ -17,7 +17,7 @@ using System.IO;
 using System.Reflection;
 
 using NmpBase;
-using Nmp.Expressions;
+using NmpExpressions;
 
 namespace Nmp {
 

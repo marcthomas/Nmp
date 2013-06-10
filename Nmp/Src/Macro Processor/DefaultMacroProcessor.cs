@@ -19,8 +19,8 @@ using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 using NmpBase;
+using NmpEvaluators;
 using NmpExpressions;
-using Nmp.Expressions;
 using Nmp.Builtin.Macros;
 using Nmp.Output;
 //using Nmp.Powershell;

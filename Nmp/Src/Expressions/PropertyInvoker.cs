@@ -13,8 +13,9 @@ using System.Reflection;
 using NmpBase;
 using Nmp;
 
+using ReflectionHelpers;
 
-namespace Nmp.Expressions {
+namespace NmpExpressions {
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -23,23 +24,30 @@ namespace Nmp.Expressions {
 
 		ObjectInfo info;
 
-
 		/////////////////////////////////////////////////////////////////////////////
+
+		//public static object Invoke( ObjectInfo objInfo )
+		//{
+		//	// ******
+		//	MethodInfo mi = objInfo.MemberAs<MethodInfo>();
+		//	if( objInfo.IsStatic && !mi.IsStatic ) {
+		//		ThreadContext.MacroError( "attempt to call non static property \"{0}\" using a static reference to \"{1}\"", mi.Name, mi.ReflectedType.FullName );
+		//	}
+		//	return MethodInvoker.MethodInvoke( objInfo.Object, mi, new object [ 0 ] );
+		//}
 
 		public static object Invoke( ObjectInfo objInfo )
 		{
 			// ******
-			MethodInfo mi = objInfo.MemberAs<MethodInfo>();
-
+			var cacheItem = MethodInvoker.FindPropertyMethod( objInfo );
 			try {
-				return mi.Invoke( objInfo.Object, null );
+				//var result = handler.Invoke( objInfo.Object, null );
+				//return result;
+
+				return MethodInvoker.BaseMethodInvoke( cacheItem, objInfo.Object, new object [0] );
 			}
-			catch ( Exception ex ) {
-				//
-				// never returns
-				//
-				ThreadContext.MacroError( ExceptionHelpers.RecursiveMessage( ex, "error invoking property getter \"{0}\"", objInfo.MemberName ) );
-				return null;
+			catch( Exception ex ) {
+				throw ExceptionHelpers.CreateException( ex, "exception invoking property \"{0}\" on \"{1}\"", objInfo.MemberName, objInfo.ObjectType.Name );
 			}
 		}
 

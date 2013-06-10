@@ -278,6 +278,13 @@ namespace Nmp {
 		//					}
 		//
 		//					// ******
+
+		////Delegate macroDelegate= Delegate.CreateDelegate( typeof(MacroInvoker_Old), typeInstance, info );
+		////					if( null != macroDelegate ) {
+		////						macros.NewBuiltinMacro( info.Name, (MacroInvoker_Old) macroDelegate, 0 );
+		////						++countRegistered;
+		////					}
+							
 		//					Delegate macroDelegate= Delegate.CreateDelegate( typeof(MacroCall), typeInstance, info );
 		//					if( null != macroDelegate ) {
 		//						

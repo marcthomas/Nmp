@@ -26,7 +26,7 @@ using Nmp;
 //}
 
 
-namespace NmpExpressions {
+namespace NmpEvaluators {
 
 
 

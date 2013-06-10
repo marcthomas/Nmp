@@ -341,6 +341,16 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		//ExtensionTypeDictionary _extensions = new ExtensionTypeDictionary { };
+
+		//public ExtensionTypeDictionary GetMethodExtensions()
+		//{
+		//	return _extensions;
+		//}
+
+	
+		/////////////////////////////////////////////////////////////////////////////
+
 		public GrandCentral( NMP nmp, INmpHost nmpHost )
 		{
 			// ******

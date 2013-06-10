@@ -15,9 +15,9 @@ using System.Text;
 
 using NmpBase;
 using Nmp;
-using Nmp.Expressions;
+using NmpExpressions;
 
-namespace NmpExpressions {
+namespace NmpEvaluators {
 
 
 	/////////////////////////////////////////////////////////////////////////////
