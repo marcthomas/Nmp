@@ -360,6 +360,11 @@ namespace NmpBase {
 			// first: where number of arguments match, this handles 0 argsIn
 			// and 0 parameters just fine
 			//
+			
+// NEED TO LOOK FOR EXACT MATCH FIRST
+//
+// BUT WHAT ABOUT CASE WHERE MULTIPLE ARGS AND CASTING TO BASE OF ONE MAKES INCORRECT SELECTION
+
 			for( int i = 0; i < methods.Count; i++ ) {
 				MethodBase mi = methods[ i ];
 				//

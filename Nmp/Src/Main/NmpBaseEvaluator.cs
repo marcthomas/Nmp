@@ -247,7 +247,7 @@ namespace Nmp {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		public string GetDiversionText( string name )
+		public string GetDiversionText( string name, bool supressWarning = false )
 		{
 			// ******
 			using( new NMP.NmpMakeCurrent(nmp) ) {
@@ -262,7 +262,9 @@ namespace Nmp {
 				//
 				// if does not exist will issue a warning and return empty string
 				//
-				return output.FetchDivert( name, false );
+				//return output.FetchDivert( name, false );
+				return output.FetchDivert( name, false, 0, string.Empty, supressWarning );
+
 			}
 		}
 

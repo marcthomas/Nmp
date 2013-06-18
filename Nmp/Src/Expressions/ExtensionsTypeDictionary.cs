@@ -86,6 +86,12 @@ namespace NmpExpressions {
 				return item;
 			}
 
+			//
+			// by doing this it may see derived type before it sees it's own type
+			//
+			// or am i nuts ??
+
+
 			for( var type = typeIn.BaseType; null != type; type = type.BaseType ) {
 				if( dict.TryGetValue( type, out item ) ) {
 					dict.Add( typeIn, item );
@@ -107,7 +113,7 @@ namespace NmpExpressions {
 
 			if( null != extItem ) {
 				Type type = extItem.Type;
-				
+
 				//
 				// list of type and types its derived from
 				//
@@ -126,7 +132,7 @@ namespace NmpExpressions {
 						//
 						// accept parameter that is 'type' or anything it derives from
 						//
-						if( parameters.Length > 0 && types.Contains( parameters [ 0 ].ParameterType) ) {
+						if( parameters.Length > 0 && types.Contains( parameters [ 0 ].ParameterType ) ) {
 							return true;
 						}
 					}
@@ -142,7 +148,43 @@ namespace NmpExpressions {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public Tuple<MethodBase, object [], List<MethodBase>> FindExtensionMethod( Type objType, string methodName, object [] argsIn, Func<IList<MethodBase>, object [], Tuple<MethodBase, object []>> matchArgs )
+		public IEnumerable<MethodInfo> SortByFirstArg( IEnumerable<MethodInfo> methods )
+		{
+			// ******
+			//
+			// ?? order methods by first argument where the most derived appears first
+			//
+			List<KeyValuePair<MethodInfo, Type>> list = new List<KeyValuePair<MethodInfo, Type>> { };
+			foreach( var method in methods ) {
+				var parameters = method.GetParameters();
+				if( 0 == parameters.Length ) {
+					continue;
+				}
+				list.Add( new KeyValuePair<MethodInfo, Type>( method, parameters [ 0 ].ParameterType ) );
+			}
+
+			// ******
+			list.Sort( ( l, r ) => l.Value.IsSubclassOf( r.Value ) ? -1 : 1 );
+
+			// ******
+			List<MethodInfo> returnList = new List<MethodInfo> { };
+			foreach( var item in list ) {
+				returnList.Add( item.Key );
+			}
+
+			// ******
+			return returnList;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		//public Tuple<MethodBase, object [], List<MethodBase>> FindExtensionMethod( Type objType, string methodName, object [] argsIn, Func<IList<MethodBase>, object [], Tuple<MethodBase, object []>> matchArgs )
+		//{
+		//	return null;
+		//}
+	
+		public Tuple<MethodBase, object [], List<MethodBase>> FindExtensionMethod( Type objType, string methodName, object [] argsIn )
 		{
 			// ******
 			MethodBase methodBase = null;
@@ -150,28 +192,49 @@ namespace NmpExpressions {
 			var mbList = new List<MethodBase> { };
 
 			// ******
-			//
-			// optimize check 
-			//
-
-			// ******
 			var extItem = FindTypes( objType );
 			if( null != extItem ) {
 				Type type = extItem.Type;
 
 				foreach( var extType in extItem.List ) {
+					//
+					// get methods in extType (class that implements extension types) that
+					// match 'methodName'
+					//
 					var methods = extType.GetMethods().Where( mi => methodName == mi.Name );
-					mbList.AddRange( methods );
+
+					// ******
+					//
+					// order methods by first argument where the most derived appears first, this
+					// allows us to select the first method whose first argument can be assigned
+					// 'objType' without fear that we'll select a method whose first arg is less
+					// derived - in other words, if we're passed RuntimeConstructorInfo we'll get
+					// ConstructorInfo before we'll get MethodBase - assuming all other args are
+					// equal (MatchArgs does the actual selection)
+					//
+					methods = SortByFirstArg( methods );
+					
+					// ******
+					//
+					// don't have to do this pruning, MatchArgs may do it for us
+					//
+					foreach( var method in methods ) {
+						//if( method.IsStatic ) {
+
+						var parameters = method.GetParameters();
+						if( parameters.Length > 0 ) {
+							if( parameters [ 0 ].ParameterType.IsAssignableFrom( objType ) ) {
+								mbList.Add( method );
+							}
+						}
+
+						//}
+					}
 				}
 
-				var result = matchArgs( mbList, argsIn );
-				if( null != result && null != result.Item1 ) {
-					methodBase = result.Item1;
-					argsOut = result.Item2;
-
-					//
-					// build optimization
-					//
+				// ******
+				if( mbList.Count > 0 ) {
+					argsOut = ArgumentMatcher.MatchArgs( mbList, argsIn, out methodBase );
 				}
 			}
 

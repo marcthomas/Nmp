@@ -24,14 +24,9 @@ using Nmp;
 using ReflectionHelpers;
 using NmpExpressions;
 
-
-
 #pragma warning disable 169
 
 namespace ObjectTests {
-
-
-	// #object.newStaticMacro( `#testStatic', `SSTestClass', `AssociatedClass1', `AssociatedClass2' ... )
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -42,111 +37,6 @@ namespace ObjectTests {
 		Type testClassType;
 		MethodCache methodCache;
 		ExtensionTypeDictionary methodExtensions;
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public void SetFixture( ObjectTestClass data )
-		{
-			testClass = data;
-			testClassType = testClass.GetType();
-			NewMethodCache();
-			NewMethodExtensions();
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		void NewMethodCache()
-		{
-			methodCache = new MethodCache { };
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		void NewMethodExtensions()
-		{
-			methodExtensions = new ExtensionTypeDictionary { };
-			methodExtensions.AddMethodExtensions( typeof( TestClassExtensions ), typeof( ObjectTestClass ), typeof(object) );
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		MethodInfo GetGetPropertyMethodInfo( Type type, string name )
-		{
-			var pi = type.GetProperty( name );
-			return pi.GetGetMethod();
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		MethodInfo GetMethodMethodInfo( Type type, string name )
-		{
-			return type.GetMethod( name );
-		}
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		object GetProperty( object instance, string propertyName )
-		{
-			var instanceType = instance.GetType();
-			var methodInfo = GetGetPropertyMethodInfo( instanceType, propertyName );
-			var cacheItem = methodCache.GetHandler( instance, instanceType, propertyName, methodInfo, null );
-			var result = cacheItem.Handler( instance, null );
-			return result;
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		object CallInstanceMethod( object instance, string methodName, params object [] args )
-		{
-			//
-			// this is not the Nmp, the args MUST be correct
-			//
-			var instanceType = instance.GetType();
-			var methodInfo = instanceType.GetMethod( methodName, Type.GetTypeArray(args) );
-			var cacheItem = methodCache.GetHandler( instance, instanceType, methodName, methodInfo, args );
-			var result = cacheItem.Handler( instance, args );
-			return result;
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		object CallStaticMethod( Type type, string methodName, params object [] args )
-		{
-			//
-			// this is not the Nmp, the args MUST be correct
-			//
-			//var methodInfo = type.GetMethod( methodName, BindingFlags.Public | BindingFlags.Static, null, Type.GetTypeArray( args ), null );
-			var methodInfo = type.GetMethod( methodName, Type.GetTypeArray( args ) );
-			var cacheItem = methodCache.GetHandler( null, type, methodName, methodInfo, args );
-			var result = cacheItem.Handler( null, args );
-			return result;
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		object CallExtensionMethod( Type type, string methodName, params object [] args )
-		{
-			//
-			// this is not the Nmp, the args MUST be correct
-			//
-			////var methodInfo = type.GetMethod( methodName, BindingFlags.Public | BindingFlags.Static, null, Type.GetTypeArray( args ), null );
-			//var methodInfo = type.GetMethod( methodName, Type.GetTypeArray( args ) );
-			//var cacheItem = methodCache.GetHandler( null, type, methodName, methodInfo, args );
-			//var result = cacheItem.Handler( null, args );
-			//return result;
-
-			Tuple<MethodBase, object [], List<MethodBase>> findResult = methodExtensions.FindExtensionMethod( type, methodName, args, ArgumentMatcher.MatchArgs2 );
-			var cacheItem = methodCache.GetHandler( null, testClassType, methodName, findResult.Item1 as MethodInfo, args );
-			return cacheItem.Handler( null, findResult.Item2 );
-		}
-
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -231,12 +121,61 @@ namespace ObjectTests {
 		/////////////////////////////////////////////////////////////////////////////
 
 		[Fact]
+		public void DirectObjectTests_ExtensionMethodSelectType()
+		{
+			// ******
+			const string ConstMethodName = "Modifiers";
+			Type firstParamType;
+
+			var ctors = testClassType.GetConstructors();
+			var methodInfo = SelectExtensionMethod( ctors [ 0 ], ConstMethodName, out firstParamType );
+
+			Assert.Equal( ConstMethodName, methodInfo.Name );
+			Assert.Equal( typeof( ConstructorInfo ), firstParamType );
+
+			// ******
+			methodInfo = SelectExtensionMethod( ctors [ 0 ], ConstMethodName, out firstParamType, 42 );
+
+			Assert.Equal( ConstMethodName, methodInfo.Name );
+			Assert.Equal( typeof( MemberInfo ), firstParamType );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		[Fact]
+		public void DirectObjectTests_ExtensionMethodSelectType2()
+		{
+			// ******
+			const string ConstMethodName = "Modifiers";
+			Type firstParamType;
+
+			var fieldInfo = testClassType.GetField( "intField" );
+			var methodInfo = SelectExtensionMethod( fieldInfo, ConstMethodName, out firstParamType );
+
+			Assert.Equal( ConstMethodName, methodInfo.Name );
+			Assert.Equal( typeof( FieldInfo ), firstParamType );
+
+			// ******
+			methodInfo = SelectExtensionMethod( fieldInfo, ConstMethodName, out firstParamType, 42 );
+
+			Assert.Equal( ConstMethodName, methodInfo.Name );
+			Assert.Equal( typeof( MemberInfo ), firstParamType );
+
+			var strResult = CallExtensionMethod( typeof(FieldInfo), "Modifiers", fieldInfo, 42 );
+			Assert.Equal( "MemberInfo Modifiers value is 42", strResult );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		[Fact]
 		public void DirectObjectTests_ExtensionMethodEchosArg()
 		{
 			// ******
-			var newArgs = new object [] { testClass  };
+			var newArgs = new object [] { testClass };
 			var strResult = CallExtensionMethod( testClassType, "ClassFullName", newArgs );
-			Assert.Equal( typeof(ObjectTestClass).FullName, strResult );
+			Assert.Equal( typeof( ObjectTestClass ).FullName, strResult );
 		}
 
 
@@ -371,6 +310,140 @@ namespace ObjectTests {
 		//{
 		//	return ((KeyValuePair<string, object>) kvp).Key;
 		//}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public void SetFixture( ObjectTestClass data )
+		{
+			testClass = data;
+			testClassType = testClass.GetType();
+			NewMethodCache();
+			NewMethodExtensions();
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		void NewMethodCache()
+		{
+			methodCache = new MethodCache { };
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		void NewMethodExtensions()
+		{
+			methodExtensions = new ExtensionTypeDictionary { };
+			methodExtensions.AddMethodExtensions(
+				typeof( TestClassExtensions ),
+
+				typeof( ObjectTestClass ),
+				typeof( EventInfo ),
+				typeof( FieldInfo ),
+				typeof( MethodBase ),
+				typeof( ConstructorInfo ),
+				typeof( MemberInfo ),
+
+				typeof( object )
+			);
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		MethodInfo GetGetPropertyMethodInfo( Type type, string name )
+		{
+			var pi = type.GetProperty( name );
+			return pi.GetGetMethod();
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		MethodInfo GetMethodMethodInfo( Type type, string name )
+		{
+			return type.GetMethod( name );
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		object GetProperty( object instance, string propertyName )
+		{
+			var instanceType = instance.GetType();
+			var methodInfo = GetGetPropertyMethodInfo( instanceType, propertyName );
+			var cacheItem = methodCache.GetHandler( instance, instanceType, propertyName, methodInfo, null );
+			var result = cacheItem.Handler( instance, null );
+			return result;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		object CallInstanceMethod( object instance, string methodName, params object [] args )
+		{
+			//
+			// this is not the Nmp, the args MUST be correct
+			//
+			var instanceType = instance.GetType();
+			var methodInfo = instanceType.GetMethod( methodName, Type.GetTypeArray( args ) );
+			var cacheItem = methodCache.GetHandler( instance, instanceType, methodName, methodInfo, args );
+			var result = cacheItem.Handler( instance, args );
+			return result;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		object CallStaticMethod( Type type, string methodName, params object [] args )
+		{
+			//
+			// this is not the Nmp, the args MUST be correct
+			//
+			//var methodInfo = type.GetMethod( methodName, BindingFlags.Public | BindingFlags.Static, null, Type.GetTypeArray( args ), null );
+			var methodInfo = type.GetMethod( methodName, Type.GetTypeArray( args ) );
+			var cacheItem = methodCache.GetHandler( null, type, methodName, methodInfo, args );
+			var result = cacheItem.Handler( null, args );
+			return result;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		object CallExtensionMethod( Type type, string methodName, params object [] args )
+		{
+			//
+			// this is not the Nmp, the args MUST be correct
+			//
+			Tuple<MethodBase, object [], List<MethodBase>> findResult = methodExtensions.FindExtensionMethod( type, methodName, args );	//, ArgumentMatcher.MatchArgs2 );
+			var cacheItem = methodCache.GetHandler( null, testClassType, methodName, findResult.Item1 as MethodInfo, args );
+			return cacheItem.Handler( null, findResult.Item2 );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		Type GetFirstParameterType( MethodBase mi )
+		{
+			if( null == mi ) {
+				throw new ArgumentNullException( "mi" );
+			}
+			var parameters = mi.GetParameters();
+			return 0 == parameters.Length ? null : parameters [ 0 ].ParameterType;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		MethodBase SelectExtensionMethod( object theObject, string methodName, out Type firstParamType, params object [] args )
+		{
+			var objType = theObject.GetType();
+			var newArgs = Arguments.PrependArgs( args, theObject );
+			Tuple<MethodBase, object [], List<MethodBase>> findResult = methodExtensions.FindExtensionMethod( objType, methodName, newArgs );
+			firstParamType = GetFirstParameterType( findResult.Item1 );
+			return findResult.Item1;
+		}
 
 
 		/////////////////////////////////////////////////////////////////////////////

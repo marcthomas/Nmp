@@ -90,12 +90,22 @@ namespace NmpBase {
 				return null == objIn ? string.Empty : objIn.ToString();
 			}
 
-			else if( type.IsInstanceOfType(objIn) ) {
+			// ******
+			Type objInType = objIn.GetType();
+
+			//else if( type.IsInstanceOfType(objIn) ) {
+			//	return objIn;
+			//}
+			if( type == objInType || type.IsAssignableFrom( objInType ) ) {
 				return objIn;
 			}
 
-			// ******
-			Type objInType = objIn.GetType();
+			if( runtimeTypeGuid.Equals( objInType.GUID ) && ((Type)objIn) == type ) {
+				//
+				// requesting a Type object which 'objIn' is, and they are equal
+				//
+				return objIn;
+			}
 
 		 	if( objInType.Equals(type) ) {
 				//

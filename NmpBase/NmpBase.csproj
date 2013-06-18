@@ -138,7 +138,7 @@
     <Compile Include="Src\Code\StringExtensions.cs" />
     <Compile Include="Src\Code\StringIndexer.cs" />
     <Compile Include="Src\Razor\HelperResult.cs" />
-    <Compile Include="Src\Reflection\Invoker.cs" />
+    <Compile Include="Src\Reflection\ArgumentMatcher.cs" />
     <Compile Include="Src\Razor\IRazorBase.cs" />
     <Compile Include="Src\Razor\ParseRazorSource.cs" />
     <Compile Include="Src\Razor\RazorOptions.cs" />

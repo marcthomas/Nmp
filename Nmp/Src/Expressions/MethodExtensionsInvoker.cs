@@ -61,7 +61,6 @@ namespace NmpExpressions {
 		object [] FindMethod( object [] argsIn, out MethodCacheItem cacheItem )
 		{
 			// ******
-			Type objType = obj.GetType();
 			var newArgs = Arguments.PrependArgs( argsIn, obj );
 
 			// ******
@@ -75,7 +74,7 @@ namespace NmpExpressions {
 			}
 
 			// ******
-			Tuple<MethodBase, object [], List<MethodBase>> result = methodExtensions.FindExtensionMethod( objType, methodName, newArgs, MatchArgs2 );
+			Tuple<MethodBase, object [], List<MethodBase>> result = methodExtensions.FindExtensionMethod( objType, methodName, newArgs );	//, MatchArgs2 );
 			if( null != result && null != result.Item1 ) {
 				cacheItem = methodCache.Generate( null, objType, methodName, result.Item1 as MethodInfo, newArgs );
 				return result.Item2;

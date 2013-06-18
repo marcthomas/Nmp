@@ -63,6 +63,10 @@ namespace ObjectTests {
 
 	public class ObjectTestClass {
 
+		public int intField;
+		public double doubleField;
+		public DateTime dateTimeField;
+
 		// ******
 		public AuxType<string, object> AuxType
 		{
@@ -136,6 +140,15 @@ namespace ObjectTests {
 			return value;
 		}
 
+		
+		/////////////////////////////////////////////////////////////////////////////
+
+		public ObjectTestClass()
+		{
+		}
+
+
+
 	}
 
 
@@ -143,15 +156,60 @@ namespace ObjectTests {
 
 	public static class TestClassExtensions {
 
+		/////////////////////////////////////////////////////////////////////////////
+
 		public static string ClassFullName( this ObjectTestClass tc )
 		{
 			return tc.GetType().FullName;
 		}
 
+
+		/////////////////////////////////////////////////////////////////////////////
+
 		//public static double MethodEchosArg( this ObjectTestClass tc, double arg )
 		//{
 		//	return tc.MethodEchosArg( arg );
 		//}
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		//public static string Modifiers( this EventInfo _ )
+		//{
+		//	return "EventInfo Modifiers";
+		//}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static string Modifiers( this FieldInfo _ )
+		{
+			return "FieldInfo Modifiers";
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static string Modifiers( this MethodBase _ )
+		{
+			return "MethodBase Modifiers";
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static string Modifiers( this ConstructorInfo _ )
+		{
+			return "ConstructorInfo Modifiers";
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static string Modifiers( this MemberInfo mi, int value )
+		{
+			return string.Format("MemberInfo Modifiers value is {0}", value );
+		}
+
 
 	}
 
