@@ -60,6 +60,7 @@ namespace NmpExpressions {
 		/// </returns>
 		////////////////////////////////////////////////////////////////////////////
 
+		[Macro]
 		public string Join( string joinStr )
 		{
 			// ******
