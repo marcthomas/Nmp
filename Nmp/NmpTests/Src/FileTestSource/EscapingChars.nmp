@@ -1,0 +1,32 @@
+#.pushDivert(-1)
+#.nofile()
+#.popDivert()
+
+
+(#defmacro `_Test')
+	.trim.
+
+\\
+\
+\`
+\'
+\,
+`Success\\'Is\failure\held\at\bay
+
+
+
+(#endmacro)
+
+(#if #.not(isTest) )
+
+	;;
+	;; the test code that runs this macro text defines a macro named
+	;; `isTest', so this will not run when the unit test is running
+	;;
+	
+	_Test@[divert]
+	#.saveDivert( `Success\\'#Path.GetFileName(#.currentFile)`'.result, `_Test', true)
+
+(#endif)
+
+

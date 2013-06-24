@@ -87,6 +87,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Src\FileTestSource\EscapingChars.nmp" />
     <None Include="Src\FileTestSource\DateTime.nmp" />
     <None Include="Src\FileTestSource\Defarray.nmp" />
     <None Include="Src\FileTestSource\Deflist.nmp" />

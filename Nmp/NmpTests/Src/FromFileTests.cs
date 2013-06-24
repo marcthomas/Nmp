@@ -224,6 +224,20 @@ namespace NmpTests {
 
 
 		///////////////////////////////////////////////////////////////////////////////
+		// 20
+
+		[Fact]
+		public void FileTest_EscapingChars()
+		{
+			//
+			// #cpp()
+			//
+			Tuple<string, string> result = TestHelpers.RunMacro( "EscapingChars.nmp" );
+			Equal( result.Item1, result.Item2 );
+		}
+
+
+		///////////////////////////////////////////////////////////////////////////////
 
 		public void Equal( string lhs, string rhs )
 		{
