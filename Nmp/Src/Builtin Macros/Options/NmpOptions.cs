@@ -36,6 +36,18 @@ namespace Nmp.Builtin.Macros {
 		/////////////////////////////////////////////////////////////////////////////
 
 		[Macro]
+		public bool fixResultOn { get { return gc.FixResults; } }
+
+		[Macro]
+		public void setFixtResult( bool value )
+		{
+			gc.FixResults = value;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		[Macro]
 		public bool macroTraceOn { get { return gc.MacroTraceOn; } }
 
 		[Macro]

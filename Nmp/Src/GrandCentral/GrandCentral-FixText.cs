@@ -21,31 +21,31 @@ namespace Nmp {
 
 	partial class GrandCentral {
 
-		/////////////////////////////////////////////////////////////////////////////
-		//
-		//private char HandleCaretEscape()
-		//{
-		//	// ******
-		//	if( SC.CARET == reader.Peek() ) {
-		//		//
-		//		// two carets - skip one, return the other
-		//		//
-		//		reader.Next();
-		//		return SC.CARET;
-		//	}
-		//
-		//	// ******
-		//	char ch = EscapedCharValue( reader.Peek() );
-		//	return SC.NO_CHAR == ch ? SC.BACKSLASH : ch;
-		//
-		//	//
-		//	// if escaped quote then embed it - fix out output
-		//	//
-		//
-		//
-		//	//ch = ThreadContext.EscapedChars().Add( ch );
-		//}
-		//
+		///////////////////////////////////////////////////////////////////////////
+
+		public string EncodeNmpQuotes( string text )
+		{
+			// ******
+			if( 2 != SeqOpenQuote.CountChars + SeqCloseQuote.CountChars ) {
+				return text;
+			}
+
+			// ******
+			var sb = new StringBuilder { };
+
+			foreach( var ch in text ) {
+				if( SeqOpenQuote.FirstChar == ch || SeqCloseQuote.FirstChar == ch ) {
+					sb.Append( EscapedChars.Add( ch ) );
+				}
+				else {
+					sb.Append( ch );
+				}
+			}
+
+			// ******
+			return sb.ToString();
+		}
+
 
 		///////////////////////////////////////////////////////////////////////////
 
@@ -133,32 +133,72 @@ namespace Nmp {
 					//	}
 					//}
 
+					//if( SC.BACKSLASH == ch ) {
+					//	//
+					//	// current char is a backslash
+					//	//
+					//	if( SC.BACKSLASH == lastCh ) {
+					//		//
+					//		// two backslashes in a row
+					//		//
+					//		// \\` or \\' - escaping the backslash and leaving the quote in place
+					//		//
+					//		// \` or \'
+					//		//
+					//		lastCh = SC.BACKSLASH;
+					//	}
+					//	else if( checkQuotes && (SeqOpenQuote.FirstChar == chNext || SeqCloseQuote.FirstChar == chNext) ) {
+					//		//
+					//		// \` or \' - embed open or close quote
+					//		//
+					//		++iCh;
+					//		lastCh = GetEscapedChars().Add( chNext );
+					//		sb.Append( lastCh );
+					//		continue;
+					//	}
+					//	else if( SC.COMMA == chNext ) {
+					//		//
+					//		// \, - embed comma
+					//		//
+					//		++iCh;
+					//		lastCh = GetEscapedChars().Add( chNext );
+					//		sb.Append( lastCh );
+					//		continue;
+					//	}
+					//}
+
 					if( SC.BACKSLASH == ch ) {
-						if( SC.BACKSLASH == lastCh ) {
+						var isOpenOrCloseQuote = checkQuotes && (SeqOpenQuote.FirstChar == chNext || SeqCloseQuote.FirstChar == chNext);
+
+						if( SC.BACKSLASH == lastCh ) {	//&& isOpenOrCloseQuote ) {
 							//
-							// \\` or \\' - escaping the backslash and leaving the quote in place
+							// escape backslash - "\\" -> "\"
 							//
-							// \` or \'
+							// *** i am torn, should this ALWAYS escape or only when followed by an open or close quote ***
 							//
 							lastCh = SC.BACKSLASH;
+							continue;
 						}
-						else if( checkQuotes && (SeqOpenQuote.FirstChar == chNext || SeqCloseQuote.FirstChar == chNext) ) {
+						else if( isOpenOrCloseQuote ) {
 							//
-							// embed open quote
+							// \` or \' - embed open or close quote
 							//
 							++iCh;
-							lastCh = GetEscapedChars().Add( chNext );
+							lastCh = EscapedChars.Add( chNext );
 							sb.Append( lastCh );
 							continue;
 						}
 						else if( SC.COMMA == chNext ) {
+							//
+							// \, - embed comma
+							//
 							++iCh;
-							lastCh = GetEscapedChars().Add( chNext );
+							lastCh = EscapedChars.Add( chNext );
 							sb.Append( lastCh );
 							continue;
 						}
-
 					}
+
 
 			
 					// ******

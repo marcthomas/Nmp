@@ -110,6 +110,8 @@ namespace Nmp {
 
 		//TypeHelperDictionary GetTypeHelpers();
 
+		bool EncodeQuotes { get; set; }
+		bool FixResults { get; set; }
 		bool MacroTraceOn { get; set; }
 		int MacroTraceLevel { get; set; }
 		bool PushbackResult { get; set; }
@@ -124,7 +126,7 @@ namespace Nmp {
 		void SetQuotes( string open, string close );
 		string QuoteWrapString( string str );
 		NamedTextBlocks GetTextBlocks();
-		EscapedCharList GetEscapedChars();
+		EscapedCharList EscapedChars { get; }
 		NmpStringList GetSearchPaths();
 		NmpStack<string> GetDirectoryStack();
 		
@@ -569,6 +571,9 @@ namespace Nmp {
 		bool HtmlEncode { get; set; }
 
 		bool Echo { get; set; }
+
+		bool FixResult { get; set; }
+		bool EncodeQuotes { get; set; }
 
 		//
 		// other options

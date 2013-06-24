@@ -158,9 +158,11 @@ namespace Nmp.Output {
 		Diversions			diversions;
 		DiversionStack	diversionsStack;
 
+		GrandCentral gc;
+
 		// ******
-		NamedTextBlocks blocks;	// = ThreadContext.TextBlocks;
-		EscapedCharList chars;	// = ThreadContext.EscapedChars;
+		//NamedTextBlocks blocks;	// = ThreadContext.TextBlocks;
+		//EscapedCharList chars;	// = ThreadContext.EscapedChars;
 
 
 		///////////////////////////////////////////////////////////////////////////////
@@ -634,7 +636,7 @@ namespace Nmp.Output {
 					string key = sbIn.ToString( index, NamedTextBlocks.NameLength );
 					index += NamedTextBlocks.NameLength;
 
-					string text = blocks.GetTextBlock( key );
+					string text = gc.GetTextBlocks().GetTextBlock( key );
 					if( null == text ) {
 						throw ExceptionHelpers.CreateException( "could not locate text block key \"{0}\" while final processing text", key );
 					}
@@ -704,7 +706,7 @@ namespace Nmp.Output {
 				// escaped characters
 				//
 				if( ch >= EscapedCharList.FirstEmbedEscape && ch <= EscapedCharList.LastEmbedEscape ) {
-					sb.Append( chars.Get(ch) );
+					sb.Append( gc.EscapedChars.Get( ch ) );
 					++index;
 				}
 
@@ -754,8 +756,8 @@ namespace Nmp.Output {
 
 			// ******
 			if( removeBlocksAndChars ) {
-				blocks.Clear();
-				chars.Clear();
+				gc.GetTextBlocks().Clear();
+				//chars.Clear();
 			}
 
 			// ******
@@ -782,8 +784,9 @@ namespace Nmp.Output {
 		public MasterOutput( GrandCentral gc )
 		{
 			// ******
-			blocks = gc.GetTextBlocks();
-			chars = gc.GetEscapedChars();
+			this.gc = gc;
+			//blocks = gc.GetTextBlocks();
+			//chars = gc.GetEscapedChars();
 
 			// ******
 			diversions = new Diversions();

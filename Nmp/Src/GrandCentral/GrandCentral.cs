@@ -89,7 +89,43 @@ namespace Nmp {
 		//	}
 		//}
 
-	
+
+		///////////////////////////////////////////////////////////////////////////
+
+		bool _encodeQuotes = false;
+
+		public bool EncodeQuotes
+		{
+			get
+			{
+				return _encodeQuotes;
+			}
+
+			set
+			{
+				_encodeQuotes = value;
+			}
+		}
+
+
+		///////////////////////////////////////////////////////////////////////////
+
+		bool _fixResultOn = false;
+
+		public bool FixResults
+		{
+			get
+			{
+				return _fixResultOn;
+			}
+
+			set
+			{
+				_fixResultOn = value;
+			}
+		}
+
+
 		/////////////////////////////////////////////////////////////////////////////
 
 		public bool	RunningUnderAspNet
@@ -313,9 +349,12 @@ namespace Nmp {
 			
 		EscapedCharList _escapedChars = new EscapedCharList();
 
-		public EscapedCharList GetEscapedChars()
+		public EscapedCharList EscapedChars
 		{
-			return _escapedChars;
+			get
+			{
+				return _escapedChars;
+			}
 		}
 
 

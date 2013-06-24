@@ -229,6 +229,14 @@ namespace Nmp {
 				ThreadContext.WriteMessage( "echo: " + value );
 			}
 
+			if( options.FixResult || gc.FixResults ) {
+				value = gc.FixText( value );
+			}
+
+			if( options.EncodeQuotes || gc.EncodeQuotes ) {
+				value = gc.EncodeNmpQuotes( value.ToString() );
+			}
+
 			// ******
 			if( options.Quote ) {
 				value = gc.QuoteWrapString( value );
@@ -327,6 +335,17 @@ namespace Nmp {
 //#endif
 
 			// ******
+			if( gc.FixResults && !macroArgs.Options.FixResult ) {
+				//
+				// if options.FixResult then it will be fixed in post process
+				//
+				finalResult = gc.FixText( finalResult.ToString() );
+			}
+
+			if( gc.EncodeQuotes && !macroArgs.Options.EncodeQuotes ) {
+				finalResult = gc.EncodeNmpQuotes( finalResult.ToString() );
+			}
+
 			if( macroArgs.Options.Divert ) {
 				MasterOutput output = OutputInstance as MasterOutput;
 				output.AddToDivert( macro.Name, finalResult.ToString() );

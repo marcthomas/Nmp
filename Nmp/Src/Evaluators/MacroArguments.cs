@@ -52,8 +52,11 @@ namespace Nmp {
 		public bool TabsToSpaces { get; set; }
 
 		public bool HtmlEncode { get; set; }
-		
+
 		public bool Echo { get; set; }
+
+		public bool FixResult { get; set; }
+		public bool EncodeQuotes { get; set; }
 
 		//
 		// other options
@@ -122,6 +125,9 @@ namespace Nmp {
 			HtmlEncode = false;
 
 			Echo = false;
+
+			FixResult = false;
+			EncodeQuotes = false;
 
 			//
 			// other options
@@ -254,6 +260,14 @@ namespace Nmp {
 
 						case "echo":
 							Echo = true;
+							break;
+
+						case "fixresult":
+							FixResult = true;
+							break;
+
+						case "encodequotes":
+							EncodeQuotes = true;
 							break;
 
 						default:

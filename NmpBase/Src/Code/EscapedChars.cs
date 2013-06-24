@@ -18,27 +18,36 @@ namespace NmpBase {
 
 	///////////////////////////////////////////////////////////////////////////
 
-	public class EscapedCharList : List<char> {
+	public class EscapedCharList {	// : List<char> {
+
+		List<char> chars = new List<char> { };
 
 		///////////////////////////////////////////////////////////////////////////
 
 		public const char	FirstEmbedEscape	= SC.EMBED_FIRST_ESCAPE_CHAR;
 		public const char	LastEmbedEscape		= SC.EMBED_LAST_ESCAPE_CHAR;
-		
-		
+
+
 		///////////////////////////////////////////////////////////////////////////
-		
-		//public char First	{ get { return (char) (FirstEmbedEscape + this.Count); } }
-		//public char Last	{ get { return 0 == this.Count ? SC.NO_CHAR : (char) (FirstEmbedEscape + this.Count); } }
-		
-		
+
+		public void Clear()
+		{
+			chars.Clear();
+		}
+
+
 		///////////////////////////////////////////////////////////////////////////
 
 		public char Get( char chSpecial )
 		{
 			// ******
 			int index = chSpecial - FirstEmbedEscape;
-			return index < 0 ? SC.NO_CHAR : this[ index ];
+			try {
+				return index < 0 ? SC.NO_CHAR : chars [ index ];
+			}
+			catch( Exception ex ) {
+				throw ex;
+			}
 		}
 
 
@@ -47,17 +56,24 @@ namespace NmpBase {
 		public new char Add( char ch )
 		{
 			// ******
-			for( int i = 0; i < this.Count; i++ ) {
-				if( ch == this[i] ) {
+			for( int i = 0; i < chars.Count; i++ ) {
+				if( ch == chars[i] ) {
 					return (char) ((int)FirstEmbedEscape + i);
 				}
 			}
 			
-			char chSpecial = (char) (FirstEmbedEscape + this.Count);
+			char chSpecial = (char) (FirstEmbedEscape + chars.Count);
 
 			// ******
-			base.Add( ch );
+			chars.Add( ch );
 			return chSpecial;
+		}
+
+
+		///////////////////////////////////////////////////////////////////////////
+
+		public EscapedCharList()
+		{
 		}
 	
 	}
