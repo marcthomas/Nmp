@@ -345,11 +345,13 @@ namespace Nmp.Output {
 			div.Value.Append( textToAdd );
 		}
 
+ 		/////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
+		public bool DiversionExists( string divName )
+		{
+			// ******
+			return null != diversions.GetExistingDiversion( divName );
+		}
 
 
 

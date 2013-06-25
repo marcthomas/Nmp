@@ -326,6 +326,14 @@ namespace Nmp.Builtin.Macros {
 
 
 		///////////////////////////////////////////////////////////////////////////////
+
+		[Macro]
+		public bool diversionExists( string divName )
+		{
+			return GetOutput.DiversionExists( divName );
+		}
+	
+		///////////////////////////////////////////////////////////////////////////////
 		//
 		//public Divert( IMacroProcessor mp, Builtin builtins )
 		//{
