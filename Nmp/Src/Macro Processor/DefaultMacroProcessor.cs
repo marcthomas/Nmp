@@ -56,10 +56,10 @@ namespace Nmp {
 		/////////////////////////////////////////////////////////////////////////////
 
 		private int	macroDataNameIndex = 1001;
-	
-	
+
+
 		/////////////////////////////////////////////////////////////////////////////
-	
+
 		public bool	DumpExpressionOnly	= false;
 
 
@@ -74,9 +74,10 @@ namespace Nmp {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		public IPowerShellInterface	Powershell
+		public IPowerShellInterface Powershell
 		{
-			get {
+			get
+			{
 				return powershell;
 			}
 		}
@@ -106,22 +107,22 @@ namespace Nmp {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		public NmpMacroList _MacroList
-		{
-			get {
-				return macroList;
-			}
-		}
+		//public NmpMacroList _MacroList
+		//{
+		//	get {
+		//		return macroList;
+		//	}
+		//}
 
 
 		//////////////////////////////////////////////////////////////////////////////
-		
-		public CoreMacros _Builtins
-		{
-			get {
-				return builtins;
-			}
-		}
+
+		//public CoreMacros _Builtins
+		//{
+		//	get {
+		//		return builtins;
+		//	}
+		//}
 
 
 		/////////////////////////////////////////////////////////////////////////////
@@ -131,13 +132,13 @@ namespace Nmp {
 			return hub.Get<T>();
 		}
 
-		
+
 		/////////////////////////////////////////////////////////////////////////////
 
-		public string DefineMacro( IMacroArguments macroArgs, string macroName, object macroObject, List<string> argNames, bool isPushMacro )
-		{
-			return null;
-		}
+		//public string DefineMacro( IMacroArguments macroArgs, string macroName, object macroObject, List<string> argNames, bool isPushMacro )
+		//{
+		//	return null;
+		//}
 
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -163,7 +164,7 @@ namespace Nmp {
 
 			//for( int i = 0; i < options.AdditionalOptions.Count; i++ ) {
 			//	string optionName = options.AdditionalOptions[ i ];
-			
+
 			foreach( string optionName in options.AdditionalOptions ) {
 
 				if( "/break" == optionName.ToLower() ) {
@@ -172,8 +173,8 @@ namespace Nmp {
 
 				// ******
 				IMacro macro;
-				if( FindMacro(optionName, false, out macro) ) {
-					
+				if( FindMacro( optionName, false, out macro ) ) {
+
 					if( MacroType.Object == macro.MacroType ) {
 						object macroObj = macro.MacroObject;
 
@@ -270,88 +271,75 @@ namespace Nmp {
 		/// record
 		/// </summary>
 		/// <param name="macro"></param>
-		/// <param name="exp"></param>
-		/// <returns>object result of processing the macro</returns>
+		/// <param name="macroArgs"></param>
+		/// <param name="postProcess"></param>
+		/// <returns></returns>
 
-		public object _ProcessMacro( IMacro macro, IMacroArguments macroArgs, bool postProcess )
+		object ProcessMacro( IMacro macro, IMacroArguments macroArgs, bool postProcess )
 		{
 			// ******
-			int	id = tracerId++;
-			if( null != tracer ) {
-				tracer.ProcessMacroBegin( id, macro, macroArgs, postProcess );
-			}
+			using( new SaveRestore<IMacroArguments>( CurrentMacroArgs, macroArgs, v => CurrentMacroArgs = v ) ) {
 
-			// ******
-			//
-			// macro.IsBuiltinMacro
-			// macro.IsTextMacro
-			// macro.IsObjectMacro
-			//
+				// ******
+				int	id = tracerId++;
+				if( null != tracer ) {
+					tracer.ProcessMacroBegin( id, macro, macroArgs, postProcess );
+				}
 
-			//
-			// must save and restore CurrentMacroArgs
-			//
-			var argsSave = CurrentMacroArgs;
-			CurrentMacroArgs = macroArgs;
+				// ******
 				object macroResult = macro.MacroHandler.Evaluate( macro, macroArgs );
-			CurrentMacroArgs = argsSave;
 
-			// ******
-			object finalResult = null;
+				// ******
+				object finalResult = null;
 
-			if( postProcess || macroArgs.Options.CallerInstructions ) {
+				if( postProcess || macroArgs.Options.CallerInstructions ) {
+					//
+					// when postProcess is true OR the macro was invoked with
+					// instructions "@[...]"
+					//
+					// this is important if this macro was invoked as an argument 
+					// to another macro - the object WILL be converted to a string
+					// so care must be taken NOT to use macro instructions when
+					// you want to preserve the resut of the call as an object !
+					//
+					// addenda: converts to a string UNLESS the '/break' option is
+					// used
+					//
+					finalResult = PostProcessMacroResult( macro.Name, macroArgs.Options, macroResult );
+				}
+				else {
+					finalResult = macroResult;
+				}
+
+				// ******
+				if( null != tracer ) {
+					tracer.ProcessMacroDone( id, macro, postProcess, macroArgs.Options.Divert, macroResult, finalResult );
+				}
+
+				// ******
 				//
-				// when postProcess is true OR the macro was invoked with
-				// instructions "@[...]"
+				// the same cautions apply here as above concerning "@[...]", 
+				// FixResults, EncodeQuotes and Divert will convert the macro result to
+				// a string
 				//
-				// this is important if this macro was invoked as an argument 
-				// to another macro - the object WILL be converted to a string
-				// so care must be taken NOT to use macro instructions when
-				// you want to preserve the resut of the call as an object !
-				//
-				finalResult = PostProcessMacroResult( macro.Name, macroArgs.Options, macroResult );
-			}
-			else {
-				finalResult = macroResult;
-			}
+				if( gc.FixResults && !macroArgs.Options.FixResult ) {
+					//
+					// if options.FixResult then it will have been fixed in post process
+					//
+					finalResult = gc.FixText( finalResult.ToString() );
+				}
 
-			// ******
-			if( null != tracer ) {
-				tracer.ProcessMacroDone( id, macro, postProcess, macroArgs.Options.Divert, macroResult, finalResult );
-			}
+				if( gc.EncodeQuotes && !macroArgs.Options.EncodeQuotes ) {
+					finalResult = gc.EncodeNmpQuotes( finalResult.ToString() );
+				}
 
-//			// ******
-//#if !NET35
-//			if( macroArgs.Options.Razor || macroArgs.Options.RazorObject ) {
-//				var razor = new RazorRunner( this );
-//				finalResult = razor.Run( finalResult.ToString() );
-//
-//				if( macroArgs.Options.RazorObject ) {
-//					razor.MacroFromLastInstance( macro.Name );
-//					return string.Empty;
-//				}
-//
-//			}
-//#endif
-
-			// ******
-			if( gc.FixResults && !macroArgs.Options.FixResult ) {
-				//
-				// if options.FixResult then it will be fixed in post process
-				//
-				finalResult = gc.FixText( finalResult.ToString() );
-			}
-
-			if( gc.EncodeQuotes && !macroArgs.Options.EncodeQuotes ) {
-				finalResult = gc.EncodeNmpQuotes( finalResult.ToString() );
-			}
-
-			if( macroArgs.Options.Divert ) {
-				MasterOutput output = OutputInstance as MasterOutput;
-				output.AddToDivert( macro.Name, finalResult.ToString() );
-				return string.Empty;
-			}
-			else {
+				if( macroArgs.Options.Divert ) {
+					MasterOutput output = OutputInstance as MasterOutput;
+					output.AddToDivert( macro.Name, finalResult.ToString() );
+					return string.Empty;
+				}
+				
+				// ******
 				return finalResult;
 			}
 		}
@@ -368,26 +356,22 @@ namespace Nmp {
 
 		public virtual string ProcessMacro( IMacroInvocationRecord mir )
 		{
-
 			// ******
-			MacroProcessingState prevMirState = mir.State;
-			mir.State = MacroProcessingState.Executing;
+			using( new SaveRestore<MacroProcessingState>( mir.State, MacroProcessingState.Executing, ms => mir.State = ms ) ) {
 
-			// ******
-			try {
-				//
-				// return a string that represents the expression
-				//
 				if( DumpExpressionOnly ) {
+					//
+					// return a string that represents the expression
+					//
 					return DumpExpression( mir.Macro, mir.MacroArgs.Expression ).ToString();
 				}
 
 				// ******
-				return _ProcessMacro( mir.Macro, mir.MacroArgs, true ).ToString();
-			}
-
-			finally {
-				mir.State = prevMirState;
+				//
+				// process the macro
+				//
+				return ProcessMacro( mir.Macro, mir.MacroArgs, true ).ToString();
+		
 			}
 		}
 
@@ -404,7 +388,7 @@ namespace Nmp {
 
 		public string FixText( string text )
 		{
-			return FixText( new string [] {text} );
+			return FixText( new string [] { text } );
 		}
 
 
@@ -413,9 +397,9 @@ namespace Nmp {
 		public object InvokeMacro( IInput input, MIR mir, MacroExpression expression, bool postProcess )
 		{
 			// ******
-			using( Get<InvocationContext>().Init( mir ) ) {
-				var macroArgs = new MacroArguments(	mir.Macro, input, expression );
-				return _ProcessMacro( mir.Macro, macroArgs, postProcess );
+			using( Get<InvocationContext>().Initialize( mir ) ) {
+				var macroArgs = new MacroArguments( mir.Macro, input, expression );
+				return ProcessMacro( mir.Macro, macroArgs, postProcess );
 			}
 		}
 
@@ -446,7 +430,7 @@ namespace Nmp {
 
 			// ******
 			if( null == args ) {
-				args = new object [0];
+				args = new object [ 0 ];
 			}
 
 			// ******
@@ -491,7 +475,7 @@ namespace Nmp {
 		{
 			// ******
 			IMacro macro;
-			if( FindMacro(macroName, false, out macro) ) {
+			if( FindMacro( macroName, false, out macro ) ) {
 				return InvokeMacro( macro, args, postProcess );
 			}
 
@@ -512,7 +496,7 @@ namespace Nmp {
 			foreach( string name in macrosList ) {
 				IMacro macro;
 
-				if( macroList.TryGetValue(name, out macro) ) {
+				if( macroList.TryGetValue( name, out macro ) ) {
 					list.Add( macro );
 					macroList.Remove( name );
 				}
@@ -529,7 +513,7 @@ namespace Nmp {
 		{
 			// ******
 			IMacro existingMacro;
-			if( FindMacro(macroName, out existingMacro) ) {
+			if( FindMacro( macroName, out existingMacro ) ) {
 				//
 				// get Pushed, remove existingMacro
 				//
@@ -582,7 +566,7 @@ namespace Nmp {
 				string macroName = kvp.Key;
 				IMacro macro = kvp.Value;
 
-				if( ! userOnly || MacroType.Text == macro.MacroType || MacroType.Object == macro.MacroType ) {
+				if( !userOnly || MacroType.Text == macro.MacroType || MacroType.Object == macro.MacroType ) {
 					list.Add( macroName );
 				}
 			}
@@ -604,7 +588,7 @@ namespace Nmp {
 				string macroName = kvp.Key;
 				IMacro macro = kvp.Value;
 
-				if( ! userOnly || MacroType.Text == macro.MacroType || MacroType.Object == macro.MacroType ) {
+				if( !userOnly || MacroType.Text == macro.MacroType || MacroType.Object == macro.MacroType ) {
 					list.Add( macro );
 				}
 			}
@@ -614,18 +598,18 @@ namespace Nmp {
 		}
 
 
-//		/////////////////////////////////////////////////////////////////////////////
-//		
-//		public object UnWrapObject( object obj )
-//		{
-//			//
-//			// foreach() and maybe other methods require this, specificaly foreach needs
-//			// the actual object so that it can figure what it's dealing with
-//			//
-//			return null != psIntf && null != obj ? psIntf.UnWrapPSObject( obj ) : obj;
-//		}
-//		
-		
+		//		/////////////////////////////////////////////////////////////////////////////
+		//		
+		//		public object UnWrapObject( object obj )
+		//		{
+		//			//
+		//			// foreach() and maybe other methods require this, specificaly foreach needs
+		//			// the actual object so that it can figure what it's dealing with
+		//			//
+		//			return null != psIntf && null != obj ? psIntf.UnWrapPSObject( obj ) : obj;
+		//		}
+		//		
+
 		/////////////////////////////////////////////////////////////////////////////
 
 		//public bool FindMacro( string name, bool altTokenStart, out IMacro macro )
@@ -696,11 +680,11 @@ namespace Nmp {
 		//			object psVar;
 		//			bool psVarFound = powershell.GetVariable( name.Substring(1), out psVar );
 		//
-	////
-	//// ?? replace $ with special char to remove any possible change of
-	//// name collision if we ever allow $ in names, or one somehow slips
-	//// in ??
-	////
+		////
+		//// ?? replace $ with special char to remove any possible change of
+		//// name collision if we ever allow $ in names, or one somehow slips
+		//// in ??
+		////
 		//
 		//			if( macroList.TryGetValue(name, out macro) ) {
 		//				if( ! psVarFound ) {
@@ -794,25 +778,21 @@ namespace Nmp {
 
 			// ******
 			macro = null;
-			if( string.IsNullOrEmpty(name) ) {
+			if( string.IsNullOrEmpty( name ) ) {
 				return false;
 			}
 
 			try {
-				
-				/*
-
-						"#"			is the 'global' object for a macro script and is registered
-						"#nmp"	is also the global object and is registered
-
-							in either of the above cases access macros by "dotting" in to them
-
-								#.define( ... ) is the same as #nmp.define( ... )
-
-
-				*/
-
-				if( '$' != name[0] ) {
+				//
+				// "#"    is the 'global' object for a macro script and is a registered macro
+				//
+				// "#nmp" is also the global object and is a registered macro
+				//
+				//	in either of the above cases you access macros by "dotting" in to them
+				//
+				//		#.define( ... ) is the same as #nmp.define( ... )
+				//
+				if( '$' != name [ 0 ] ) {
 					bool found = macroList.TryGetValue( name, out macro );
 					if( found ) {
 						return true;
@@ -835,40 +815,40 @@ namespace Nmp {
 
 
 
-			// ******
-			//if( null == mTemp && null != psIntf && (! string.IsNullOrEmpty(name)) && '$' == name[0] ) {
-			//	name = name.Substring( 1 );
-			//	Macro lastPSMacro;
-			//	
-			//	//
-			//	// not found and were running with Powershell, see if there is a PS variable by
-			//	// this name
-			//	//
-			//
-			//	//
-			//	// can NOT cache by name because the PS variable might be having its value or reference
-			//	// change between our fetching of it - like in a foreach loop which is how we 
-			//	// caught this issue
-			//	//
-			//	object psVar = psIntf.GetVariable( name );
-			//	if( null != psVar ) {
-			//		lastPSMacro = Macro.NewNetObjMacro( this, name, netObjectHelper, psVar );
-			//	}
-			//	else {
-			//		lastPSMacro = null;
-			//	}
-			//
-			//	// ******
-			//	if( null  != lastPSMacro ) {
-			//		mOut = lastPSMacro;
-			//		return true;
-			//	}
-			//}
+				// ******
+				//if( null == mTemp && null != psIntf && (! string.IsNullOrEmpty(name)) && '$' == name[0] ) {
+				//	name = name.Substring( 1 );
+				//	Macro lastPSMacro;
+				//	
+				//	//
+				//	// not found and were running with Powershell, see if there is a PS variable by
+				//	// this name
+				//	//
+				//
+				//	//
+				//	// can NOT cache by name because the PS variable might be having its value or reference
+				//	// change between our fetching of it - like in a foreach loop which is how we 
+				//	// caught this issue
+				//	//
+				//	object psVar = psIntf.GetVariable( name );
+				//	if( null != psVar ) {
+				//		lastPSMacro = Macro.NewNetObjMacro( this, name, netObjectHelper, psVar );
+				//	}
+				//	else {
+				//		lastPSMacro = null;
+				//	}
+				//
+				//	// ******
+				//	if( null  != lastPSMacro ) {
+				//		mOut = lastPSMacro;
+				//		return true;
+				//	}
+				//}
 
-				var psVarName = name.Substring(1 );
+				var psVarName = name.Substring( 1 );
 
 				object psValue;
-				if( ! powershell.GetVariable(psVarName, out psValue) ) {
+				if( !powershell.GetVariable( psVarName, out psValue ) ) {
 					//
 					// no powershell variable by this name
 					//
@@ -880,15 +860,15 @@ namespace Nmp {
 				// variable we are (in essense) creating a temporary - one each time the
 				// variable is requested - HOPEFULLY they will be properly dereferenced and
 				// go away
-//
-// TODO need to test this to make sure WE aren't holding a reference somewhere
-//
+				//
+				// TODO need to test this to make sure WE aren't holding a reference somewhere
+				//
 				//
 				macro = CreateObjectMacro( name, psValue );
 				return true;
 			}
 
-			finally { 
+			finally {
 				if( null != tracer ) {
 					tracer.FindMacroCall( name, macro );
 				}
@@ -920,16 +900,16 @@ namespace Nmp {
 			return FindMacro( name, out macro );
 		}
 
-			
+
 		/////////////////////////////////////////////////////////////////////////////
 
 		public virtual bool IsStrictMacroName( string name )
 		{
-			
-			return Get<IRecognizer>().IsValidMacroIdentifier(name, false );
+
+			return Get<IRecognizer>().IsValidMacroIdentifier( name, false );
 		}
 
-			
+
 		/////////////////////////////////////////////////////////////////////////////
 
 		public bool DeleteMacro( string name )
@@ -963,31 +943,31 @@ namespace Nmp {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public string GenerateArgListName( string appendText )
 		{
 			return string.Format( "__macroArgs{0}{1}", macroDataNameIndex++, appendText );
 		}
-		
+
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public string GenerateLocalName( string appendText )
 		{
 			return string.Format( "__local{0}{1}", macroDataNameIndex++, appendText );
 		}
-		
+
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public string GenerateListName( string appendText )
 		{
 			return string.Format( "__list{0}{1}", macroDataNameIndex++, appendText );
 		}
-		
+
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public string GenerateArrayName( string appendText )
 		{
 			return string.Format( "__array{0}{1}", macroDataNameIndex++, appendText );
@@ -1053,12 +1033,12 @@ namespace Nmp {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public IMacro CreateBuiltinMacro( string macroName, MacroCall macroProc )
 		{
 			return Macro.NewBuiltinMacro( this, macroName, registeredMethodMacroHandler, macroProc );
 		}
-		
+
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -1102,7 +1082,7 @@ namespace Nmp {
 			// not use this to implement multiple macros in the same class since
 			// the IMacroHandler.Evaluate() method is called
 			//
-			return AddMacro( Macro.NewBlockMacro( this, macroName, mh) );
+			return AddMacro( Macro.NewBlockMacro( this, macroName, mh ) );
 		}
 
 
@@ -1116,7 +1096,7 @@ namespace Nmp {
 			// not use this to implement multiple macros in the same class since
 			// the IMacroHandler.Evaluate() method is called
 			//
-			return AddMacro( Macro.NewBuiltinMacro( this, macroName, mh) );
+			return AddMacro( Macro.NewBuiltinMacro( this, macroName, mh ) );
 		}
 
 
@@ -1130,12 +1110,12 @@ namespace Nmp {
 			// not use this to implement multiple macros in the same class since
 			// the IMacroHandler.Evaluate() method is called
 			//
-			return AddMacro( Macro.NewBuiltinMacro( this, macroName, mh, handlerData) );
+			return AddMacro( Macro.NewBuiltinMacro( this, macroName, mh, handlerData ) );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		public IMacro AddBuiltinMacro( string macroName, MacroCall macroProc )
 		{
 			//
@@ -1144,9 +1124,9 @@ namespace Nmp {
 			// class as long as it matches MacroProc's signature - useful where you want to
 			// have multiple macro method handles in the same class
 			//
-			return AddMacro( Macro.NewBuiltinMacro(this, macroName, registeredMethodMacroHandler, macroProc) );
+			return AddMacro( Macro.NewBuiltinMacro( this, macroName, registeredMethodMacroHandler, macroProc ) );
 		}
-		
+
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -1227,43 +1207,43 @@ namespace Nmp {
 
 
 			// ******
-	builtins = new CoreMacros( this );
+			builtins = new CoreMacros( this );
 			//
 			// under two different names
 			//
 			//AddObjectMacro( "$", builtins );
 			//AddObjectMacro( "$nmp", builtins );
-			
+
 			//
 			// and a couple more until we decide what we like
 			//
 			AddObjectMacro( "#", builtins );
 			AddObjectMacro( "#nmp", builtins );
 			AddObjectMacro( "#mp", this );
-			
+
 			// ******
-	var objectMacros = new ObjectMacros( this );
+			var objectMacros = new ObjectMacros( this );
 			AddObjectMacro( "#object", objectMacros );
 
 			// ******
-	var ifMacros = new IfMacros( this );
+			var ifMacros = new IfMacros( this );
 			AddObjectMacro( "#if", ifMacros );
 
 			// ******
-	var isMacros = new IsMacros( this );
+			var isMacros = new IsMacros( this );
 			AddObjectMacro( "#is", isMacros );
 
 
 			// ******
-			AddMacro( Defmacro.Create(this, builtins) );
-			AddMacro( Pushdef.Create(this, builtins) );
+			AddMacro( Defmacro.Create( this, builtins ) );
+			AddMacro( Pushdef.Create( this, builtins ) );
 
 			// ******
-			AddMacro( IfMacroHandler.Create(this) );
-			AddMacro( Textblock.Create(this) );
+			AddMacro( IfMacroHandler.Create( this ) );
+			AddMacro( Textblock.Create( this ) );
 
 			// ******
-			AddMacro( Defarray.Create(this) );
+			AddMacro( Defarray.Create( this ) );
 			AddMacro( Deflist.Create( this ) );
 
 			// ******
@@ -1275,15 +1255,15 @@ namespace Nmp {
 			AddMacro( ForloopMacros.Create( this ) );
 
 			// ******
-			AddObjectMacro( "#String", new StaticStandin(typeof(string)) );
-			AddObjectMacro( "#Path", new StaticStandin(typeof(Path)) );
-			AddObjectMacro( "#DateTime", new StaticStandin(typeof(DateTime)) );
-			AddObjectMacro( "#Directory", new StaticStandin(typeof(Directory)) );
-			AddObjectMacro( "#File", new StaticStandin(typeof(File)) );
+			AddObjectMacro( "#String", new StaticStandin( typeof( string ) ) );
+			AddObjectMacro( "#Path", new StaticStandin( typeof( Path ) ) );
+			AddObjectMacro( "#DateTime", new StaticStandin( typeof( DateTime ) ) );
+			AddObjectMacro( "#Directory", new StaticStandin( typeof( Directory ) ) );
+			AddObjectMacro( "#File", new StaticStandin( typeof( File ) ) );
 
-			AddObjectMacro( "#Registry", new StaticStandin(typeof(Registry)) );
-			AddObjectMacro( "#Environment", new StaticStandin(typeof(Environment)) );
-			AddObjectMacro( "#NmpEnvironment", new StaticStandin(typeof(NmpEnvironment)) );
+			AddObjectMacro( "#Registry", new StaticStandin( typeof( Registry ) ) );
+			AddObjectMacro( "#Environment", new StaticStandin( typeof( Environment ) ) );
+			AddObjectMacro( "#NmpEnvironment", new StaticStandin( typeof( NmpEnvironment ) ) );
 
 
 			// ******
@@ -1304,33 +1284,33 @@ namespace Nmp {
 			//
 			AddObjectMacro( "#nmpRegion", ETB.CreateMethodInvoker( builtins, "nmpRegion" ) );
 			AddObjectMacro( "#endNmpRegion", ETB.CreateMethodInvoker( builtins, "endNmpRegion" ) );
-			
+
 			AddObjectMacro( "#define", ETB.CreateMethodInvoker( builtins, "define" ) );
-			AddObjectMacro( "#pop", ETB.CreateMethodInvoker(builtins, "pop") );
-			AddObjectMacro( "#undef", ETB.CreateMethodInvoker(builtins, "undef") );
-			AddObjectMacro( "#pushDivert", ETB.CreateMethodInvoker(builtins, "pushDivert") );
-			AddObjectMacro( "#popDivert", ETB.CreateMethodInvoker(builtins, "popDivert") );
-			AddObjectMacro( "#eval", ETB.CreateMethodInvoker(builtins, "eval") );
+			AddObjectMacro( "#pop", ETB.CreateMethodInvoker( builtins, "pop" ) );
+			AddObjectMacro( "#undef", ETB.CreateMethodInvoker( builtins, "undef" ) );
+			AddObjectMacro( "#pushDivert", ETB.CreateMethodInvoker( builtins, "pushDivert" ) );
+			AddObjectMacro( "#popDivert", ETB.CreateMethodInvoker( builtins, "popDivert" ) );
+			AddObjectMacro( "#eval", ETB.CreateMethodInvoker( builtins, "eval" ) );
 
-			AddObjectMacro( "#isDefined", ETB.CreateMethodInvoker(isMacros, "Defined") );
-			AddObjectMacro( "#isEmpty", ETB.CreateMethodInvoker(isMacros, "Empty") );
-			AddObjectMacro( "#isEqual", ETB.CreateMethodInvoker(isMacros, "Equal") );
-			AddObjectMacro( "#isFalse", ETB.CreateMethodInvoker(isMacros, "False") );
-			AddObjectMacro( "#isNotDefined", ETB.CreateMethodInvoker(isMacros, "NotDefined") );
-			AddObjectMacro( "#isNotEmpty", ETB.CreateMethodInvoker(isMacros, "NotEmpty") );
-			AddObjectMacro( "#isNotEqual", ETB.CreateMethodInvoker(isMacros, "NotEqual") );
-			AddObjectMacro( "#isTrue", ETB.CreateMethodInvoker(isMacros, "True") );
+			AddObjectMacro( "#isDefined", ETB.CreateMethodInvoker( isMacros, "Defined" ) );
+			AddObjectMacro( "#isEmpty", ETB.CreateMethodInvoker( isMacros, "Empty" ) );
+			AddObjectMacro( "#isEqual", ETB.CreateMethodInvoker( isMacros, "Equal" ) );
+			AddObjectMacro( "#isFalse", ETB.CreateMethodInvoker( isMacros, "False" ) );
+			AddObjectMacro( "#isNotDefined", ETB.CreateMethodInvoker( isMacros, "NotDefined" ) );
+			AddObjectMacro( "#isNotEmpty", ETB.CreateMethodInvoker( isMacros, "NotEmpty" ) );
+			AddObjectMacro( "#isNotEqual", ETB.CreateMethodInvoker( isMacros, "NotEqual" ) );
+			AddObjectMacro( "#isTrue", ETB.CreateMethodInvoker( isMacros, "True" ) );
 
-			AddObjectMacro( "#ifDefined", ETB.CreateMethodInvoker(ifMacros, "Defined") );
-			AddObjectMacro( "#ifelse", ETB.CreateMethodInvoker(ifMacros, "else") );
-			AddObjectMacro( "#ifElse", ETB.CreateMethodInvoker(ifMacros, "Else") );
-			AddObjectMacro( "#ifEmpty", ETB.CreateMethodInvoker(ifMacros, "Empty") );
-			AddObjectMacro( "#iffalse", ETB.CreateMethodInvoker(ifMacros, "false") );
-			AddObjectMacro( "#ifFalse", ETB.CreateMethodInvoker(ifMacros, "False") );
-			AddObjectMacro( "#ifNotDefined", ETB.CreateMethodInvoker(ifMacros, "NotDefined") );
-			AddObjectMacro( "#ifNotEmpty", ETB.CreateMethodInvoker(ifMacros, "NotEmpty") );
-			AddObjectMacro( "#iftrue", ETB.CreateMethodInvoker(ifMacros, "true") );
-			AddObjectMacro( "#ifTrue", ETB.CreateMethodInvoker(ifMacros, "True") );
+			AddObjectMacro( "#ifDefined", ETB.CreateMethodInvoker( ifMacros, "Defined" ) );
+			AddObjectMacro( "#ifelse", ETB.CreateMethodInvoker( ifMacros, "else" ) );
+			AddObjectMacro( "#ifElse", ETB.CreateMethodInvoker( ifMacros, "Else" ) );
+			AddObjectMacro( "#ifEmpty", ETB.CreateMethodInvoker( ifMacros, "Empty" ) );
+			AddObjectMacro( "#iffalse", ETB.CreateMethodInvoker( ifMacros, "false" ) );
+			AddObjectMacro( "#ifFalse", ETB.CreateMethodInvoker( ifMacros, "False" ) );
+			AddObjectMacro( "#ifNotDefined", ETB.CreateMethodInvoker( ifMacros, "NotDefined" ) );
+			AddObjectMacro( "#ifNotEmpty", ETB.CreateMethodInvoker( ifMacros, "NotEmpty" ) );
+			AddObjectMacro( "#iftrue", ETB.CreateMethodInvoker( ifMacros, "true" ) );
+			AddObjectMacro( "#ifTrue", ETB.CreateMethodInvoker( ifMacros, "True" ) );
 
 		}
 
@@ -1341,7 +1321,7 @@ namespace Nmp {
 		// note: injected
 		//
 
-		public DefaultMacroProcessor(	Hub hub, INmpHost host )
+		public DefaultMacroProcessor( Hub hub, INmpHost host )
 		{
 			// ******
 			this.hub = hub;
