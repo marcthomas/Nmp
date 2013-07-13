@@ -141,6 +141,22 @@ namespace Nmp {
 		//}
 
 
+		/////////////////////////////////////////////////////////////////////////////
+
+		public string FixText( string [] textArray )
+		{
+			return gc.FixText( textArray );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public string FixText( string text )
+		{
+			return FixText( new string [] { text } );
+		}
+
+
 		//////////////////////////////////////////////////////////////////////////////
 
 		protected object DumpExpression( IMacro macro, Expression exp )
@@ -270,21 +286,37 @@ namespace Nmp {
 		/// the scanner level (i.e. freshly parsed text) it does not have a macro invocation
 		/// record
 		/// </summary>
-		/// <param name="macro"></param>
-		/// <param name="macroArgs"></param>
+		/// <param name="mir"></param>
 		/// <param name="postProcess"></param>
 		/// <returns></returns>
 
-		object ProcessMacro( IMacro macro, IMacroArguments macroArgs, bool postProcess )
+		public object InvokeMacro( IMacroInvocationRecord mir, bool postProcess )
 		{
+		
 			// ******
+			var macro = mir.Macro;
+			var macroArgs = mir.MacroArgs;
 			using( new SaveRestore<IMacroArguments>( CurrentMacroArgs, macroArgs, v => CurrentMacroArgs = v ) ) {
 
 				// ******
-				int	id = tracerId++;
-				if( null != tracer ) {
-					tracer.ProcessMacroBegin( id, macro, macroArgs, postProcess );
+				if( DumpExpressionOnly ) {
+					//
+					// return a string that represents the expression
+					//
+					return DumpExpression( mir.Macro, mir.MacroArgs.Expression );
 				}
+
+				// ******
+				//int	id = tracerId++;
+				//if( null != tracer ) {
+				//	tracer.ProcessMacroBegin( id, macro, macroArgs, postProcess );
+				//}
+
+//				var evt = gc.MacroTraceLevel >= TraceLevels.ExtraVerbose ? new ParseArgumentsEvent( context ) : null;
+
+//				InvokeMacroEvent.Write( mir );
+
+
 
 				// ******
 				object macroResult = macro.MacroHandler.Evaluate( macro, macroArgs );
@@ -312,9 +344,9 @@ namespace Nmp {
 				}
 
 				// ******
-				if( null != tracer ) {
-					tracer.ProcessMacroDone( id, macro, postProcess, macroArgs.Options.Divert, macroResult, finalResult );
-				}
+				//if( null != tracer ) {
+				//	tracer.ProcessMacroDone( id, macro, postProcess, macroArgs.Options.Divert, macroResult, finalResult );
+				//}
 
 				// ******
 				//
@@ -346,60 +378,13 @@ namespace Nmp {
 
 
 		/////////////////////////////////////////////////////////////////////////////
-		/// <summary>
-		/// This overload is called when we have a freshly parsed macro and expression
-		/// found at the scanner level, it has a macro invocation record and we return
-		/// a string
-		/// </summary>
-		/// <param name="mir"></param>
-		/// <returns>object converted to a string</returns>
-
-		public virtual string ProcessMacro( IMacroInvocationRecord mir )
-		{
-			// ******
-			using( new SaveRestore<MacroProcessingState>( mir.State, MacroProcessingState.Executing, ms => mir.State = ms ) ) {
-
-				if( DumpExpressionOnly ) {
-					//
-					// return a string that represents the expression
-					//
-					return DumpExpression( mir.Macro, mir.MacroArgs.Expression ).ToString();
-				}
-
-				// ******
-				//
-				// process the macro
-				//
-				return ProcessMacro( mir.Macro, mir.MacroArgs, true ).ToString();
-		
-			}
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public string FixText( string [] textArray )
-		{
-			return gc.FixText( textArray );
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public string FixText( string text )
-		{
-			return FixText( new string [] { text } );
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
 
 		public object InvokeMacro( IInput input, MIR mir, MacroExpression expression, bool postProcess )
 		{
 			// ******
 			using( Get<InvocationContext>().Initialize( mir ) ) {
-				var macroArgs = new MacroArguments( mir.Macro, input, expression );
-				return ProcessMacro( mir.Macro, macroArgs, postProcess );
+				mir.MacroArgs = new MacroArguments( mir.Macro, input, expression );
+				return InvokeMacro( mir, postProcess );
 			}
 		}
 
@@ -409,7 +394,7 @@ namespace Nmp {
 		public object InvokeMacro( IMacro macro, MacroExpression expression, bool postProcess )
 		{
 			// ******
-			IInput input = gc.GetParseReader();	//ScanHelper.NewEmptyIInput;
+			IInput input = gc.GetParseReader();
 			return InvokeMacro( input, new MIR( macro, input, "InvokeMacro() " + macro.Name ), expression, postProcess );
 		}
 
@@ -445,6 +430,7 @@ namespace Nmp {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		// ok
 
 		public object InvokeMacro( IMacro macro, object [] args, bool postProcess )
 		{
@@ -470,6 +456,7 @@ namespace Nmp {
 
 
 		/////////////////////////////////////////////////////////////////////////////
+		// ok
 
 		public object InvokeMacro( string macroName, object [] args, bool postProcess )
 		{
