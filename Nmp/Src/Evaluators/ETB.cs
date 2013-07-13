@@ -128,8 +128,8 @@ namespace NmpEvaluators {
 
 		protected void ParseMacroOptions( IInput input, NmpStringList instructions )
 		{
-			//MacroInstructions = argScanner( input, RecognizedCharType.CloseBracketChar );
-			NmpStringList list = scanner.ArgScanner( input, RecognizedCharType.CloseBracketChar );
+			//MacroInstructions = ParseArguments( input, RecognizedCharType.CloseBracketChar );
+			NmpStringList list = scanner.ArgScanner( rootName, input, RecognizedCharType.CloseBracketChar );
 			instructions.Add( list );
 		}
 
@@ -154,7 +154,7 @@ namespace NmpEvaluators {
 
 			IArgumentsProcessor ap = new ArgumentsProcessor( scanner, recognizer );
 
-			NmpStringList strArgs = scanner.ArgScanner( input, RecognizedCharType.CloseParenChar );
+			NmpStringList strArgs = scanner.ArgScanner( rootName, input, RecognizedCharType.CloseParenChar );
 
 			// ******
 			if( ! validToken ) {
@@ -184,11 +184,11 @@ namespace NmpEvaluators {
 			// ******
 			Expression expression = null;
 
-			//IArgumentsProcessor ap = new ArgumentsProcessor( argScanner, recognizer );
+			//IArgumentsProcessor ap = new ArgumentsProcessor( ParseArguments, recognizer );
 			IArgumentsProcessor ap = new ArgumentsProcessor( scanner, recognizer );
 
-			//NmpStringList strArgs = argScanner( input, RecognizedCharType.CloseBracketChar );
-			NmpStringList strArgs = scanner.ArgScanner( input, RecognizedCharType.CloseBracketChar );
+			//NmpStringList strArgs = ParseArguments( input, RecognizedCharType.CloseBracketChar );
+			NmpStringList strArgs = scanner.ArgScanner( rootName, input, RecognizedCharType.CloseBracketChar );
 
 			// ******
 			if( ! validToken ) {
@@ -329,13 +329,13 @@ namespace NmpEvaluators {
 					*/
 
 					//if( isAltInvocationExpression && ! allDone ) {
-					//	//NmpStringList strArgs = argScanner( input, RecognizedCharType.CloseParenChar );
-					//	NmpStringList strArgs = scanner.ArgScanner( input, RecognizedCharType.CloseParenChar );
+					//	//NmpStringList strArgs = ParseArguments( input, RecognizedCharType.CloseParenChar );
+					//	NmpStringList strArgs = scanner.ParseArguments( input, RecognizedCharType.CloseParenChar );
 					//}
 
 					if( isAltInvocationExpression ) {
 						if( ! allDone ) {
-							NmpStringList strArgs = scanner.ArgScanner( input, RecognizedCharType.CloseParenChar );
+							NmpStringList strArgs = scanner.ArgScanner( rootName, input, RecognizedCharType.CloseParenChar );
 						}
 
 						if( SC.ATCHAR == input.Peek() && SC.OPEN_BRACKET == input.Peek(1) ) {
@@ -462,7 +462,7 @@ namespace NmpEvaluators {
 		//				*/
 		//
 		//		if( isAltInvocationExpression && ! allDone ) {
-		//			NmpStringList strArgs = argScanner( input, RecognizedCharType.CloseParenChar );
+		//			NmpStringList strArgs = ParseArguments( input, RecognizedCharType.CloseParenChar );
 		//		}
 		//
 		//

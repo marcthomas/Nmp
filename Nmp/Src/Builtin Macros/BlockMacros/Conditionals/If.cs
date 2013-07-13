@@ -178,7 +178,8 @@ namespace Nmp.Builtin.Macros {
 					//
 					// we're responsible for gather the arguments to `elseif'
 					//
-					NmpStringList strList = mp.Get<IScanner>().ArgScanner( input, RecognizedCharType.CloseParenChar );
+					//NmpStringList strList = mp.Get<IScanner>().ArgScanner( input, RecognizedCharType.CloseParenChar );
+					NmpStringList strList = mp.Get<IScanner>().ArgScanner( "elseif", input, RecognizedCharType.CloseParenChar );
 					int argsEnd = input.Index - 1;
 				
 					if( SC.NEWLINE == input.Peek() ) {

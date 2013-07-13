@@ -739,6 +739,14 @@ namespace Nmp {
 
 		public bool FindMethodOnObjectMacro( string name, out IMacro macro )
 		{
+			//
+			// tell me again where a "macro.method()" comes from? and why it can't be
+			// "macro.property"?
+			//
+			// implemented this for some reason, did not document and now I'm completely
+			// lost as to what, where and why?
+			//
+
 			try {
 				//
 				// split at '.', if two (?? or more) string look up the first one in

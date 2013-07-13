@@ -46,7 +46,7 @@ namespace Nmp.Builtin.Macros {
 		/// <param name="start"></param>
 		/// <param name="end"></param>
 		/// <param name="increment"></param>
-		/// <param name="macroNaME">If the macro name begins with '!' or '&" then the
+		/// <param name="macroName">If the macro name begins with '!' or '&amp; then the
 		/// text of 'macroName' will be used as the macro text</param>
 		/// <param name="extraArgs"></param>
 		/// <returns></returns>
@@ -87,7 +87,7 @@ namespace Nmp.Builtin.Macros {
 		/// Executes a foreach loop
 		/// </summary>
 		/// <param name="objToEnumerate"></param>
-		/// <param name="macroToCall">If the macro name begins with '!' or '&" then the
+		/// <param name="macroToCall">If the macro name begins with '!' or '&amp;' then the
 		/// text of 'macroToCall' will be used as the macro text</param>
 		/// <param name="extraArgs"></param>
 		/// <returns></returns>

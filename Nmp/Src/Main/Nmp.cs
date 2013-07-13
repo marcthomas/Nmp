@@ -10,6 +10,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing;
+
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -244,6 +246,11 @@ namespace Nmp {
 			// set bind it later, or - do we need to bind it ??
 			//
 			threadContext = ThreadContext.CreateThreadStorage();
+
+			//
+			// initialize tracing, NmpMakeCurrent() sets us as current event writer
+			//
+			EventWriter.RegisterWriter( nmpEventProviderId, this, null );
 
 			//
 			// make sure we're the current context

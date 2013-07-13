@@ -381,6 +381,14 @@ namespace Nmp {
 					options.Echo = true;
 					break;
 
+				case "fixresult":
+					options.FixResult = true;
+					break;
+
+				case "encodequotes":
+					options.EncodeQuotes = true;
+					break;
+
 				default:
 					//
 					// check for unknown dot directive, a '-' following the first dot

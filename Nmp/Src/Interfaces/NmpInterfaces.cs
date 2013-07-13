@@ -294,7 +294,8 @@ namespace Nmp {
 
 		IGrandCentral GrandCentral { get; }
 
-		NmpStringList	ArgScanner( IInput input, RecognizedCharType terminalChar );
+		//NmpStringList ParseArguments( string context, IInput input, RecognizedCharType terminalChar );
+		NmpStringList ArgScanner( string context, IInput input, RecognizedCharType terminalChar );
 		string				Scanner( string textToScan, string sourceContext );
 		void					Scanner( IInput input, IOutput output );
 

@@ -1,0 +1,693 @@
+Notes and Surprizes.txt
+=======================
+
+;; single line Text Block
+
+Still finding things that were not updated to reflect the macro naming changes between version 2 and 3; e.g. only recently discovered that the code that looked for macro names did not check for names on a macro object - still broken
+
+
+Quoting
+-------
+
+Everyone's favorite topic
+
+Default quotes: `'
+
+To escape quotes: \` or \'
+
+If you want to embed the backslash:  \\` \\'
+
+	so, to quote a backslash in a path name: `\\'
+
+You can escape a comman \,
+
+These are currently the ONLY escape checking done by Nmp
+
+
+---------------------------
+---------------------------
+
+
+Macros invoked in the context of an argument list to another macro will always have leading and trailing white space trimmed from the result of that macro removed. To protect any white space output by the macro use ".quote." in the macro or append @[quote] to the macro call.
+
+To remove a line when a macro is NOT called such as the following:
+
+-	#if.Empty($value,`',InitValue($value))-
+
+Put a leading and trailing '-' which will cause the line to go away if no text is generated for the line such as `'. It will also remove the line if the macro returns nothing.
+
+
+lists:
+
+#.newStringList()
+
+#define( `list', `@#.newStringList()' )
+
+#foreach( `@list', `!$text: $value', `the value is')
+
+#foreach( `@list', `macroName', `the value is')
+
+someListMacro.Add( xxx ) returns the list !! which will expand to the whole list if allowed
+
+	use: someListMacro.Add( xxx )@[empty]
+
+	use: - #fieldNameOrder.Add(`$key')@[empty] -
+
+Use @[empty] to throw away anyting returned by a macro
+
+
+---------------------------------------------------------------------------------------
+Text Macros
+-----------
+
+$local		is an array that can be used by the macro as private storage, exists until
+					macro returns
+
+$specials	special args passed to macro as NmpStringList, ??? currently only used when 
+					parsing with the RegExRecognizer
+
+$arguments	NmpStringList of all arguments passed to macro
+
+$[]name		references the object passed to the macro, not the ToString() value of the
+					arguments (like $name)
+
+
+
+SURPRIZES
+
+if using print blocks .{}. and you embed foreach or forloop (and other) macros into the
+macro that use print blocks you will need to open a print block .{ if the print block in
+the preceeding foreach/forloop has been closed *** this bug/feature is because embedded
+macros like foreach/forloop are treated as part of the macro (expanded in place) so there
+print block handling is at the same level as the outermost macro - so, you have to turn
+it on again!
+
+macro definitions or use of builtin macros like foreach/forloop that are embeded in a macro
+must add an additional '$' for each level of embedding
+
+	(#defmacro `outer', `arg' )
+
+		(#foreach `@items', `arg')
+			$$arg $$value.Value.Key
+		(#endforeach)
+
+	(#endmacro)
+
+This is because text macros are processed as a single unit but inner macros are processed when
+the outer macro is expanded; $arg would be expanded to the 'arg' to the outer macro, $$arg will
+have the first $ removed when the outer macro is expanded leaving the second $ ($arg) to be
+processed when the outer macro is expanded and the (#foreach) is processed.
+
+
+
+---------------------------------------------------------------------------------------
+Foreach
+-------
+
+(#foreach `someEnumerableInstance' [, extra0, extra1 ...] )
+(#endforeach)
+
+
+Iterates over `someEnumerableInstance'. Usually `someEnumerableInstance' will be specified as `@someEnumerableInstance' to reference some object.
+
+If you specify just a string: `a string', then the string will be iterated over one character at a time!
+
+Each iteration of the (#foreach ...) receives a number of arguments, the parameter list is defined as:
+
+  `value', `index', `lastIndex', `count', `type' [, extras ...]
+
+Where:
+
+`value' is a simple string or the name of an object macro that can be referenced.
+`index' is the current iteration count, 0 ... lastIndex.
+`lastIndex' is the value of the last iteration, this value may be -1 if the last iteration count can not be determined.
+`count' is the number items (#foreach ...) will iterate over, -1 if the count can not be determined.
+`type' is the Type name of `value'. If the name contains the back tick (NMP open quote `) it is replace with '^'.
+
+Any additional arguments you wish to pass into (#foreach ...) should follow `someEnumerableInstance. You reference these arguments with the `extra#' notation where '#' is the index of the additional argument starting at '0' ($extra0).
+
+Note: make limited use of this foreach variation, it can be very confusing to use when embedded within a macro.
+
+Note: there is also a #foreach( ... ) macro available where a macro is invoked for each iteration rather than interpreting the (#foreach ...) body.
+
+
+example:
+
+	(#defarray `items')
+	"0":{
+		"label":"Title",
+		"name" : "Title",
+		"text" : "Type name here"
+	},
+	"1":{
+		"label":"Text",
+		"name" : "Text",
+		"text" : ""
+	}
+	(#endarray)
+
+	items[1].label
+	items.1.name
+
+	(#foreach `@items', `Hello: ')
+		;;
+		;; where
+		;; `value' is the item enumerated by foreach
+		;; `.Value' is the value member of KeyValuePair (kvp.Key, kvp.Value)
+		;; '.label' is json item (object) we are accessing
+		;; 
+		.{$extra0 $value.Value.label}.
+		.{.nl.}.
+	(#endforeach)
+
+
+
+---------------------------------------------------------------------------------------
+Foreach
+-------
+#foreach( `someEnumerableInstance', `macroToCall', [, AdditionalArg, AnotherOne ... ] )
+
+Iterates over `someEnumerableInstance'. Usually `someEnumerableInstance' will be specified as `@someEnumerableInstance' to reference some object.
+
+If specify just a string `a string' then the string will be iterated over one character at a time!
+
+'macroToCall' receives a number of arguments, the arguments passed are: `value', `index', `lastIndex', `count', `type' [, additionals ...]
+
+Where:
+
+`value' is a simple string or the name of an object macro that can be referenced.
+`index' is the current iteration count, 0 ... lastIndex.
+`lastIndex' is the value of the last iteration, this value may be -1 if the last iteration count can not be determined.
+`count' is the number items #foreach( ...) will iterate over, -1 if the count can not be determined.
+`type' is the Type name of `value'. If the name contains the back tick (NMP open quote `) it is replace with '^'.
+
+Any additional arguments you wish to pass into #foreach( ...) should follow `macroToCall'.
+
+Example:
+
+(#deflist `list', true)
+  first entry
+  second entry
+  third entry
+(#endlist)
+
+(#defmacro `_each', `value', `index', `lastIndex', `count', `type', `text')
+$text: $value
+(#endmacro)
+
+#foreach( `@list', `_each', `the value is')
+
+The `_each' macro did not have to use the parameter names that were used in the example. Since the arguments passed to the macro are positional you could have named them anything:
+
+(#defmacro `_each', `item', `iItem', `iLastItem', `nItems', `typeOfItem', `text')
+
+However it would be best to use: `value', `index', `lastIndex', `count', `type' because these are the parameter names used by (#foreach ...).
+
+As of NMP version 0.2.0.7 if the `macroToCall' argument begins with a '!' or '&' #foreach() will use the `macroToCall' text as the macro text to interpret in the same way that the block level (#foreach ...)(#endforeach) uses the text between the open and close blocks. All the same cautions that apply to (#foreach ...) apply here as well.
+ 
+
+e.g. #foreach( `@list', `!$text: $value', `the value is')
+
+
+---------------------------------------------------------------------------------------
+Forloop
+-------
+(#forloop startValue, endValue, incrementValue [, extra0, extra1 ...] )
+(#endforloop)
+
+Loops from startValue to endValue adding the incrementValue after each iteration.
+
+Each iteration of the (#forloop ...) receives a number of arguments, the parameter list is defined as:
+
+  `index', `lastIndex', `increment' [, extras ...]
+
+You should NOT add these as arguments in the (#forloop ...) macro call, they exist but are never decalared - a reason you should limit your use of this macro.
+
+Where:
+
+`index' is the current iteration value.
+`lastIndex' is the value of the last iteration.
+`increment' is the increment value that is added to 'startValue'.
+
+Any additional arguments you wish to pass into (#forloop ...) should follow `incrementValue'. You reference these arguments with the `extra#' notation where '#' is the index of the additional argument starting at '0' ($extra0).
+
+Note: make limited use of this forloop variation, it can be very confusing to use when embedded within a macro.
+
+Note: there is also a #forloop( ... ) macro available where a macro is invoked for each iteration rather than interpreting the (#forloop ...) body. 
+
+
+
+---------------------------------------------------------------------------------------
+Forloop
+-------
+#forloop( startValue, endValue, incrementValue, macroToCall [, AdditionalArg, AnotherOne ... ] )
+
+Loops from startValue to endValue calling 'macroToCall' each time. 'incrementValue' is added to 'startValue' after each iteration.
+
+'macroToCall' receives a number of arguments, the arguments passed are: `index', `lastIndex', `increment' [, additionals ...]
+
+Where:
+
+'index' which is the current value
+'lastIndex' which is the final value that will be passed
+'increment' which is 'incremntValue'
+'additionals' are any additional arguments you pass to the #forloop(...) macro
+
+Note: unlike the (#forloop ...) macro you need to define the names of the parameters being passed to the macro or refer to them by index.
+
+Example:
+
+(#deflist `list', true)
+  first entry
+  second entry
+  third entry
+(#endlist)
+
+(#defmacro `_each', `index', `lastIndex', `increment', `listName')
+$listName[ $index ]
+(#endmacro)
+
+#forloop( 0, `@#eval(list.Count - 1)', 1, `_each', `list')
+
+The `_each' macro did not have to use the parameter names that were used in the example. Since the arguments passed to the macro are positional you could have named them anything:
+
+(#defmacro `_each', `position', `finalPostion', `', `theList')
+
+However it would be best to use: `index', `lastIndex' and `increment' because these are the parameter names used by (#forloop ...).
+
+As of NMP version 0.2.0.7 if the `macroToCall' argument begins with a '!' or '&' #forloop() will use the `macroToCall' text as the macro text to interpret in the same way that the block level (#forloop ...)(#endforloop) uses the text between the open and close blocks. All the same cautions that apply to (#forloop ...) apply here as well.
+
+
+---------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+			//
+			// and a couple more until we decide what we like
+			//
+			AddObjectMacro( "#", builtins );
+			AddObjectMacro( "#nmp", builtins );
+			
+			// ******
+	var objectMacros = new ObjectMacros( this );
+			AddObjectMacro( "#object", objectMacros );
+
+			// ******
+	var ifMacros = new IfMacros( this );
+			AddObjectMacro( "#if", ifMacros );
+
+			// ******
+	var isMacros = new IsMacros( this );
+			AddObjectMacro( "#is", isMacros );
+
+
+			// ******
+			AddMacro( Defmacro.Create(this, builtins) );
+			AddMacro( Pushdef.Create(this, builtins) );
+
+			// ******
+			AddMacro( IfMacroHandler.Create(this) );
+			AddMacro( Textblock.Create(this) );
+
+			// ******
+			AddMacro( Defarray.Create(this) );
+			AddMacro( Deflist.Create( this ) );
+
+			// ******
+			AddMacro( ExpandoBlock.Create( this ) );
+			AddMacro( GenericBlock.Create( this ) );
+
+			// ******
+			AddMacro( ForeachBlockMacro.Create( this ) );
+			AddMacro( ForloopMacros.Create( this ) );
+
+			// ******
+			AddObjectMacro( "#String", new StaticStandin(typeof(string)) );
+			AddObjectMacro( "#Path", new StaticStandin(typeof(Path)) );
+			AddObjectMacro( "#DateTime", new StaticStandin(typeof(DateTime)) );
+			AddObjectMacro( "#Directory", new StaticStandin(typeof(Directory)) );
+			AddObjectMacro( "#File", new StaticStandin(typeof(File)) );
+
+			AddObjectMacro( "#Registry", new StaticStandin(typeof(Registry)) );
+			AddObjectMacro( "#Environment", new StaticStandin(typeof(Environment)) );
+			AddObjectMacro( "#NmpEnvironment", new StaticStandin(typeof(NmpEnvironment)) );
+
+
+			// ******
+			//
+			// builtin object helpers
+			//
+			gc.GetTypeHelpers().Add( typeof(string), StringObjectHelper.Create );
+			gc.GetTypeHelpers().Add( typeof(string []), StringArrayObjectHelper.Create );
+
+
+			// ******
+			AddTestObjects();
+
+			// ******
+			//
+			// legacy macros
+			//
+			AddObjectMacro( "#define", ETB.CreateMethodInvoker(builtins, "define") );
+			AddObjectMacro( "#pop", ETB.CreateMethodInvoker(builtins, "pop") );
+			AddObjectMacro( "#undef", ETB.CreateMethodInvoker(builtins, "undef") );
+			AddObjectMacro( "#pushDivert", ETB.CreateMethodInvoker(builtins, "pushDivert") );
+			AddObjectMacro( "#popDivert", ETB.CreateMethodInvoker(builtins, "popDivert") );
+			AddObjectMacro( "#eval", ETB.CreateMethodInvoker(builtins, "eval") );
+
+			AddObjectMacro( "#isDefined", ETB.CreateMethodInvoker(isMacros, "Defined") );
+			AddObjectMacro( "#isEmpty", ETB.CreateMethodInvoker(isMacros, "Empty") );
+			AddObjectMacro( "#isEqual", ETB.CreateMethodInvoker(isMacros, "Equal") );
+			AddObjectMacro( "#isFalse", ETB.CreateMethodInvoker(isMacros, "False") );
+			AddObjectMacro( "#isNotDefined", ETB.CreateMethodInvoker(isMacros, "NotDefined") );
+			AddObjectMacro( "#isNotEmpty", ETB.CreateMethodInvoker(isMacros, "NotEmpty") );
+			AddObjectMacro( "#isNotEqual", ETB.CreateMethodInvoker(isMacros, "NotEqual") );
+			AddObjectMacro( "#isTrue", ETB.CreateMethodInvoker(isMacros, "True") );
+
+			AddObjectMacro( "#ifDefined", ETB.CreateMethodInvoker(ifMacros, "Defined") );
+			AddObjectMacro( "#ifelse", ETB.CreateMethodInvoker(ifMacros, "else") );
+			AddObjectMacro( "#ifElse", ETB.CreateMethodInvoker(ifMacros, "Else") );
+			AddObjectMacro( "#ifEmpty", ETB.CreateMethodInvoker(ifMacros, "Empty") );
+			AddObjectMacro( "#iffalse", ETB.CreateMethodInvoker(ifMacros, "false") );
+			AddObjectMacro( "#ifFalse", ETB.CreateMethodInvoker(ifMacros, "False") );
+			AddObjectMacro( "#ifNotDefined", ETB.CreateMethodInvoker(ifMacros, "NotDefined") );
+			AddObjectMacro( "#ifNotEmpty", ETB.CreateMethodInvoker(ifMacros, "NotEmpty") );
+			AddObjectMacro( "#iftrue", ETB.CreateMethodInvoker(ifMacros, "true") );
+			AddObjectMacro( "#ifTrue", ETB.CreateMethodInvoker(ifMacros, "True") );
+
+Core-FileSys.cs
+
+		public object nmpAssemblyPath
+		public object currentDirectory
+		public object defpath
+		public object currentFile
+		public object parentFile
+		public object nofile()
+		public object setOutputExtension( string ext )
+		public object include( string fileName )
+		public object readFile( string macroName, string fileName, string regExStr )
+
+
+IfMacros.cs
+
+internal class IfMacros : MacroContainer
+{
+    // Methods
+
+		#if.Name(...)
+
+		generaly speaking the second argument is returned if the first argument is true
+		(in relation to the question being asked), and the third is returned otherwise
+
+    public IfMacros(IMacroProcessor mp);
+    public object Defined(params string[] argsIn);
+    public object @else(params object[] args);
+    public object Else(params object[] argsIn);
+    public object Empty(params string[] argsIn);
+    public object @false(object obj, object isFalseResult, params object[] others);
+    public object False(object obj, object isFalseResult, params object[] others);
+    public object NotDefined(params string[] args);
+    public object NotEmpty(params string[] argsIn);
+    public object @true(object obj, object isTrueResult, params object[] others);
+    public object True(object obj, object isTrueResult, params object[] others);
+}
+
+
+IsMacros.cs
+
+Note for "is" macro methods. Methods that would seem to only take a single argument
+like "Empty()" can take multiple string arguments. The "extra" arguments are combined
+with the value argument to form the string that will be checked. This allows the "building up"
+of test cases. Mainly it exists because if a string that is passed to one of these methods
+has a comma (,) embeded in it then that would cause the string to be broken into multiple 
+arguments.
+
+The True() and False() is macro methods will accept multiple arguments but only the first
+(value) is used in the check
+
+internal class IsMacros : MacroContainer
+{
+    // Methods
+    public IsMacros(IMacroProcessor mp);
+    public object Defined();
+    public object Defined(string macroName, params string [] extra);
+    public object Empty();
+    public object Empty(string value, params string [] extra);
+    public object Equal(object lhs, object rhs);
+    public object False();
+    public object False(object value, params string [] extra);
+    public object NotDefined();
+    public object NotDefined(string macroName, params string [] extra);
+    public object NotEmpty();
+    public object NotEmpty(string value, params string [] extra);
+    public object NotEqual(object lhs, object rhs);
+    public object True();
+    public object True(object value, params string [] extra);
+}
+
+
+
+ObjectMacros.cs
+
+internal class ObjectMacros : MacroContainer
+{
+    // Fields
+    private static string[] macroNames;
+
+    // Methods
+    static ObjectMacros();
+    public ObjectMacros(IMacroProcessor mp);
+    private object CreateNewObject(string typeName, object[] constructorArgs);
+    private StaticStandin CreateNewStandin(string typeName);
+    public object getType(string typeName);
+    public object newObject(string typeName, params object[] constructorArgs);
+    public object newObjectMacro(string macroName, string typeName, params object[] constructorArgs);
+    public object newStatic(string typeName);
+    public object newStaticMacro(string macroName, string typeName);
+    public object @typeof(object obj);
+}
+
+ 
+NmpOptions.cs
+
+internal class NmpOptions
+{
+    // Fields
+    private GrandCentral gc;
+    private IMacroProcessor mp;
+
+    // Methods
+    public NmpOptions(IMacroProcessor mp);
+    public void SetAltTokenFmtOnly(bool value);
+    public void SetBreakNext(bool value);
+    public void SetExpandAndScan(bool value);
+    public void SetMacroTraceLevel(int value);
+    public void SetMacroTraceOn(bool value);
+    public void SetMaxExecTime(int value);
+    public void SetMaxMacroScanDepth(int value);
+    public void SetMaxRunTime(int value);
+    public void SetPushbackResult(bool value);
+    public void SetQuotes(string openQuoteStr, string closeQuoteStr);
+
+    // Properties
+    public bool AltTokenFmtOnly { get; }
+    public bool BreakNext { get; }
+    public string CloseQuote { get; }
+    public bool ExpandAndScan { get; }
+    public int MacroTraceLevel { get; }
+    public bool MacroTraceOn { get; }
+    public int MaxExecTime { get; }
+    public int MaxMacroScanDepth { get; }
+    public int MaxRunTime { get; }
+    public string OpenQuote { get; }
+    public bool PushbackResult { get; }
+}
+
+ 
+
+CoreMacros
+
+internal class CoreMacros : MacroContainer
+{
+    // Fields
+    private MethodInfo evalMethInfo;
+    private GrandCentral gc;
+    private Assembly jscriptDll;
+    private const string PSInterfaceDllName = "PSInterface.dll";
+    private RegExRecognizer regExRecognizer;
+    private object vsa;
+
+    // Methods
+    public CoreMacros(IMacroProcessor mp);
+    public object addRecognizerRegex(string regExName, string regExStr, string macroToCall);
+    public object bozo();
+    private static NmpArray CheckForJSON(string str);
+    public object clearDivert(string divName);
+    public object CreateDateTime(long ticksOrYear, int month, int day, int hour, int minute, int second, int ms, bool utc);
+    public object dateTime(string format = "");
+    public object dateTimeUtc(string format = "");
+    public object define(string macroName, object macroObject, params string[] argNames);
+    public string DefineMacro(IMacroArguments macroArgs, string macroName, object macroObject, IList<string> argNames, bool isPushMacro);
+    public object divert(string divName);
+    public object dumpdef(params string[] macroNames);
+    private void DumpDefFormat(StringBuilder sb, IMacro macro);
+    public object dumpDivert(string divName, bool toOutput);
+    public object DumpMacro(bool dumpToOutput, IList<string> macroNames);
+    public object echo(params string[] args);
+    public object EchoArguments(IEnumerable<string> args);
+    public object eval(params string[] strs);
+    private object Evaluate(string text);
+    public object exec(string exeName, string cmdLine);
+    public object exit(int exitCode);
+    public object fetchDivert(string divName, bool clear);
+    private static bool FirstElementMatches(string strToMatch, ref string[] items, bool remove);
+    public object @foreach(object objToEnumerate, string macroToCall, params object[] extraArgs);
+    public object forloop(int start, int end, int increment, string macroName, params object[] extraArgs);
+    private MethodInfo GetEvaluateMethod(Type type, string name, int nArgs);
+    public object getMacroNames();
+    public object getMacros();
+    private NMP GetNMP();
+    protected object HandleExec(string exeName, string cmdLine);
+    private static bool HasFlag(string specificFlag, string[] flags);
+    public object include(string fileName);
+    public object includeDivert(string divName, bool clear);
+    public object loadPowershell(string pathToDll = null);
+    public object makersp(string rspPath, bool loadMacros, bool displayFoundMacros);
+    public object newArray(params string[] strs);
+    public object newDateTime(long ticksOrYear = -1L, int month = -1, int day = 1, int hour = -1, int minute = 0, int second = 0, int ms = 0);
+    public object newDateTimeUtc(long ticksOrYear = -1L, int month = -1, int day = 1, int hour = -1, int minute = 0, int second = 0, int ms = 0);
+    public object newObjectList(params object[] objs);
+    public object newStringList(params object[] objs);
+    public object nofile();
+    public object not(string value);
+    public object pop(string macroName);
+    public object popdef(string macroName);
+    public object popdivert();
+    public object popDivert();
+    public object PopMacro(string macroName);
+    public object push(string macroName, object macroObject, params string[] argNames);
+    public object pushdivert(string divName);
+    public object pushDivert(string divName);
+    public object readFile(string macroName, string fileName, string regExStr);
+    public object saveDivert(string fileName, string divName, bool clearDiv);
+    public object saveDivert(string fileName, string divName, bool clearDiv, bool append);
+    public object setOutputExtension(string ext);
+    public object setRegexRecognizer(bool activate, params string[] flags);
+    public object shell(string cmdLine);
+    public object sleep(int ms);
+    public object TestOptionalArgs(string str, int i1 = 1, int i2 = 2, object o = null);
+    public object trace(params object[] args);
+    public object undef(string macroName);
+    public object UndefineMacro(string macroName);
+    public object undivert(params string[] args);
+
+    // Properties
+    public object currentDirectory { get; }
+    public object currentFile { get; }
+    public object defpath { get; }
+    private MasterOutput GetOutput { [DebuggerStepThrough] get; }
+    public object nmpAssemblyPath { get; }
+    public object parentFile { get; }
+    public object version { get; }
+
+    // Nested Types
+    private class MakeResponse
+    {
+        // Fields
+        private IMacroProcessor mp;
+
+        // Methods
+        public MakeResponse(IMacroProcessor mp);
+        public string Make(string rspPath);
+        private void Update(string rspPath, string dllPath);
+        private bool UptoDate(string dllPath, string rspFilePath, string responseDirectory, IList<string> filesToCheck);
+    }
+}
+
+ 
+StringObjectHelpers
+
+internal class StringObjectHelper
+{
+    // Fields
+    private const int MaxParseItems = 0x400;
+    private string theString;
+
+    // Methods
+    public StringObjectHelper(object theString);
+    public static object Create(object str);
+    public string EscapeEscapes();
+    public string[] Extract(string regExStr);
+    public string[] Extract(string regExStr, int maxItems);
+    public NmpArray ExtractSubexpressions(string regExStr);
+    public NmpArray ExtractSubexpressions(string regExStr, int maxItems);
+    public string HtmlDecode();
+    public string HtmlEncode(bool encodeAngleBrackets);
+    public string MatchEx(string regExStr);
+    public string ReplaceEx(string regExStr, params object[] args);
+    public string Reverse();
+    public string SetString(char ch, int count);
+    public string SetString(string str, int count);
+    public string[] Split(string splitStr);
+    public string[] SplitEx(string regExStr);  RegEx method
+    public string[] SplitHelper(string macroName, string splitOrRegex, bool usingRegex);
+    public string Translate(string lookup, string replace);
+    public string TranslateEscapes();
+}
+
+----------------------------------------
+----------------------------------------
+
+
+
+----------------------------------------
+
+The following use to generate an error:
+
+   expecting method reference or Delegate, found: String
+
+Because someMethod()() is a legal construct. In:
+
+	#popDivert()-
+	;;
+	;;
+	(#block `#handleBlockMacro', `This is the text passed in the block:')
+
+end of lines and ;; are stripped away leaving:
+
+	#popDivert()(#block `#handleBlockMacro', `This is the text passed in the block:')
+
+?? how comment and strip lines ??
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

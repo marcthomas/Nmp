@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using fastJSON;
+
+namespace NmpBase {
+
+	/////////////////////////////////////////////////////////////////////////////
+
+	public static class Json {
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static JSON Instance
+		{
+			get
+			{
+				return JSON.Instance;
+			}
+		}
+
+	
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static string ToJSON( object obj )
+		{
+			return JSON.Instance.ToJSON( obj );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static string ToJSON( object obj, JSONParameters param )
+		{
+			return JSON.Instance.ToJSON( obj, param );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static object Parse( string json )
+		{
+			return JSON.Instance.Parse( json );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static T ToObject<T>( string json )
+		{
+			return JSON.Instance.ToObject<T>( json );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static object ToObject( string json )
+		{
+			return JSON.Instance.ToObject( json, null );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static object ToObject( string json, Type type )
+		{
+			return JSON.Instance.ToObject( json, type );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public static string Beautify( string input )
+		{
+			return JSON.Instance.Beautify( input );
+		}
+
+
+	}
+
+
+}

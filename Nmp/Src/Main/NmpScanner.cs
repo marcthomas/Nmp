@@ -40,7 +40,7 @@ namespace Nmp {
 			public bool								FoundQuotedText;
 			public bool								KeepQuotes;
 
-			public ScannerOptions( RecognizedCharType b1, RecognizedCharType	b2, bool keepQuotes = false )
+			public ScannerOptions( RecognizedCharType b1, RecognizedCharType b2, bool keepQuotes = false )
 			{
 				BreakChar1 = b1;
 				BreakChar2 = b2;
@@ -49,7 +49,7 @@ namespace Nmp {
 			}
 
 			public ScannerOptions( ScannerOptions so )
-				:	this( so.BreakChar1, so.BreakChar2, so.KeepQuotes )
+				: this( so.BreakChar1, so.BreakChar2, so.KeepQuotes )
 			{
 				FoundQuotedText = false;
 			}
@@ -60,7 +60,7 @@ namespace Nmp {
 		//Hub hub;
 		GrandCentral gc;
 		IMacroProcessorBase	mpBase;
-		
+
 		// ******
 		//
 		// default implementation ignores this, in face it has to
@@ -92,7 +92,8 @@ namespace Nmp {
 
 		public IRecognizer Recognizer
 		{
-			get {
+			get
+			{
 				return gc.Get<IRecognizer>();
 			}
 		}
@@ -102,7 +103,8 @@ namespace Nmp {
 
 		public bool ErrorReturns
 		{
-			get {
+			get
+			{
 				//
 				// default error method does not return
 				//
@@ -159,13 +161,13 @@ namespace Nmp {
 			// ******
 			IMacro macro = mir.Macro;
 			mir.State = MacroProcessingState.Parsing;
-	
+
 			// ******
 			MacroExpression exp = null;
 
 			if( 0 == (MacroFlags.NonExpressive & macro.Flags) ) {
-		 		ETB expressionTreeBuilder = new ETB( mir.Macro.Name, mir.AltToken, this, Recognizer );
-		 		exp = expressionTreeBuilder.ParseExpression( input );
+				ETB expressionTreeBuilder = new ETB( mir.Macro.Name, mir.AltToken, this, Recognizer );
+				exp = expressionTreeBuilder.ParseExpression( input );
 			}
 			else {
 				exp = ETB.CreateNullExpression();
@@ -181,14 +183,16 @@ namespace Nmp {
 			mir.State = MacroProcessingState.Processing;
 
 			mir.SetSourceEndIndex( input.Index );
-			mir.MacroArgs = new MacroArguments(	macro, 
+			mir.MacroArgs = new MacroArguments( macro,
 																					input,
 																					exp,
-																					mir.SpecialArgs, 
+																					mir.SpecialArgs,
 																					blockText
 																				);
 
-///	macroProcessor.DumpExpressionOnly = true;
+			///	macroProcessor.DumpExpressionOnly = true;
+
+			InvokeMacroEvent.Write( mir );
 
 			return mpBase.ProcessMacro( mir );
 		}
@@ -196,7 +200,7 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		protected void PostProcessArgument( NmpStringList args, string str )
+		protected void PostProcessArgument( ParseArgumentsEvent evt, NmpStringList args, string str )
 		{
 			// ******
 			StringBuilder sb = new StringBuilder();
@@ -204,17 +208,17 @@ namespace Nmp {
 			//StringIndexer reader = new StringIndexer( str );
 			CharSequence openQuote = gc.SeqOpenQuote;
 
-	/*
-	 * by using ParseReader its translating characters like in "d:\fred\nmp\etc" '\n'
-	 * 
-	 * need to do this on a string, add GetQuotedText for string
-	 * 
-	 */
+			/*
+			 * by using ParseReader its translating characters like in "d:\fred\nmp\etc" '\n'
+			 * 
+			 * need to do this on a string, add GetQuotedText for string
+			 * 
+			 */
 
-			while( ! reader.AtEnd ) {
+			while( !reader.AtEnd ) {
 				char ch = reader.Peek();
 
-				if( openQuote.FirstChar == ch && openQuote.Starts(reader) ) {
+				if( openQuote.FirstChar == ch && openQuote.Starts( reader ) ) {
 					//reader.Skip( 1 );
 
 					openQuote.Skip( reader );
@@ -224,8 +228,8 @@ namespace Nmp {
 				}
 				else if( SC.COMMA == ch ) {
 					reader.Skip( 1 );
-					reader.Skip( c => char.IsWhiteSpace(c) );
-					args.Add( sb.ToString() );
+					reader.Skip( c => char.IsWhiteSpace( c ) );
+					args.Add( evt.SetCurrentItem( sb.ToString() ) );
 					sb.Length = 0;
 
 				}
@@ -235,106 +239,116 @@ namespace Nmp {
 			}
 
 			// ******
-			args.Add( sb.ToString() );
+			args.Add( evt.SetCurrentItem( sb.ToString() ) );
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public NmpStringList ArgScanner( IInput input, RecognizedCharType terminalChar )
+		public NmpStringList ArgScanner( string context, IInput input, RecognizedCharType terminalChar )
 		{
 			// ******
-			NmpStringList args = new NmpStringList();
-			var output = new NmpOutput();
+			var evt = new ParseArgumentsEvent( context );
+			evt.BeginParseEvent();
 
 			// ******
-			ScannerOptions options = new ScannerOptions(RecognizedCharType.ArgSepChar, terminalChar, true);
-
-			// ******
-			while( true ) {
-				if( input.AtEnd ) {
-
-// TODO: need file/line/col number for use with MPError
-
-					ThreadContext.MacroError( "end of data parsing argument list, {0} character not found", terminalChar.ToString() );
-				}
-				
-				// ******
-				output.Zero();
-				options.FoundQuotedText = false;
-
-				/*
-
-					()
-
-					(   )
-
-					( arg )
-
-					( `' )
-
-					( `  ' )
-
-					( arg, arg )
-
-					( `', arg )
-
-					( `  ', `  arg   ' )
-
-
-				*/
+			try {
+				NmpStringList args = new NmpStringList();
+				var output = new NmpOutput();
 
 				// ******
-				//
-				// have to scan without stripping quotes so that we can preserve
-				// white space within quotes when we trim the string - afterword
-				// we strip the quotes
-				//
-				// note that the scanner may miss some commas that are generated by
-				// macro expansion because the text (if pushback is off) will be
-				// put in the output buffer and not seen by the scanner, PostProcessArgument() 
-				// will locate these extra commas and split the result into multiple arguments
-				//
-				// LIMITATION: a macro can NOT supply the closing parenthesis for the argument
-				// list unless pushback is turned on
-				//
-				// Additionaly, white space that preceeds the macro generated comma is NOT trimmed
-				// away
-				//
-				RecognizedCharType breakChar = Scanner( input, output, options );
+				ScannerOptions options = new ScannerOptions( RecognizedCharType.ArgSepChar, terminalChar, true );
 
 				// ******
-				//
-				// trims white-space and removes any outer quotes that might have been protecting
-				// inner white-space that the caller wanted to maintain
-				//
-				// PostProcess will locate new commas that might have been generated by macro
-				// expansion and split the string into multiple arguments
-				//
+				while( true ) {
+					if( input.AtEnd ) {
 
-				//
-				// note that trimming the white space will also remove leading and trailing white space
-				// from any macro that was invoked by the scanner (above)
-				//
+						// TODO: need file/line/col number for use with MPError
 
-
-				string argStr = output.Contents.ToString().Trim();	//TrimArgument( output.Contents );
-				PostProcessArgument( args, argStr );
-
-				// ******
-				if( terminalChar == breakChar ) {
-					if( 1 == args.Count && string.IsNullOrEmpty(args[0]) && ! options.FoundQuotedText ) {
-						//
-						// since we've hit the closing char and there is only one argument
-						// and if that arg was empty there was no argument, we had () with
-						// maybe some white-space between the open/close chars
-						//
-						// unles we had ( `' )
-						//
-						args.RemoveAt( 0 );
+						ThreadContext.MacroError( "end of data parsing argument list, {0} character not found", terminalChar.ToString() );
 					}
-					return args;
+
+					// ******
+					output.Zero();
+					options.FoundQuotedText = false;
+
+					/*
+
+						()
+
+						(   )
+
+						( arg )
+
+						( `' )
+
+						( `  ' )
+
+						( arg, arg )
+
+						( `', arg )
+
+						( `  ', `  arg   ' )
+
+
+					*/
+
+					// ******
+					//
+					// have to scan without stripping quotes so that we can preserve
+					// white space within quotes when we trim the string - afterword
+					// we strip the quotes
+					//
+					// note that the scanner may miss some commas that are generated by
+					// macro expansion because the text (if pushback is off) will be
+					// put in the output buffer and not seen by the scanner, PostProcessArgument() 
+					// will locate these extra commas and split the result into multiple arguments
+					//
+					// LIMITATION: a macro can NOT supply the closing parenthesis for the argument
+					// list unless pushback is turned on
+					//
+					// Additionaly, white space that preceeds the macro generated comma is NOT trimmed
+					// away
+					//
+					RecognizedCharType breakChar = Scanner( input, output, options );
+
+					// ******
+					//
+					// trims white-space and removes any outer quotes that might have been protecting
+					// inner white-space that the caller wanted to maintain
+					//
+					// PostProcess will locate new commas that might have been generated by macro
+					// expansion and split the string into multiple arguments
+					//
+
+					//
+					// note that trimming the white space will also remove leading and trailing white space
+					// from any macro that was invoked by the scanner (above)
+					//
+
+
+					string argStr = output.Contents.ToString().Trim();	//TrimArgument( output.Contents );
+					PostProcessArgument( evt, args, argStr );
+
+					// ******
+					if( terminalChar == breakChar ) {
+						if( 1 == args.Count && string.IsNullOrEmpty( args [ 0 ] ) && !options.FoundQuotedText ) {
+							//
+							// since we've hit the closing char and there is only one argument
+							// and if that arg was empty there was no argument, we had () with
+							// maybe some white-space between the open/close chars
+							//
+							// unles we had ( `' )
+							//
+							args.RemoveAt( 0 );
+						}
+						return args;
+					}
 				}
+			}
+
+			finally {
+				evt.EndParseEvent();
 			}
 		}
 
@@ -359,7 +373,7 @@ namespace Nmp {
 
 		public void Scanner( IInput input, IOutput output )
 		{
-			Scanner( input, output, new ScannerOptions(RecognizedCharType.UnknownCharType, RecognizedCharType.UnknownCharType) );
+			Scanner( input, output, new ScannerOptions( RecognizedCharType.UnknownCharType, RecognizedCharType.UnknownCharType ) );
 		}
 
 
@@ -379,7 +393,7 @@ namespace Nmp {
 				//
 				// recursion depth exceeded
 				//
-				Error( new MacroExecutionNotifier(new RunawayMacroException("The scanner recursion depth has exceeded the maximum ({0})", gc.MaxMacroScanDepth)), string.Empty );
+				Error( new MacroExecutionNotifier( new RunawayMacroException( "The scanner recursion depth has exceeded the maximum ({0})", gc.MaxMacroScanDepth ) ), string.Empty );
 			}
 
 			// ******
@@ -398,7 +412,7 @@ namespace Nmp {
 				//		throw new ExitException( 1, "maximum execution time ({0}ms) exceeded.", macros.MaxExecTime );
 				//	}
 				//}
-			
+
 
 				//bool flagEmptyQuotedStr = false;
 
@@ -435,7 +449,7 @@ namespace Nmp {
 						bool found = mpBase.FindMacro( tm.Token, tm.IsAltTokenFormat, out macro );
 
 						if( found ) {
-							bool notAltTokenFormat = ! tm.IsAltTokenFormat;
+							bool notAltTokenFormat = !tm.IsAltTokenFormat;
 
 							if( notAltTokenFormat && 0 != ((int) macro.Flags & (int) MacroFlags.AltTokenFmtOnly) ) {
 								//
@@ -461,12 +475,12 @@ namespace Nmp {
 								//
 								// handle the macro
 								//
-								
+
 								//
 								// can NOT pushPop when were in editor mode
 								//
 
-								using( Get<InvocationContext>().Init( mir ) ) {
+								using( Get<InvocationContext>().Initialize( mir ) ) {
 									//
 									// recognizer may change behind our back durring a macro
 									// call - just showing that 'tm' could become invalid
@@ -519,9 +533,9 @@ namespace Nmp {
 
 						input.Skip( 1 );
 						RecognizedCharType rct = Scanner( input, tempOutput, so );
-						output.WriteChar( breakProtectArray [0] );
+						output.WriteChar( breakProtectArray [ 0 ] );
 						output.Append( tempOutput );
-						output.WriteChar( breakProtectArray [1] );
+						output.WriteChar( breakProtectArray [ 1 ] );
 
 					}
 
@@ -544,7 +558,7 @@ namespace Nmp {
 				// ******
 				return RecognizedCharType.UnknownCharType;
 			}
-			
+
 			finally {
 				--scanDepth;
 			}

@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -33,10 +34,10 @@ namespace NmpBase {
 	/// 
 	public static class Arguments {
 
-		static Type typeofObject = typeof(object);
-		static Type typeofString = typeof(string);
-		static Type typeofType = typeof(Type);
-		static Guid runtimeTypeGuid = new Guid("97e69551-7329-39c5-ba61-2ca4b573e0e5");
+		static Type typeofObject = typeof( object );
+		static Type typeofString = typeof( string );
+		static Type typeofType = typeof( Type );
+		static Guid runtimeTypeGuid = new Guid( "97e69551-7329-39c5-ba61-2ca4b573e0e5" );
 
 
 		/////////////////////////////////////////////////////////////////////////////
@@ -73,17 +74,17 @@ namespace NmpBase {
 		public static object ChangeType( object objIn, Type type )	//TypeCode typeCode )
 		{
 
-//TODO: add checks for objIn type is derived from type
+			//TODO: add checks for objIn type is derived from type
 
 			// ******
-			if( typeofObject.Equals(type) ) {
+			if( typeofObject.Equals( type ) ) {
 				//
 				// caller requesting an object - which we simply need to return
 				//
 				return objIn;
 			}
 
-			else if( typeofString.Equals(type) ) {
+			else if( typeofString.Equals( type ) ) {
 				//
 				// caller requesting an object - which we simply need to return
 				//
@@ -100,14 +101,14 @@ namespace NmpBase {
 				return objIn;
 			}
 
-			if( runtimeTypeGuid.Equals( objInType.GUID ) && ((Type)objIn) == type ) {
+			if( runtimeTypeGuid.Equals( objInType.GUID ) && ((Type) objIn) == type ) {
 				//
 				// requesting a Type object which 'objIn' is, and they are equal
 				//
 				return objIn;
 			}
 
-		 	if( objInType.Equals(type) ) {
+			if( objInType.Equals( type ) ) {
 				//
 				// Convert.ChangeType() uses IConvertable to change the type, if the
 				// objIn does not support IConvertable then it will always fail - lots
@@ -118,7 +119,7 @@ namespace NmpBase {
 				//
 				return objIn;
 			}
-			else if( typeofType.Equals(type) ) {
+			else if( typeofType.Equals( type ) ) {
 				//
 				// unfortunately if the 'type' being requested is a Type
 				// object the check above will fail because if you do
@@ -128,7 +129,7 @@ namespace NmpBase {
 				// however, the GUID's are stable between 3.5 and 4.0 for the
 				// RuntimeType and we CAN check that
 				//
-				if( runtimeTypeGuid.Equals(objInType.GUID) ) {
+				if( runtimeTypeGuid.Equals( objInType.GUID ) ) {
 					//
 					// objIn is a Type object
 					//
@@ -149,8 +150,22 @@ namespace NmpBase {
 			}
 
 			// ******
-			object changed = Convert.ChangeType( objIn, type );
-			return changed;
+			try {
+				object changed = Convert.ChangeType( objIn, type );
+				return changed;
+			}
+			catch( Exception ex ) {
+
+//#if DEBUG
+//				if( Debugger.IsAttached ) {
+//					Debug.WriteLine( "could not convert \"{0}\" to \"{1}\"", objInType.Name, type.Name );
+//				}
+//#endif
+				//objInType.EventConversionError( type );
+
+				ConversionError.Write( objInType, type );
+				throw ex;
+			}
 		}
 
 
@@ -182,7 +197,7 @@ namespace NmpBase {
 
 			for( int i = 0; i < nArgsToConvert; i++ ) {
 				try {
-					argsOut[ i ] = ChangeType( argsIn[i], pi[i].ParameterType );
+					argsOut [ i ] = ChangeType( argsIn [ i ], pi [ i ].ParameterType );
 				}
 				catch {
 					return null;
@@ -213,7 +228,7 @@ namespace NmpBase {
 
 			for( int i = 0; i < nArgsToConvert; i++ ) {
 				try {
-					argsOut[ i ] = ChangeType( argsIn[i], types[i] );
+					argsOut [ i ] = ChangeType( argsIn [ i ], types [ i ] );
 				}
 				catch {
 					return null;
@@ -234,7 +249,7 @@ namespace NmpBase {
 
 			for( int i = 0; i < argsIn.Count; i++ ) {
 				try {
-					argsOut[ i ] = ChangeType( argsIn[i], pi[i].ParameterType );
+					argsOut [ i ] = ChangeType( argsIn [ i ], pi [ i ].ParameterType );
 				}
 				catch {
 					return null;
@@ -255,7 +270,7 @@ namespace NmpBase {
 
 			for( int i = 0; i < argsIn.Count; i++ ) {
 				try {
-					argsOut[ i ] = ChangeType( argsIn[i], convertToTypes[i] );
+					argsOut [ i ] = ChangeType( argsIn [ i ], convertToTypes [ i ] );
 				}
 				catch {
 					return null;
@@ -318,7 +333,7 @@ namespace NmpBase {
 
 			int i = 0;
 			foreach( ParameterInfo pi in piArray ) {
-				types[ i++ ] = pi.ParameterType;
+				types [ i++ ] = pi.ParameterType;
 			}
 
 			// ******
@@ -356,7 +371,7 @@ namespace NmpBase {
 				}
 
 				sb.AppendFormat( "{0}.{1}", mi.DeclaringType.Name, mi.Name );
-				sb.Append( ParametersTypeNames(mi.GetParameters(), "( ", " )") );
+				sb.Append( ParametersTypeNames( mi.GetParameters(), "( ", " )" ) );
 			}
 
 			// ******
@@ -379,7 +394,7 @@ namespace NmpBase {
 				if( i > 0 ) {
 					sb.Append( ", " );
 				}
-				sb.Append( argTypes[i].Name );
+				sb.Append( argTypes [ i ].Name );
 			}
 
 			if( null != closeStr ) {
@@ -407,7 +422,7 @@ namespace NmpBase {
 			Type [] types = new Type [ args.Count ];
 
 			for( int i = 0; i < args.Count; i++ ) {
-				types[ i ] = args[i].GetType();
+				types [ i ] = args [ i ].GetType();
 			}
 
 			// ******
@@ -432,7 +447,7 @@ namespace NmpBase {
 			Type [] types = new Type [ propParams.Length ];
 
 			for( int i = 0; i < propParams.Length; i++ ) {
-				types[ i ] = propParams[i].ParameterType;
+				types [ i ] = propParams [ i ].ParameterType;
 			}
 
 			// ******
@@ -448,7 +463,7 @@ namespace NmpBase {
 			Type [] types = new Type [ propParams.Length ];
 
 			for( int i = 0; i < propParams.Length; i++ ) {
-				types[ i ] = propParams[i].ParameterType;
+				types [ i ] = propParams [ i ].ParameterType;
 			}
 
 			// ******
@@ -497,16 +512,16 @@ namespace NmpBase {
 		//
 
 		/////////////////////////////////////////////////////////////////////////////
-		
+
 		private static object CastExpression( string castType, string castValue )
 		{
 			// ******
-//			if( castType.IndexOf(';') >= 0 ) {
-//				//
-//				// not a cast but a string list
-//				//
-////SDebugger.Break();
-//			}
+			//			if( castType.IndexOf(';') >= 0 ) {
+			//				//
+			//				// not a cast but a string list
+			//				//
+			////SDebugger.Break();
+			//			}
 
 			// ******
 			object obj = null;
@@ -515,7 +530,7 @@ namespace NmpBase {
 
 				case "int16":
 					Int16 i16Value;
-					if( ! Int16.TryParse(castValue, out i16Value) ) {
+					if( !Int16.TryParse( castValue, out i16Value ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to Int16: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = i16Value;
@@ -523,7 +538,7 @@ namespace NmpBase {
 
 				case "uint16":
 					UInt16 u16Value;
-					if( ! UInt16.TryParse(castValue, out u16Value) ) {
+					if( !UInt16.TryParse( castValue, out u16Value ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to UInt16: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = u16Value;
@@ -534,7 +549,7 @@ namespace NmpBase {
 				case "int":
 				case "int32":
 					Int32 i32Value;
-					if( ! Int32.TryParse(castValue, out i32Value) ) {
+					if( !Int32.TryParse( castValue, out i32Value ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to Int32: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = i32Value;
@@ -543,7 +558,7 @@ namespace NmpBase {
 				case "uint":
 				case "uint32":
 					UInt32 u32Value;
-					if( ! UInt32.TryParse(castValue, out u32Value) ) {
+					if( !UInt32.TryParse( castValue, out u32Value ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to UInt32: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = u32Value;
@@ -555,7 +570,7 @@ namespace NmpBase {
 				case "longlong":
 				case "int64":
 					Int64 i64Value;
-					if( ! Int64.TryParse(castValue, out i64Value) ) {
+					if( !Int64.TryParse( castValue, out i64Value ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to Int64: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = i64Value;
@@ -564,7 +579,7 @@ namespace NmpBase {
 				case "ulong":
 				case "uint64":
 					UInt64 u64Value;
-					if( ! UInt64.TryParse(castValue, out u64Value) ) {
+					if( !UInt64.TryParse( castValue, out u64Value ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to Int64: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = u64Value;
@@ -575,7 +590,7 @@ namespace NmpBase {
 				case "float":
 				case "double":
 					double doubleValue;
-					if( ! Double.TryParse(castValue, out doubleValue) ) {
+					if( !Double.TryParse( castValue, out doubleValue ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to double: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = doubleValue;
@@ -585,7 +600,7 @@ namespace NmpBase {
 
 				case "datetime":
 					DateTime dtValue;
-					if( ! DateTime.TryParse(castValue, out dtValue) ) {
+					if( !DateTime.TryParse( castValue, out dtValue ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to DateTime: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = dtValue;
@@ -595,7 +610,7 @@ namespace NmpBase {
 
 				case "decimal":
 					decimal decValue;
-					if( ! decimal.TryParse(castValue, out decValue) ) {
+					if( !decimal.TryParse( castValue, out decValue ) ) {
 						throw new ArgumentCastException( castType, castValue, "unable to convert string to decimal: \"({0}) {1}\"", castType, castValue );
 					}
 					obj = decValue;
@@ -674,7 +689,7 @@ namespace NmpBase {
 		public static object CastArg( string s )
 		{
 			// ******
-			Debug.Assert( '(' == s[0], "Helpers.CastArg: cast or list string does not begin with a '('" );
+			Debug.Assert( '(' == s [ 0 ], "Helpers.CastArg: cast or list string does not begin with a '('" );
 
 			// ******
 			//
@@ -693,7 +708,7 @@ namespace NmpBase {
 		public static object CastArg( NmpStringList list, string s )
 		{
 
-//TODO: buggy, does not handle errors in list length
+			//TODO: buggy, does not handle errors in list length
 
 			// ******
 			if( 0 == list.Count ) {
@@ -711,18 +726,18 @@ namespace NmpBase {
 				//
 				// if Count is greater than 2
 				//
-				Trace.Assert( 2 == list.Count, string.Format("Helpers.CastArg: error parsing cast expression \"{0}\"", s) );
+				Trace.Assert( 2 == list.Count, string.Format( "Helpers.CastArg: error parsing cast expression \"{0}\"", s ) );
 			}
 
 			// ******
-			string castType = list[ 0 ];
-			string castValue = list[ 1 ];
+			string castType = list [ 0 ];
+			string castValue = list [ 1 ];
 
-			object value = CastExpression( castType.Substring(1, castType.Length - 2), castValue );
+			object value = CastExpression( castType.Substring( 1, castType.Length - 2 ), castValue );
 			if( null == value ) {
 				value = s;
 			}
-			
+
 			// ******
 			return value;
 		}
@@ -733,11 +748,11 @@ namespace NmpBase {
 		private static object [] CollectionArg( string s )
 		{
 			// ******
-			Debug.Assert( '[' == s[0], "Helpers.CollectionArg: argument string does not begin with a '['" );
-			Debug.Assert( ']' == s[s.Length - 1], "Helpers.CollectionArg: argument string does end with a ']'" );
+			Debug.Assert( '[' == s [ 0 ], "Helpers.CollectionArg: argument string does not begin with a '['" );
+			Debug.Assert( ']' == s [ s.Length - 1 ], "Helpers.CollectionArg: argument string does end with a ']'" );
 
 			// ******
-			NmpStringList list = SplitString.Split( new StringIndexer(s.Substring(1)), '[', ']' );
+			NmpStringList list = SplitString.Split( new StringIndexer( s.Substring( 1 ) ), '[', ']' );
 			object [] args = Create( list );
 
 			// ******
@@ -751,17 +766,17 @@ namespace NmpBase {
 		{
 			// ******
 			if( 0 == argList.Count ) {
-				return new object [0];
+				return new object [ 0 ];
 			}
 
 			// ******
 			var args = new NmpObjectList();
-			
+
 			foreach( string arg in argList ) {
 				string s = arg.Trim();
-				
+
 				// ******
-				if( string.IsNullOrEmpty(s) ) {
+				if( string.IsNullOrEmpty( s ) ) {
 					args.Add( string.Empty );
 				}
 				else if( 1 == s.Length ) {
@@ -771,9 +786,9 @@ namespace NmpBase {
 					args.Add( CastArg( s ) );
 				}
 				else if( '[' == s [ 0 ] && '[' != s [ 1 ] ) {
-					args.Add( CollectionArg(s) );
+					args.Add( CollectionArg( s ) );
 				}
-				else { 
+				else {
 					//
 					// as a string
 					//
@@ -796,8 +811,8 @@ namespace NmpBase {
 
 		public static object Create( string arg )
 		{
-			object [] array = Create( new NmpStringList() {arg} );
-			return null == array || 0 == array.Length ? arg : array[0];
+			object [] array = Create( new NmpStringList() { arg } );
+			return null == array || 0 == array.Length ? arg : array [ 0 ];
 		}
 
 
@@ -812,7 +827,7 @@ namespace NmpBase {
 
 		public static object Create( string typeName, string arg )
 		{
-			return Create( string.Format("({0}) {1}", typeName, arg) );
+			return Create( string.Format( "({0}) {1}", typeName, arg ) );
 		}
 	}
 

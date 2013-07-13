@@ -280,7 +280,6 @@ namespace Nmp.Builtin.Macros {
 		/// Creates an object that "stands in" for the static members of an object, allows access to the static members
 		/// </summary>
 		/// <param name="typeName">Name of type</param>
-		/// <param name="extTypes">Name of type</param>
 		/// <returns></returns>
 		/// 
 		[Macro]
@@ -297,7 +296,6 @@ namespace Nmp.Builtin.Macros {
 		/// </summary>
 		/// <param name="macroName">Output macro name</param>
 		/// <param name="typeName">Name of type</param>
-		/// <param name="extTypes">Name of type</param>
 		/// <returns></returns>
 
 		[Macro]

@@ -294,13 +294,9 @@ namespace NmpBase {
 				}
 				catch {
 					//return string.Format( "[SafeStringFormat: exception calling string.Format()] format string: {0}", fmt );
-					return string.Format( "{0}", fmt );
+					//return string.Format( "{0}", fmt );
 				}
 			}
-			//else {
-			//	fmt = fmt.Replace( "{", "{{");
-			//	fmt = fmt.Replace( "}", "}}" );
-			//}
 
 			// ******
 			return fmt;

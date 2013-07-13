@@ -1,0 +1,8 @@
+
+=========================
+
+
+Tests are useless to learn nmp
+
+Project is a giant hack-a-thon that started about 2007 as author began playing around with C# and the idea of a macro processor to generate web pages that he was working with at the time.
+

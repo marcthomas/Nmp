@@ -52,7 +52,7 @@ namespace Nmp {
 						// ******
 						var mir = new MIR( null, input, "Root" );
 
-						using ( Get<InvocationContext>().Init( mir ) ) {
+						using ( Get<InvocationContext>().Initialize( mir ) ) {
 							SetMacroProcessorOutputInstance( output );
 							
 							Scanner( input, output );
@@ -120,7 +120,7 @@ namespace Nmp {
 						// ******
 						var mir = new MIR( null, input, "Root" );
 						
-						using( Get<InvocationContext>().Init( mir ) ) {
+						using( Get<InvocationContext>().Initialize( mir ) ) {
 							SetMacroProcessorOutputInstance( multileEvalOutput );
 							Scanner( input, multileEvalOutput );
 							SetMacroProcessorOutputInstance( null );

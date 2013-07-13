@@ -74,12 +74,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Src\Evaluators\MIR.cs" />
+    <Compile Include="Src\Events\NmpEvents.cs" />
     <Compile Include="Src\Expressions\Caching\InvokerGenerator.cs" />
     <Compile Include="Src\Expressions\Caching\MethodCache.cs" />
     <Compile Include="Src\Expressions\Invoker.cs" />
     <Compile Include="Src\Expressions\MethodExtensionsInvoker.cs" />
     <Compile Include="Src\Expressions\ExtensionsTypeDictionary.cs" />
-    <Compile Include="Src\Expressions\Caching\Latebound.cs" />
     <Compile Include="Src\Expressions\ObjectHelpers\StringObjectHelper.cs" />
     <Compile Include="Src\GrandCentral\ExecutionSecurity.cs" />
     <Compile Include="Src\GrandCentral\GrandCentral-FileIO.cs" />

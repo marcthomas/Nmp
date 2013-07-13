@@ -27,6 +27,12 @@ namespace Nmp {
 
 	partial class NMP {
 
+		// ******
+		//
+		// {10F126C4-BE00-40FE-A0D1-613420E1674B}
+		//
+		static Guid nmpEventProviderId = new Guid( 0x10f126c4, 0xbe00, 0x40fe, 0xa0, 0xd1, 0x61, 0x34, 0x20, 0xe1, 0x67, 0x4b );
+
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +40,7 @@ namespace Nmp {
 
 			NMP	nmp;
 			object savedState;
+			object eventWriterToken;
 
 			/////////////////////////////////////////////////////////////////////////////
 		
@@ -47,15 +54,10 @@ namespace Nmp {
 
 			/////////////////////////////////////////////////////////////////////////////
 
-			//private void MakeCurrent()
-			//{
-			//	savedState = nmp.MakeCurrent();
-			//}
-			//
-
 			private void MakeCurrent()
 			{
 				savedState = ThreadContext.SetThreadStorage( nmp.ThreadContextState );
+				eventWriterToken = EventWriter.SetCurrentWriter( nmp );
 			}
 
 

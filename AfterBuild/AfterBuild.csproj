@@ -59,22 +59,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Readme.txt" />
-    <Content Include="test.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>test.txt.nmp</DependentUpon>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="copy-files-local.btm" />
     <None Include="CopyNmpForVisualStudio.btm" />
     <None Include="CreateNugetPkg.btm" />
     <None Include="nmp.nuspec.nmp" />
-    <None Include="test.txt.nmp">
-      <SubType>Form</SubType>
-      <Generator>NMP</Generator>
-      <LastGenOutput>test.txt</LastGenOutput>
-    </None>
   </ItemGroup>
   <!--
 	not used

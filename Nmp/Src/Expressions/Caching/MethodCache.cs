@@ -55,7 +55,18 @@ namespace ReflectionHelpers {
 			}
 			else {
 				foreach( var obj in unmatchedArgs ) {
-					sb.Append( obj.GetType().FullName );
+					//
+					// note: where there are null arguments we'll be generating different
+					// hashes for the same method - same for methods that are called with
+					// arguments that are differently derived from the matching parameter
+					// type
+					//
+					if( null == obj ) {
+						sb.Append( "null" );
+					}
+					else {
+						sb.Append( obj.GetType().FullName );
+					}
 				}
 			}
 
@@ -179,13 +190,12 @@ namespace ReflectionHelpers {
 		/////////////////////////////////////////////////////////////////////////////
 		/// <summary>
 		/// Called for static methods
-		/// </summary>
+		/// </summary>		/// <param name="instance"></param>
 		/// <param name="type"></param>
-		/// <param name="unmatchedArgs"></param>
 		/// <param name="methodNameToUse"></param>
 		/// <param name="methodInfo"></param>
+		/// <param name="unmatchedArgs"></param>
 		/// <returns></returns>
-
 		public MethodCacheItem Generate( object instance, Type type, string methodNameToUse, MethodInfo methodInfo, object [] unmatchedArgs )
 		{
 			var handler = InvokerGenerator.Generate( methodInfo, instance );

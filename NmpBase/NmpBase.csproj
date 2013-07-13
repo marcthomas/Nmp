@@ -80,7 +80,16 @@
     <Compile Include="..\Common\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Src\Code\SaveRestore.cs" />
     <Compile Include="Src\Code\StringBuilderExtensions.cs" />
+    <Compile Include="Src\fastJson\FastJson.cs" />
+    <Compile Include="Src\fastJson\Formatter.cs" />
+    <Compile Include="Src\fastJson\Getters.cs" />
+    <Compile Include="Src\fastJson\JSON.cs" />
+    <Compile Include="Src\fastJson\JsonParser.cs" />
+    <Compile Include="Src\fastJson\JsonSerializer.cs" />
+    <Compile Include="Src\fastJson\Reflection.cs" />
+    <Compile Include="Src\fastJson\SafeDictionary.cs" />
     <Compile Include="Src\JSON\JSONInterfaces.cs" />
     <Compile Include="Src\Reflection\Arguments.cs" />
     <Compile Include="Src\Code\FileGroup.cs" />
@@ -146,6 +155,8 @@
     <Compile Include="Src\Reflection\TypeCreator.cs" />
     <Compile Include="Src\Reflection\TypeLoader.cs" />
     <Compile Include="Src\Code\TokenMap.cs" />
+    <Compile Include="Src\TraceEventing\CommonEvents.cs" />
+    <Compile Include="Src\TraceEventing\EventWriter.cs" />
     <Compile Include="Src\Tuples\NmpTuple.cs" />
     <Compile Include="Src\Tuples\NmpTuple1.cs" />
     <Compile Include="Src\Tuples\NmpTuple10.cs" />

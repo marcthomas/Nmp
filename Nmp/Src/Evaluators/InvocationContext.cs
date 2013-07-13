@@ -17,44 +17,10 @@ namespace NmpEvaluators {
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	//public class InvocationContext : UsingHelper {
-	//
-	//	IMacroInvocationRecord mir;
-	//	//bool doPushPop = true;
-	//
-	//
-	//	/////////////////////////////////////////////////////////////////////////////
-	//
-	//	public override void DoDispose()
-	//	{
-	//		//if( doPushPop ) {
-	//			ThreadContext.PopInvocationData();
-	//		//}
-	//	}
-	//
-	//
-	//	/////////////////////////////////////////////////////////////////////////////
-	//
-	//	public override void Init()
-	//	{
-	//		//if( doPushPop ) {
-	//			ThreadContext.PushInvocationData( mir );
-	//		//}
-	//	}
-	//
-	//
-	//	/////////////////////////////////////////////////////////////////////////////
-	//
-	//	public InvocationContext( IMacroInvocationRecord mir )	//, bool doPushPop )
-	//	{
-	//		this.mir = mir;
-	//		//this.doPushPop = doPushPop;
-	//		Init();
-	//	}
-	//
-	//}
-	//
-
+	/// <summary>
+	/// Used to push/pop value on InvocationStack
+	/// </summary>
+	/// 
 	class InvocationContext : IDisposable {
 
 		InvocationStack stack;
@@ -70,7 +36,7 @@ namespace NmpEvaluators {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public InvocationContext Init( IMacroInvocationRecord mir )
+		public InvocationContext Initialize( IMacroInvocationRecord mir )
 		{
 			stack.Push( mir );
 			return this;
@@ -79,10 +45,6 @@ namespace NmpEvaluators {
 
 		/////////////////////////////////////////////////////////////////////////////
 		
-		//
-		// should be injected
-		// 
-
 		public InvocationContext( InvocationStack stack )
 		{
 			this.stack = stack;
