@@ -46,7 +46,7 @@ namespace NmpEvaluators {
 				scanner.Error( null, "empty '@' expression" );
 			}
 
-			IInput input = scanner.Get<GrandCentral>().GetParseReader( exp, string.Empty, "at expression" );
+			IInput input = scanner.Get<GrandCentral>().CreateParseReader( exp, string.Empty, "at expression" );
 			string macroName = recognizer.GetMacroName( input );
 
 			if( string.IsNullOrEmpty(macroName) ) {

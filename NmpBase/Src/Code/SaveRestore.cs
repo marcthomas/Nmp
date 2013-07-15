@@ -5,6 +5,11 @@ using System.Text;
 
 namespace NmpBase {
 
+	/// <summary>
+	/// Use in "using( new SaveRestor<XXX>() ) { }"
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+
 	public class SaveRestore<T> : IDisposable {
 
 		T value;

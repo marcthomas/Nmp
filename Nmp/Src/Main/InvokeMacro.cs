@@ -64,8 +64,6 @@ namespace Nmp {
 			
 			// ******
 			MacroExpression expression = ETB.CreateMacroCallExpression( macro, args );
-			var input = gc.GetParseReader( macroName );
-			var mir = new MIR( macro, false, null, input, "InvokeMacro direct", 0, 1, 1 );
 
 			// ******
 			//
@@ -79,7 +77,7 @@ namespace Nmp {
 				MasterOutput output = GetMasterOutput( newOutput );
 
 				using( new UsingHelper(() => SetMacroProcessorOutputInstance(output), () => SetMacroProcessorOutputInstance(null)) ) {
-					object result = MacroProcessor.InvokeMacro( input, mir, expression, true );
+					var result = MacroProcessor.InvokeMacro( macro, expression, true );
 
 					// ******
 					//

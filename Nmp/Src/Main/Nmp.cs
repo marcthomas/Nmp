@@ -207,9 +207,9 @@ namespace Nmp {
 		{
 			// ******
 			gc.AltTokenFmtOnly			= false;
+
 			gc.MacroTraceOn				= false;
-			
-			gc.MacroTraceLevel			= 1;
+			gc.MacroTraceLevel			= TraceLevels.Warning;
 
 			gc.PushbackResult = false;
 			

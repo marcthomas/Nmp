@@ -60,12 +60,15 @@ namespace Nmp.Builtin.Macros {
 		/////////////////////////////////////////////////////////////////////////////
 
 		[Macro]
-		public int macroTraceLevel { get { return gc.MacroTraceLevel; } }
+		public int macroTraceLevel { get { return (int) gc.MacroTraceLevel; } }
 
 		[Macro]
 		public void setMacroTraceLevel( int value )
 		{
-			gc.MacroTraceLevel = value;
+			var obj = Enum.ToObject( typeof( TraceLevels ), value );
+			if( Enum.IsDefined( typeof( TraceLevels ), obj ) ) {
+				gc.MacroTraceLevel = (TraceLevels) value;
+			}
 		}
 		
 		

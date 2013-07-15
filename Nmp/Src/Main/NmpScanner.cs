@@ -147,8 +147,59 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		protected string HandleMacro( IInput input, MIR mir )
+		//protected string _HandleMacro( IInput input, MIR mir )
+		//{
+		//	// ******
+		//	if( gc.BreakNext ) {
+		//		gc.BreakNext = false;
+
+		//		if( Debugger.IsAttached ) {
+		//			Debugger.Break();
+		//		}
+		//	}
+
+		//	// ******
+		//	IMacro macro = mir.Macro;
+		//	mir.State = MacroProcessingState.Parsing;
+
+		//	// ******
+		//	MacroExpression exp = null;
+
+		//	if( 0 == (MacroFlags.NonExpressive & macro.Flags) ) {
+		//		ETB expressionTreeBuilder = new ETB( mir.Macro.Name, mir.AltToken, this, Recognizer );
+		//		exp = expressionTreeBuilder.ParseExpression( input );
+		//	}
+		//	else {
+		//		exp = ETB.CreateNullExpression();
+		//	}
+
+		//	// ******
+		//	string blockText = string.Empty;
+		//	if( macro.IsBlockMacro ) {
+		//		blockText = mir.Macro.MacroHandler.ParseBlock( exp, input );
+		//	}
+
+		//	// ******
+		//	mir.State = MacroProcessingState.Executing;
+
+		//	mir.SetSourceEndIndex( input.Index );
+		//	mir.MacroArgs = new MacroArguments( macro,
+		//																			input,
+		//																			exp,
+		//																			mir.SpecialArgs,
+		//																			blockText
+		//																		);
+
+		//	///	macroProcessor.DumpExpressionOnly = true;
+
+		//	return mpBase.InvokeMacro( mir, true ).ToString();
+		//}
+
+		protected string HandleMacro( IMacro macro, TokenMap tm, InputSpan inputSpan, out bool pushBack )
 		{
+
+			var input = inputSpan.Input;
+
 			// ******
 			if( gc.BreakNext ) {
 				gc.BreakNext = false;
@@ -159,43 +210,42 @@ namespace Nmp {
 			}
 
 			// ******
-			IMacro macro = mir.Macro;
-			mir.State = MacroProcessingState.Parsing;
-
-			// ******
 			MacroExpression exp = null;
 
 			if( 0 == (MacroFlags.NonExpressive & macro.Flags) ) {
-				ETB expressionTreeBuilder = new ETB( mir.Macro.Name, mir.AltToken, this, Recognizer );
+				ETB expressionTreeBuilder = new ETB( macro.Name, tm.IsAltTokenFormat, this, Recognizer );
 				exp = expressionTreeBuilder.ParseExpression( input );
 			}
 			else {
 				exp = ETB.CreateNullExpression();
 			}
+			var spanEnd = input.Index;
 
 			// ******
 			string blockText = string.Empty;
 			if( macro.IsBlockMacro ) {
-				blockText = mir.Macro.MacroHandler.ParseBlock( exp, input );
+				blockText = macro.MacroHandler.ParseBlock( exp, input );
 			}
+			var extendedSpanEnd = input.Index;
+
 
 			// ******
-			mir.State = MacroProcessingState.Processing;
-
-			mir.SetSourceEndIndex( input.Index );
-			mir.MacroArgs = new MacroArguments( macro,
+			var macroArgs = new MacroArguments( macro,
 																					input,
 																					exp,
-																					mir.SpecialArgs,
+																					tm.RegExCaptures,	// mir.SpecialArgs,
 																					blockText
 																				);
+			var mir = new MIR( macro, tm, inputSpan, spanEnd, extendedSpanEnd, macroArgs, "Macro: " + macro.Name );
 
-			///	macroProcessor.DumpExpressionOnly = true;
-
-			InvokeMacroEvent.Write( mir );
-
-			return mpBase.ProcessMacro( mir );
+			// ******
+			//	macroProcessor.DumpExpressionOnly = true;
+			var result = mpBase.InvokeMacro( mir, true ).ToString();
+			pushBack = mir.MacroArgs.Options.Pushback;
+			return result;
 		}
+			
+
 
 
 		/////////////////////////////////////////////////////////////////////////////
@@ -204,7 +254,7 @@ namespace Nmp {
 		{
 			// ******
 			StringBuilder sb = new StringBuilder();
-			NonEscapingParseReader reader = gc.GetNonEscapingParseReader( str );
+			NonEscapingParseReader reader = gc.CreateNonEscapingParseReader( str );
 			//StringIndexer reader = new StringIndexer( str );
 			CharSequence openQuote = gc.SeqOpenQuote;
 
@@ -215,6 +265,7 @@ namespace Nmp {
 			 * 
 			 */
 
+			string arg = null;
 			while( !reader.AtEnd ) {
 				char ch = reader.Peek();
 
@@ -229,8 +280,14 @@ namespace Nmp {
 				else if( SC.COMMA == ch ) {
 					reader.Skip( 1 );
 					reader.Skip( c => char.IsWhiteSpace( c ) );
-					args.Add( evt.SetCurrentItem( sb.ToString() ) );
+
+					arg = sb.ToString();
 					sb.Length = 0;
+
+					if( null != evt ) {
+						evt.SetCurrentItem( arg );
+					}
+					args.Add( arg );
 
 				}
 				else {
@@ -239,7 +296,13 @@ namespace Nmp {
 			}
 
 			// ******
-			args.Add( evt.SetCurrentItem( sb.ToString() ) );
+			//args.Add( evt.SetCurrentItem( sb.ToString() ) );
+
+			arg = sb.ToString();
+			if( null != evt ) {
+				evt.SetCurrentItem( arg );
+			}
+			args.Add( arg );
 		}
 
 
@@ -248,8 +311,10 @@ namespace Nmp {
 		public NmpStringList ArgScanner( string context, IInput input, RecognizedCharType terminalChar )
 		{
 			// ******
-			var evt = new ParseArgumentsEvent( context );
-			evt.BeginParseEvent();
+			var evt = gc.MacroTraceLevel >= TraceLevels.ExtraVerbose ? new ParseArgumentsEvent( context ) : null;
+			if( null != evt ) {
+				evt.BeginParseEvent();
+			}
 
 			// ******
 			try {
@@ -348,7 +413,9 @@ namespace Nmp {
 			}
 
 			finally {
-				evt.EndParseEvent();
+				if( null != evt ) {
+					evt.EndParseEvent();
+				}
 			}
 		}
 
@@ -358,7 +425,7 @@ namespace Nmp {
 		public string Scanner( string textToScan, string sourceContext )
 		{
 			// ******
-			var input = gc.GetParseReader( textToScan, string.Empty, sourceContext );
+			var input = gc.CreateParseReader( textToScan, string.Empty, sourceContext );
 			var output = new NmpOutput();
 
 			// ******
@@ -443,6 +510,10 @@ namespace Nmp {
 						int pos = input.Index;
 						int line = input.Line;
 						int column = input.Column;
+
+			var inputSpan = new InputSpan( input );
+
+
 						IMacro macro = null;
 
 						// ******
@@ -465,38 +536,47 @@ namespace Nmp {
 								//
 								Recognizer.Skip( input, tm );
 
-								// ******
-								//
-								// macro invocation record
-								//
-								var mir = new MIR( macro, tm.IsAltTokenFormat, tm.RegExCaptures, input, "Macro: " + macro.Name, pos, line, column );
+//								// ******
+//								//
+//								// macro invocation record
+//								//
+//								var mir = new MIR( macro, tm.IsAltTokenFormat, tm.RegExCaptures, input, "Macro: " + macro.Name, pos, line, column );
+//
+//								// ******
+//								//
+//								// handle the macro
+//								//
+//
+//								//
+//								// can NOT pushPop when were in editor mode
+//								//
+//
+//								//
+//								// recognizer may change behind our back durring a macro
+//								// call - just showing that 'tm' could become invalid
+//								//
+//								tm = null;
+//
+//								// ******
+//								string macroResult = HandleMacro( input, mir );
+//								if( macroResult.Length > 0 ) {
+//									if( mir.MacroArgs.Options.Pushback ) {
+//										input.PushBack( macroResult );
+//									}
+//									else {
+//										output.Write( macroResult );
+//									}
+//								}
 
-								// ******
-								//
-								// handle the macro
-								//
+								bool pushBack;
+								string macroResult = HandleMacro( macro, tm, inputSpan, out pushBack );
 
-								//
-								// can NOT pushPop when were in editor mode
-								//
-
-								using( Get<InvocationContext>().Initialize( mir ) ) {
-									//
-									// recognizer may change behind our back durring a macro
-									// call - just showing that 'tm' could become invalid
-									//
-									tm = null;
-
-									// ******
-									string macroResult = HandleMacro( input, mir );
-
-									if( macroResult.Length > 0 ) {
-										if( mir.MacroArgs.Options.Pushback ) {
-											input.PushBack( macroResult );
-										}
-										else {
-											output.Write( macroResult );
-										}
+								if( macroResult.Length > 0 ) {
+									if( pushBack ) {
+										input.PushBack( macroResult );
+									}
+									else {
+										output.Write( macroResult );
 									}
 								}
 							}

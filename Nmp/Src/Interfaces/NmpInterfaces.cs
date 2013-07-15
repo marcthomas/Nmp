@@ -98,6 +98,18 @@ namespace Nmp {
 
 	/////////////////////////////////////////////////////////////////////////////
 
+	public enum TraceLevels {
+		None,
+		Error,
+		Warning,
+		Information,
+		Verbose,
+		ExtraVerbose,
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////////
+
 	public interface IGrandCentral : IHub {
 
 		CharSequence SeqOpenQuote { get; set; }
@@ -113,7 +125,7 @@ namespace Nmp {
 		bool EncodeQuotes { get; set; }
 		bool FixResults { get; set; }
 		bool MacroTraceOn { get; set; }
-		int MacroTraceLevel { get; set; }
+		TraceLevels MacroTraceLevel { get; set; }
 		bool PushbackResult { get; set; }
 		bool ExpandAndScan { get; set; }
 		int MaxMacroScanDepth { get; set; }
@@ -229,9 +241,12 @@ namespace Nmp {
 		bool		PushbackCalled	{ get; }
 		string	Context					{ get; }	// context of the call; "file", "macro `name'", etc
 
-		string	SourceName			{ get; }	// soure file path - may be empty depending upon Context
-		int			Line						{ get; }	// gets from current IBaseReader
-		int			Column					{ get; }	// gets from current IBaseReader
+		//
+		// will likely get from Current (IReader)
+		//
+		string SourceName { get; }
+		int Line { get; }
+		int Column { get; }
 
 		// ******
 		void	PushBack( string text );
@@ -504,40 +519,43 @@ namespace Nmp {
 	
 	/////////////////////////////////////////////////////////////////////////////
 
-	public enum MacroProcessingState {
-		None,
-		Parsing,
-		Processing,
-		Executing,
-	}
+	//public enum MacroProcessingState {
+	//	None,
+	//	Parsing,
+	//	Executing,
+	//}
 
 
 	/////////////////////////////////////////////////////////////////////////////
 
 	public interface IMacroInvocationRecord {
 
-		bool	CalledFromMacro		{ get; }
-		bool	CalledFromFile		{ get; }
+		IMacro Macro { get; }
+		string Context { get; }	// context of the call; "file", "macro `name'", etc
+		bool AltToken { get; }
 
-		MacroProcessingState	State			{ get; set; }
-		IMacroArguments				MacroArgs	{ get; }
+		IMacroArguments MacroArgs { get; }
+		NmpStringList SpecialArgs { get; }
 
-		IMacro	Macro							{ get; }
-		IReader	Source						{ get; }
+		bool PushbackCalled { get; }
+		string SourceName { get; }	// soure file path - may be empty depending upon Context
 
-		bool	PushbackCalled						{ get; }
+		int SourceStartIndex { get; }
+		int SourceEndIndex { get; }
+		int SourceExpandedEndIndex { get; }
 
-		string	Context						{ get; }	// context of the call; "file", "macro `name'", etc
-		string	SourceName				{ get; }	// soure file path - may be empty depending upon Context
+		string InitialTextSpan { get; }
+		string TextSpan { get; }
 
-		int			SourceStartIndex	{ get; }
-		int			SourceEndIndex		{ get; }
-		int			Line							{ get; }
-		int			Column						{ get; }
-		bool		AltToken					{ get; }
-		string	Text							{ get; }
+		int Line { get; }
+		int Column { get; }
+
+		// ******
+		bool CalledFromMacro { get; }
+		bool CalledFromFile { get; }
+
+		//MacroProcessingState State { get; set; }
 	}
-
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -611,7 +629,11 @@ namespace Nmp {
 
 		// ******
 		NmpStringList	GetMacroNames( bool userOnly );
-	
+
+		// ******
+		string FixText( string [] text );
+		string FixText( string text );
+
 		// ******
 		//
 		// altTokenStart indicates is altToken and the leading chars
@@ -629,7 +651,7 @@ namespace Nmp {
 		bool		IsMacroName( string name );
 		
 		// ******
-		string	ProcessMacro( IMacroInvocationRecord mir );
+		object	InvokeMacro( IMacroInvocationRecord mir, bool postProcess );
 
 	}
 
@@ -651,10 +673,6 @@ namespace Nmp {
 		//
 		IMacroArguments CurrentMacroArgs	{ get; }
 		
-		// ******
-		string	FixText( string [] text );
-		string	FixText( string text );
-
 		// ******
 		object	InvokeMacro( IMacro macro, MacroExpression exp, bool postProcess );
 		object	InvokeMacro( IMacro macro, string methodName, object [] args, bool postProcess );

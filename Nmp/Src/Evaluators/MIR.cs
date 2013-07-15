@@ -26,62 +26,157 @@ namespace Nmp {
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	 class MIR : IMacroInvocationRecord {
+	public class InputSpan {
 
-		// ******
-		int _line;
-		int _column;
+		public IInput Input { get; set; }
+		public IReader Source { get { return Input.Current; } }
 
-		// ******
-		public bool	CalledFromMacro		{ get; private set; }
-		public bool	CalledFromFile		{ get; private set; }
+		/// <summary>
+		/// current line in Source when InputSpan initialized
+		/// </summary>
+		public int StartLine { get; set; }
 
-		// ******
-		public	MacroProcessingState	State				{ get; set; }
-		public	IMacroArguments				MacroArgs		{ get; set; }
-		public	NmpStringList					SpecialArgs	{ get; set; }
+		/// <summary>
+		/// current column in Source when InputSpan initialized
+		/// </summary>
+		public int StartColumn { get; set; }
 
-		// ******
-		public	IMacro	Macro							{ get; private set; }
-		public	IReader	Source						{ get; private set; }
+		/// <summary>
+		/// current line now
+		/// </summary>
+		public int CurrentLine { get { return Source.Line; } }
 
-		public	bool		PushbackCalled		{ get; private set; }
+		/// <summary>
+		/// current column now
+		/// </summary>
+		public int CurrentColumn { get { return Source.Column; } }
 
-		public	string	Context						{ get; private set; }
+		/// <summary>
+		/// start of span in Source
+		/// </summary>
+		public int SpanStart { get; private set; }
 
-		public	string	SourceName				{ get { return Source.SourceName; } }
+		/// <summary>
+		/// end of span in Source - should be end of expression
+		/// </summary>
+		public int SpanEnd { get; private set; }
 
-		public	int			SourceStartIndex 	{ get; private set; }
-		public	int			SourceEndIndex		{ get; private set; }
-		public	bool		AltToken					{ get; private set; }
-
-		public	string	Text							{ get { return Source.GetText(SourceStartIndex, SourceEndIndex); } }
-
-		// ******
-		//public	NmpStringList	Instructions	{ get; set; }
+		/// <summary>
+		/// end of span when macro is block macro
+		/// </summary>
+		public int ExpandedSpanEnd { get; private set; }
 
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public	int	Line							{ get { return null == Macro ? Source.Line : _line; } }
-		public	int	Column						{ get { return null == Macro ? Source.Column : _column; } }
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public void SetSourceEndIndex( int pos )
+		public void SetSpanEnd( int index )
 		{
-			SourceEndIndex = pos;
+			SpanEnd = index;
 		}
 
 
-//		/////////////////////////////////////////////////////////////////////////////
-//
-//		public void SetInstructions( NmpStringList list )
-//		{
-//			Instructions = list;
-//		}
-//
+		/////////////////////////////////////////////////////////////////////////////
+
+		public void SetExpandedSpanEnd( int index )
+		{
+			ExpandedSpanEnd = index;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public string InitialTextSpan()
+		{
+			return SpanStart < 0 || SpanEnd <= SpanStart ? string.Empty : Source.GetText( SpanStart, SpanEnd );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public string TextSpan()
+		{
+			var endSpan = ExpandedSpanEnd > 0 ? ExpandedSpanEnd : SpanEnd;
+			return SpanStart < 0 || endSpan <= SpanStart ? string.Empty : Source.GetText( SpanStart, endSpan );
+		}
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		public InputSpan( IInput input, int spanEnd = -1, int expandedSpanEnd = -1 )
+		{
+			Input = input;
+			StartLine = input.Line;
+			StartColumn = input.Column;
+			SpanStart = input.Index;
+			SpanEnd = spanEnd;
+			ExpandedSpanEnd = expandedSpanEnd;
+		}
+
+
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////////
+
+	class MIR : IMacroInvocationRecord {
+
+		// ******
+		//
+		// IMacroInvocationRecord
+		//
+		public IMacro Macro { get; private set; }
+		public string Context { get; private set; }
+		public bool AltToken { get; private set; }
+
+		public IMacroArguments MacroArgs { get; private set; }
+		public NmpStringList SpecialArgs { get; private set; }
+
+		// ******
+		public bool PushbackCalled { get { return Input.PushbackCalled; } }
+		public string SourceName { get { return Source.SourceName; } }
+
+		public int SourceStartIndex { get { return inputSpan.SpanStart; } }
+		public int SourceEndIndex { get { return inputSpan.SpanEnd; } }
+		public int SourceExpandedEndIndex { get { return inputSpan.ExpandedSpanEnd; } }
+
+		public string InitialTextSpan { get { return inputSpan.InitialTextSpan(); } }
+		public string TextSpan { get { return inputSpan.TextSpan(); } }
+
+		//
+		// Macro CAN be null for the root (first) instance of MIR on the InvocationStack,
+		// that instance of MIR is set by Evaluate() and MultipleEvaluate() in Evaluate.cs 
+		// which setup the processing of files, not straight invoking of macros
+		//
+		// above required MIR to be pushed on InvocationStack by the evaluate methods, this
+		// is no longer done
+
+		public int Line { get { return null == Macro ? 0 : Source.Line; } }
+		public int Column { get { return null == Macro ? 0 : Source.Column; } }
+
+		// ******
+		public bool CalledFromMacro { get; private set; }
+		public bool CalledFromFile { get; private set; }
+
+		// ******
+		//public MacroProcessingState State { get; set; }
+
+		// ******
+		//
+		// locals
+		//
+		InputSpan inputSpan;
+
+		public IInput Input { get { return inputSpan.Input; } }
+		public IReader Source { get { return inputSpan.Source; } }
+
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		//public void SetSourceEndIndex( int pos )
+		//{
+		//	inputSpan.SetSpanEnd( pos );
+		//}
+
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -93,64 +188,76 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public MIR( IMacro macro, bool isAltTokenFormat, NmpStringList specialArgs, IInput inputSource, string context, int pos, int line, int column )
+
+		public MIR( IMacro macro, TokenMap tm, InputSpan ispan, int spanEnd, int extendedSpanEnd, IMacroArguments macroArgs, string context )
 		{
 			// ******
-			CalledFromMacro = string.IsNullOrEmpty( inputSource.SourceName );
-			CalledFromFile = ! CalledFromMacro;
+			if( null == macro ) {
+				throw new ArgumentNullException( "macro" );
+			}
+
+			if( null == tm ) {
+				throw new ArgumentNullException( "tm" );
+			}
+
+			if( null == ispan ) {
+				throw new ArgumentNullException( "ispan" );
+			}
+
+			if( string.IsNullOrEmpty(context) ) {
+				throw new ArgumentNullException( "context" );
+			}
 
 			// ******
-			State = MacroProcessingState.None;
-			MacroArgs = null;
-			SpecialArgs = specialArgs;
+			inputSpan = ispan;
+			inputSpan.SetSpanEnd( spanEnd );
+			inputSpan.SetExpandedSpanEnd( extendedSpanEnd );
 
-			// ******
 			Macro = macro;
-			Source = inputSource.Current;
-			PushbackCalled = inputSource.PushbackCalled;
+			Context = context;
+			AltToken = tm.IsAltTokenFormat;
+
+			MacroArgs = macroArgs;
+			SpecialArgs = tm.RegExCaptures;
 
 			// ******
-			Context = context;
-			SourceStartIndex = pos;
-			SourceEndIndex = 0;
-			_line = line;
-			_column = column;
-			AltToken = isAltTokenFormat;
-
+			CalledFromMacro = string.IsNullOrEmpty( inputSpan.Source.SourceName );
+			CalledFromFile = !CalledFromMacro;
 		}
 
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public MIR( IMacro macro, IInput inputSource, string context )
+		public MIR( IMacro macro, IInput input, MacroArguments macroArgs, string context )
 		{
 			// ******
-			CalledFromMacro = string.IsNullOrEmpty( inputSource.SourceName );
-			CalledFromFile = ! CalledFromMacro;
+			if( null == macro ) {
+				throw new ArgumentNullException( "macro" );
+			}
 
+			if( null == input ) {
+				throw new ArgumentNullException( "input" );
+			}
+
+			if( string.IsNullOrEmpty( context ) ) {
+				throw new ArgumentNullException( "context" );
+			}
+		
 			// ******
-			State = MacroProcessingState.None;
-			MacroArgs = null;
+			inputSpan = new InputSpan( input );
+
+			Macro = macro;
+			Context = context;
+			AltToken = false;
+
+			MacroArgs = macroArgs;
 			SpecialArgs = null;
 
 			// ******
-			//
-			// sometimes called with 'macro' null
-			//
-			Macro = macro;
-			Source = inputSource.Current;
-			PushbackCalled = inputSource.PushbackCalled;
-
-			// ******
-			Context = context;
-			SourceStartIndex = 0;
-			SourceEndIndex = 0;
-			_line = 0;
-			_column = 0;
-			AltToken = false;
+			CalledFromMacro = string.IsNullOrEmpty( inputSpan.Source.SourceName );
+			CalledFromFile = !CalledFromMacro;
 		}
-
-
+			
 	}
 
 

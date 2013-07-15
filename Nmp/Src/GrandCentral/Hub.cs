@@ -53,41 +53,13 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		public InvocationContext NewInvocationContext
-		{
-			get
-			{
-				return new InvocationContext( InvocationStack );
-			}
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		//public TypeHelperDictionary NewTypeHelperDictionary
-		//{
-		//	get
-		//	{
-		//		return new TypeHelperDictionary { };
-		//	}
-		//}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
 		public object Get( Type type )
 		{
 			// ******
 			object value = null;
 
 			// ******
-			if( typeof( InvocationContext ) == type ) {
-				value = NewInvocationContext;
-			}
-			//else if( typeof( TypeHelperDictionary ) == type ) {
-			//	value = NewTypeHelperDictionary;
-			//}
-			else if( typeof( InvocationStack ) == type ) {
+			if( typeof( InvocationStack ) == type ) {
 				value = InvocationStack;
 			}
 			else {

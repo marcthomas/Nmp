@@ -115,75 +115,75 @@ namespace Nmp {
 	
 	/////////////////////////////////////////////////////////////////////////////
 
-	class InvokeMacroEvent {
+	//class InvokeMacroEvent {
 
-		public MIR MacroInvocationRecord { get; private set; }
+	//	public MIR MacroInvocationRecord { get; private set; }
 
 
-		/////////////////////////////////////////////////////////////////////////////
+	//	/////////////////////////////////////////////////////////////////////////////
 
-		public string BasicInfo()
-		{
-			// ******
-			var mir = MacroInvocationRecord;
-			var sb = new StringBuilder { };
+	//	public string BasicInfo()
+	//	{
+	//		// ******
+	//		var mir = MacroInvocationRecord;
+	//		var sb = new StringBuilder { };
 
-			// ******
-			if( null == mir.Macro ) {
-				sb.AppendFormat( "Root file: \"{0}\"\n", mir.SourceName );
-			}
-			else {
-				string macroName = null != mir.Macro ? mir.Macro.Name : string.Empty;
+	//		// ******
+	//		if( null == mir.Macro ) {
+	//			sb.AppendFormat( "Root file: \"{0}\"\n", mir.SourceName );
+	//		}
+	//		else {
+	//			string macroName = null != mir.Macro ? mir.Macro.Name : string.Empty;
 
-				// ******
-				string someMacroText = mir.Text.TrimStart();
+	//			// ******
+	//			string someMacroText = mir.Text.TrimStart();
 
-				//char [] chars = new char [] { '\r', '\n' };
+	//			//char [] chars = new char [] { '\r', '\n' };
 
-				//int index = 0;
+	//			//int index = 0;
 
-				//while( 0 == (index = someMacroText.IndexOfAny( chars )) )
-				//	;
+	//			//while( 0 == (index = someMacroText.IndexOfAny( chars )) )
+	//			//	;
 
-				//if( index > 0 ) {
-				//	someMacroText = string.Format( "{0}\n ...", someMacroText.Substring( 0, index ) );
-				//}
+	//			//if( index > 0 ) {
+	//			//	someMacroText = string.Format( "{0}\n ...", someMacroText.Substring( 0, index ) );
+	//			//}
 
-				sb.AppendFormat( "\n {0}\n", someMacroText );
+	//			sb.AppendFormat( "\n {0}\n", someMacroText );
 		
 			
-			}
+	//		}
 			
-			// ******
-			return sb.ToString();
-		}
+	//		// ******
+	//		return sb.ToString();
+	//	}
 
 
-		/////////////////////////////////////////////////////////////////////////////
+	//	/////////////////////////////////////////////////////////////////////////////
 
-		public override string ToString()
-		{
-			var macroArgs = MacroInvocationRecord.MacroArgs;
+	//	public override string ToString()
+	//	{
+	//		var macroArgs = MacroInvocationRecord.MacroArgs;
 
-			// ******
-			var sb = new StringBuilder { };
-			{
-				sb.Append( BasicInfo() );
-			}
-			return sb.ToString();
-		}
-
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public static void Write( MIR mir )
-		{
-			var evt = new InvokeMacroEvent { MacroInvocationRecord = mir };
-			EventWriter.Information( evt );
-		}
+	//		// ******
+	//		var sb = new StringBuilder { };
+	//		{
+	//			sb.Append( BasicInfo() );
+	//		}
+	//		return sb.ToString();
+	//	}
 
 
-	}
+	//	/////////////////////////////////////////////////////////////////////////////
+
+	//	public static void Write( MIR mir )
+	//	{
+	//		var evt = new InvokeMacroEvent { MacroInvocationRecord = mir };
+	//		EventWriter.Information( evt );
+	//	}
+
+
+	//}
 
 
 }

@@ -45,22 +45,28 @@ namespace Nmp {
 			//
 			using( new EvalLock( this ) ) {
 				try {
-					using( var input = gc.GetMasterParseReader( new ParseStringReader( evx.Text, evx.FileName ) ) ) {
+					using( var input = gc.CreateMasterParseReader( new ParseStringReader( evx.Text, evx.FileName ) ) ) {
 						MasterOutput output = GetMasterOutput( newOutput );
 						string result = string.Empty;
 
 						// ******
-						var mir = new MIR( null, input, "Root" );
+						//
+						// no longer pushed on the stack since the "using" InvocationContext went away
+						//
+						////var mir = new MIR( null, input, "Root" );
+						//var inputSpan = new InputSpan( input );
+						//var mir = new MIR( null, inputSpan, "InvokeMacro direct" );
 
-						using ( Get<InvocationContext>().Initialize( mir ) ) {
-							SetMacroProcessorOutputInstance( output );
+
+
+
+						SetMacroProcessorOutputInstance( output );
 							
-							Scanner( input, output );
-							StringBuilder sb = output.AllText;
-							result = sb.ToString();
+						Scanner( input, output );
+						StringBuilder sb = output.AllText;
+						result = sb.ToString();
 
-							SetMacroProcessorOutputInstance( null );
-						}
+						SetMacroProcessorOutputInstance( null );
 
 						// ******
 						return result;
@@ -111,21 +117,23 @@ namespace Nmp {
 			//
 			using( new EvalLock( this ) ) {
 				try {
-					using( var input = gc.GetMasterParseReader( new ParseStringReader( evx.Text, evx.FileName ) ) ) {
+					using( var input = gc.CreateMasterParseReader( new ParseStringReader( evx.Text, evx.FileName ) ) ) {
 						
 						if( null == multileEvalOutput ) {
 							multileEvalOutput = new MasterOutput( gc );
 						}
 		
 						// ******
-						var mir = new MIR( null, input, "Root" );
-						
-						using( Get<InvocationContext>().Initialize( mir ) ) {
-							SetMacroProcessorOutputInstance( multileEvalOutput );
-							Scanner( input, multileEvalOutput );
-							SetMacroProcessorOutputInstance( null );
-						}
-		
+						//
+						// no longer pushed on the stack since the "using" InvocationContext went away
+						//
+						////var mir = new MIR( null, input, "Root" );
+						//var inputSpan = new InputSpan( input );
+						//var mir = new MIR( null, inputSpan, "InvokeMacro direct" );
+
+						SetMacroProcessorOutputInstance( multileEvalOutput );
+						Scanner( input, multileEvalOutput );
+						SetMacroProcessorOutputInstance( null );
 					}
 				}
 				finally {

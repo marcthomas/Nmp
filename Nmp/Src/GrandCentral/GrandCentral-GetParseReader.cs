@@ -24,7 +24,7 @@ namespace Nmp {
 
 		///////////////////////////////////////////////////////////////////////////
 
-		public NonEscapingParseReader GetNonEscapingParseReader( string text )
+		public NonEscapingParseReader CreateNonEscapingParseReader( string text )
 		{
 			return new NonEscapingParseReader( this, GetDirectoryStack(), text );
 		}
@@ -32,7 +32,7 @@ namespace Nmp {
 
 		///////////////////////////////////////////////////////////////////////////
 		
-		public ParseReader GetParseReader()
+		public ParseReader CreateParseReader()
 		{
 			return new ParseReader( this, GetDirectoryStack() );
 		}
@@ -40,7 +40,7 @@ namespace Nmp {
 
 		///////////////////////////////////////////////////////////////////////////
 
-		public ParseReader GetParseReader( string text )
+		public ParseReader CreateParseReader( string text )
 		{
 			return new ParseReader( this, GetDirectoryStack(), text );
 		}
@@ -48,7 +48,7 @@ namespace Nmp {
 
 		///////////////////////////////////////////////////////////////////////////
 		
-		public ParseReader GetParseReader( IBaseReader reader, string context )
+		public ParseReader CreateParseReader( IBaseReader reader, string context )
 		{
 			return new ParseReader( this, GetDirectoryStack(), reader, context );
 		}
@@ -56,7 +56,7 @@ namespace Nmp {
 
 		///////////////////////////////////////////////////////////////////////////
 		
-		public ParseReader GetParseReader( string text, string sourceFile, string context )
+		public ParseReader CreateParseReader( string text, string sourceFile, string context )
 		{
 			return new ParseReader( this, GetDirectoryStack(), text, sourceFile, context );
 		}
@@ -64,7 +64,7 @@ namespace Nmp {
 
 		///////////////////////////////////////////////////////////////////////////
 		
-		public MasterParseReader GetMasterParseReader( IBaseReader reader )
+		public MasterParseReader CreateMasterParseReader( IBaseReader reader )
 		{
 			return new MasterParseReader( this, GetDirectoryStack(), reader );
 		}

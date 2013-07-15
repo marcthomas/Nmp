@@ -67,13 +67,13 @@
     <Compile Include="Src\Builtin Macros\Logical\IsMacros.cs" />
     <Compile Include="Src\Builtin Macros\Object\ObjectMacros.cs" />
     <Compile Include="Src\Builtin Macros\Options\NmpOptions.cs" />
-    <Compile Include="Src\Evaluators\InvocationContext.cs" />
     <Compile Include="Src\Evaluators\InvocationStack.cs" />
     <Compile Include="Src\Evaluators\MacroArgs.cs" />
     <Compile Include="Src\Evaluators\MacroArguments.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Src\Evaluators\MIR.cs" />
+    <Compile Include="Src\Events\ProcessMacroEvent.cs" />
     <Compile Include="Src\Events\NmpEvents.cs" />
     <Compile Include="Src\Expressions\Caching\InvokerGenerator.cs" />
     <Compile Include="Src\Expressions\Caching\MethodCache.cs" />

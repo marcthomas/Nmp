@@ -292,99 +292,95 @@ namespace Nmp {
 
 		public object InvokeMacro( IMacroInvocationRecord mir, bool postProcess )
 		{
-		
 			// ******
-			var macro = mir.Macro;
-			var macroArgs = mir.MacroArgs;
-			using( new SaveRestore<IMacroArguments>( CurrentMacroArgs, macroArgs, v => CurrentMacroArgs = v ) ) {
+			try {
+				Get<InvocationStack>().Push( mir );
 
 				// ******
-				if( DumpExpressionOnly ) {
+				var macro = mir.Macro;
+				var macroArgs = mir.MacroArgs;
+				using( new SaveRestore<IMacroArguments>( CurrentMacroArgs, macroArgs, v => CurrentMacroArgs = v ) ) {
+
+					// ******
+					if( DumpExpressionOnly ) {
+						//
+						// return a string that represents the expression
+						//
+						return DumpExpression( mir.Macro, mir.MacroArgs.Expression );
+					}
+
+					// ******
+					//int	id = tracerId++;
+					//if( null != tracer ) {
+					//	tracer.ProcessMacroBegin( id, macro, macroArgs, postProcess );
+					//}
+
+					//				var evt = gc.MacroTraceLevel >= TraceLevels.ExtraVerbose ? new ParseArgumentsEvent( context ) : null;
+
+					//				InvokeMacroEvent.Write( mir );
+
+
+
+					// ******
+					object macroResult = macro.MacroHandler.Evaluate( macro, macroArgs );
+
+					// ******
+					object finalResult = null;
+
+					if( postProcess || macroArgs.Options.CallerInstructions ) {
+						//
+						// when postProcess is true OR the macro was invoked with
+						// instructions "@[...]"
+						//
+						// this is important if this macro was invoked as an argument 
+						// to another macro - the object WILL be converted to a string
+						// so care must be taken NOT to use macro instructions when
+						// you want to preserve the resut of the call as an object !
+						//
+						// addenda: converts to a string UNLESS the '/break' option is
+						// used
+						//
+						finalResult = PostProcessMacroResult( macro.Name, macroArgs.Options, macroResult );
+					}
+					else {
+						finalResult = macroResult;
+					}
+
+					// ******
+					//if( null != tracer ) {
+					//	tracer.ProcessMacroDone( id, macro, postProcess, macroArgs.Options.Divert, macroResult, finalResult );
+					//}
+
+					// ******
 					//
-					// return a string that represents the expression
+					// the same cautions apply here as above concerning "@[...]", 
+					// FixResults, EncodeQuotes and Divert will convert the macro result to
+					// a string
 					//
-					return DumpExpression( mir.Macro, mir.MacroArgs.Expression );
+					if( gc.FixResults && !macroArgs.Options.FixResult ) {
+						//
+						// if options.FixResult then it will have been fixed in post process
+						//
+						finalResult = gc.FixText( finalResult.ToString() );
+					}
+
+					if( gc.EncodeQuotes && !macroArgs.Options.EncodeQuotes ) {
+						finalResult = gc.EncodeNmpQuotes( finalResult.ToString() );
+					}
+
+					if( macroArgs.Options.Divert ) {
+						MasterOutput output = OutputInstance as MasterOutput;
+						output.AddToDivert( macro.Name, finalResult.ToString() );
+						return string.Empty;
+					}
+
+					// ******
+					return finalResult;
 				}
-
-				// ******
-				//int	id = tracerId++;
-				//if( null != tracer ) {
-				//	tracer.ProcessMacroBegin( id, macro, macroArgs, postProcess );
-				//}
-
-//				var evt = gc.MacroTraceLevel >= TraceLevels.ExtraVerbose ? new ParseArgumentsEvent( context ) : null;
-
-//				InvokeMacroEvent.Write( mir );
-
-
-
-				// ******
-				object macroResult = macro.MacroHandler.Evaluate( macro, macroArgs );
-
-				// ******
-				object finalResult = null;
-
-				if( postProcess || macroArgs.Options.CallerInstructions ) {
-					//
-					// when postProcess is true OR the macro was invoked with
-					// instructions "@[...]"
-					//
-					// this is important if this macro was invoked as an argument 
-					// to another macro - the object WILL be converted to a string
-					// so care must be taken NOT to use macro instructions when
-					// you want to preserve the resut of the call as an object !
-					//
-					// addenda: converts to a string UNLESS the '/break' option is
-					// used
-					//
-					finalResult = PostProcessMacroResult( macro.Name, macroArgs.Options, macroResult );
-				}
-				else {
-					finalResult = macroResult;
-				}
-
-				// ******
-				//if( null != tracer ) {
-				//	tracer.ProcessMacroDone( id, macro, postProcess, macroArgs.Options.Divert, macroResult, finalResult );
-				//}
-
-				// ******
-				//
-				// the same cautions apply here as above concerning "@[...]", 
-				// FixResults, EncodeQuotes and Divert will convert the macro result to
-				// a string
-				//
-				if( gc.FixResults && !macroArgs.Options.FixResult ) {
-					//
-					// if options.FixResult then it will have been fixed in post process
-					//
-					finalResult = gc.FixText( finalResult.ToString() );
-				}
-
-				if( gc.EncodeQuotes && !macroArgs.Options.EncodeQuotes ) {
-					finalResult = gc.EncodeNmpQuotes( finalResult.ToString() );
-				}
-
-				if( macroArgs.Options.Divert ) {
-					MasterOutput output = OutputInstance as MasterOutput;
-					output.AddToDivert( macro.Name, finalResult.ToString() );
-					return string.Empty;
-				}
-				
-				// ******
-				return finalResult;
 			}
-		}
 
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		public object InvokeMacro( IInput input, MIR mir, MacroExpression expression, bool postProcess )
-		{
-			// ******
-			using( Get<InvocationContext>().Initialize( mir ) ) {
-				mir.MacroArgs = new MacroArguments( mir.Macro, input, expression );
-				return InvokeMacro( mir, postProcess );
+			finally {
+				Get<InvocationStack>().Pop();
 			}
 		}
 
@@ -394,8 +390,11 @@ namespace Nmp {
 		public object InvokeMacro( IMacro macro, MacroExpression expression, bool postProcess )
 		{
 			// ******
-			IInput input = gc.GetParseReader();
-			return InvokeMacro( input, new MIR( macro, input, "InvokeMacro() " + macro.Name ), expression, postProcess );
+			var macroArgs = new MacroArguments( macro, gc.CreateParseReader(), expression );
+			var context = "Invoke Macro Call (): " + macro.Name;
+
+			// ******
+			return InvokeMacro( new MIR( macro, gc.CreateParseReader(), macroArgs, context ), postProcess );
 		}
 
 

@@ -122,7 +122,7 @@ namespace Nmp {
 					sb.AppendFormat( "Call Macro: \"{0}\", from: Line {1}: Column: {2} File: \"{3}\"\n", macroName, line, column, fileName );
 
 					// ******
-					string someMacroText = item.Text;
+					string someMacroText = item.InitialTextSpan;
 
 					char [] chars = new char[] { '\r', '\n' };
 

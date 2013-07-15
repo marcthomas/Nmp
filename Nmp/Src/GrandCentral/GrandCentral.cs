@@ -154,12 +154,12 @@ namespace Nmp {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		int _macroTraceLevel = 1;
+		TraceLevels _macroTraceLevel = TraceLevels.Warning;
 
-		public int MacroTraceLevel
+		public TraceLevels MacroTraceLevel
 		{
 			get {
-				return _macroTraceLevel;
+				return _macroTraceOn ? _macroTraceLevel : TraceLevels.None;
 			}
 
 			set {
